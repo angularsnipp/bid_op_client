@@ -1,0 +1,74 @@
+@(form: Form[(models.User,Boolean)])(implicit flash: Flash, request: RequestHeader)
+
+@clear_db = @{
+	models.API_bid.clearDB
+}
+
+<html>
+<head>
+
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+<link rel="stylesheet/less" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.less")">
+<script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/less.js")" type="text/javascript"></script>
+
+<script src="@routes.Assets.at("javascripts/snowstorm.js")" type="text/javascript"></script>
+<!-- <script src="http://yourjavascript.com/25223141921/snowstorm-min.js"></script> -->
+
+</head>
+<body style="background-image: url(@routes.Assets.at("images/bid_op_client.png"));">	
+	
+	@helper.form(routes.Auth.authenticate) {
+            
+            <h1>Sign in</h1>
+            
+            @form.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+            }
+            
+            @flash.get("success").map { message =>
+                <p class="success">
+                    @message
+                </p>
+            }
+            
+            <p>
+                <input type="text" name="user.name" placeholder="Login" id="usernameID" value="@form("user.name").value">
+            </p>
+            <p>
+                <input type="password" name="user.password" id="passwordID" placeholder="Password">
+            </p>
+            <p>            
+            	<label for="checkboxID" ><input type="checkbox" name="create" id="checkboxID" value="true"/>Create a new User</label>
+            	<input 	type="hidden"  value="false">					
+            </p>
+            	
+            <p>
+                <button type="submit" id="loginbutton" >Login</button>
+            </p>	}
+        
+        <p class="note">
+            Try <em>guest</em> with <em>secret</em> as password.
+        </p>
+		<p align="center" style="color: transparent;">
+            <input type="button" id="cleardb" value="Clear_DB">            
+        </p>
+		
+	@** javascripts ***********************************************************************************@	
+	<script type="text/javascript">        
+        	$('#cleardb').click(function() {        		
+        		$.ajax({
+        			type: 'GET',
+        			url: "@routes.Application.clearDB",
+        			dataType: 'json',
+        			data: {},
+        			success: function() {}
+        		});
+        	})
+    </script>
+	@** javascripts ***********************************************************************************@	
+</body>
+</html>           	
+            	

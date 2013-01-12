@@ -1,0 +1,27 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                   		controllers.Networks.index(network: String ?= "")
+
+# Campaign page
+GET     /campaign_report			controllers.Networks.campaignReport(network: String, campaign: String)
+GET     /external_campaigns			controllers.Networks.externalCampaigns(network: String, login: String, token:String)
+
+# Authentication
+GET     /login                      controllers.Auth.login
+POST    /login                      controllers.Auth.authenticate
+GET     /logout                     controllers.Auth.logout
+GET     /yOAuth						controllers.Auth.yandex
+
+# Campaigns
+GET 	/clearDB 					controllers.Application.clearDB
+POST 	/postCampaign 				controllers.Application.postCampaign
+POST 	/getRecommendations			controllers.Application.getRecommendations
+POST 	/getStats					controllers.Application.getStats
+POST 	/getBanners					controllers.Application.getBanners
+POST	/getReport					controllers.Application.getReport
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

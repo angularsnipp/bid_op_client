@@ -1,0 +1,256 @@
+@(title: String, user: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.less")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        
+<link id="bs-css" href="/assets/stylesheets/bootstrap-classic.css" rel="stylesheet">
+	<style type="text/css">
+	  body {
+		padding-bottom: 40px;
+	  }
+	  .sidebar-nav {
+		padding: 9px 0;
+	  }   
+	  </style>     
+
+	<link href="@routes.Assets.at("stylesheets/bootstrap-responsive.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/charisma-app.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/jquery-ui-1.8.21.custom.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/fullcalendar.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/fullcalendar.print.css")" rel="stylesheet" media="print">
+	<link href="@routes.Assets.at("stylesheets/chosen.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/uniform.default.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/colorbox.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/jquery.cleditor.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/jquery.noty.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/noty_theme_default.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/elfinder.min.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/elfinder.theme.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/jquery.iphone.toggle.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/opa-icons.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/uploadify.css")" rel="stylesheet">
+
+	<link href="@routes.Assets.at("stylesheets/datetimepicker.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/datetimepicker.less")" rel="stylesheet">
+
+</head>
+    <body>
+    
+    
+    <!-- topbar starts -->
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="index.html"> <img alt="Charisma Logo" src="/assets/images/logo20.png" /> <span>Bid Opt</span></a>
+				
+				<!-- user dropdown starts -->
+				<div class="btn-group pull-right" >
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						<i class="icon-user"></i><span class="hidden-phone">@user</span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="#">Profile</a></li>
+						<li class="divider"></li>
+						<li><a href="@routes.Auth.login()">Logout</a></li>
+					</ul>
+				</div>
+				<!-- user dropdown ends -->
+				
+				<!-- theme selector starts -->
+				<div class="btn-group pull-right theme-container" >
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">					
+						<i class="icon-tint"></i><span class="hidden-phone"> Change Theme / Skin</span>
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" id="themes" >
+						<li><a data-value="classic" href="#"><i class="icon-blank"></i> Classic</a></li>
+						<li><a data-value="cerulean" href="#"><i class="icon-blank"></i> Cerulean</a></li>
+						<li><a data-value="cyborg" href="#"><i class="icon-blank"></i> Cyborg</a></li>
+						<li><a data-value="redy" href="#"><i class="icon-blank"></i> Redy</a></li>
+						<li><a data-value="journal" href="#"><i class="icon-blank"></i> Journal</a></li>
+						<li><a data-value="simplex" href="#"><i class="icon-blank"></i> Simplex</a></li>
+						<li><a data-value="slate" href="#"><i class="icon-blank"></i> Slate</a></li>
+						<li><a data-value="spacelab" href="#"><i class="icon-blank"></i> Spacelab</a></li>
+						<li><a data-value="united" href="#"><i class="icon-blank"></i> United</a></li>
+					</ul>
+				</div>
+				<!-- theme selector ends -->				
+				
+				<div class="top-nav nav-collapse">
+					<ul class="nav">
+						<li><a href="#">Visit Site</a></li>
+						<li>
+							<form class="navbar-search pull-left">
+								<input placeholder="Search" class="search-query span2" name="query" type="text">
+							</form>
+						</li>
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
+	<!-- topbar ends -->
+	
+	
+	
+	<div class="container-fluid">
+		<div class="row-fluid">
+		
+		
+			<!-- left menu starts -->
+			<div class="span2 main-menu-span">
+				<div class="well nav-collapse sidebar-nav">
+					<ul class="nav nav-tabs nav-stacked main-menu">
+						<li class="nav-header hidden-tablet">Networks</li>
+						<li><a class="ajax-link" href="@routes.Networks.index()"><i class="icon-home"></i><span class="hidden-tablet"> ALL</span></a></li>
+						<li><a class="ajax-link" href="@routes.Networks.index("Yandex")"><i class="icon-star"></i><span class="hidden-tablet"> Yandex</span></a></li>
+						<li><a class="ajax-link" href="@routes.Networks.index("Google")"><i class="icon-star"></i><span class="hidden-tablet"> Google</span></a></li>
+						<li><a class="ajax-link" href="@routes.Networks.index("Begun")"><i class="icon-star"></i><span class="hidden-tablet"> Begun</span></a></li>
+						</ul>
+					<label id="for-is-ajax" class="hidden-tablet" for="is-ajax"><input id="is-ajax" type="checkbox"> Ajax on menu</label>
+				</div><!--/.well -->
+							
+			</div><!--/span-->
+			<!-- left menu ends -->
+			
+			<noscript>
+				<div class="alert alert-block span10">
+					<h4 class="alert-heading">Warning!</h4>
+					<p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+				</div>
+			</noscript>
+			
+			<div id="content" class="span10">
+				<!-- content starts -->					
+					
+				<section id="main">@content</section>
+
+			</div>
+		</div>
+		
+		<hr>
+
+		<div class="modal hide fade" id="myModal">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h3>Settings</h3>
+			</div>
+			<div class="modal-body">
+				<p>Here settings can be configured...</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">Close</a>
+				<a href="#" class="btn btn-primary">Save changes</a>
+			</div>
+		</div>
+		
+	</div>
+	<footer>
+		<p align="center">
+			<a style="font-style: oblique;" href="http://www.krispo.tk">--- www.krispo.tk ---</a>
+		</p>
+	</footer>
+	
+	
+	     <!-- external javascript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+
+	<!-- jQuery -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.7.2.min.js")"></script>
+	<!-- jQuery UI -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-ui-1.8.21.custom.min.js")"></script>
+	<!-- transition / effect library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-transition.js")"></script>
+	<!-- alert enhancer library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-alert.js")"></script>
+	<!-- modal / dialog library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-modal.js")"></script>
+	<!-- custom dropdown library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-dropdown.js")"></script>
+	<!-- scrolspy library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-scrollspy.js")"></script>
+	<!-- library for creating tabs -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-tab.js")"></script>
+	<!-- library for advanced tooltip -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-tooltip.js")"></script>
+	<!-- popover effect library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-popover.js")"></script>
+	<!-- button enhancer library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-button.js")"></script>
+	<!-- accordion library (optional, not used in demo) -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-collapse.js")"></script>
+	<!-- carousel slideshow library (optional, not used in demo) -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-carousel.js")"></script>
+	<!-- autocomplete library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-typeahead.js")"></script>
+	<!-- tour library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-tour.js")"></script>
+	<!-- library for cookie management -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.cookie.js")"></script>
+	<!-- calander plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/fullcalendar.min.js")"></script>
+	<!-- data table plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.dataTables.min.js")"></script>
+
+	<!-- chart libraries start -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/excanvas.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.min.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.pie.min.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.stack.js")"></script>
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.resize.min.js")"></script>
+	<!-- chart libraries end -->
+
+	<!-- select or dropdown enhancer -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.chosen.min.js")"></script>
+	<!-- checkbox, radio, and file input styler -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.uniform.min.js")"></script>
+	<!-- plugin for gallery image view -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.colorbox.min.js")"></script>
+	<!-- rich text editor library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.cleditor.min.js")"></script>
+	<!-- notification plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.noty.js")"></script>
+	<!-- file manager library -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.elfinder.min.js")"></script>
+	<!-- star rating plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.raty.min.js")"></script>
+	<!-- for iOS style toggle switch -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.iphone.toggle.js")"></script>
+	<!-- autogrowing textarea plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.autogrow-textarea.js")"></script>
+	<!-- multiple file upload plugin -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.uploadify-3.1.min.js")"></script>
+	<!-- history.js for cross-browser state change on ajax -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.history.js")"></script>
+	<!-- application script for Charisma demo -->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/charisma.js")"></script>
+	
+	<!-- <script type="text/javascript" src="@routes.Assets.at("javascripts/locales/bootstrap-datetimepicker.ru.js")"></script>-->
+	<script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap-datetimepicker.js")"></script>
+
+	<script type="text/javascript">
+		$(".form_datetime").datetimepicker({
+			format : "dd MM yyyy - hh:ii",
+			autoclose : true,
+			todayBtn : true
+		});
+	</script>
+
+	<!-- Snow falling -->
+	<!-- <script src="@routes.Assets.at("javascripts/snowstorm.js")" type="text/javascript"></script> -->
+	<!-- <script src="http://yourjavascript.com/25223141921/snowstorm-min.js"></script> -->
+	
+</body>
+</html>
