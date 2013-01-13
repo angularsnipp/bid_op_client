@@ -122,7 +122,7 @@ object Application extends Controller {
   }
 
   def getReport = Action { implicit request =>
-    { //During the day!!!
+    { //at the END of the day!!!
       request.body.asJson match {
         case None => BadRequest
         case Some(data) => {
@@ -168,12 +168,28 @@ object Application extends Controller {
             }
           }
 
-          //val file_name = "test/serializers/yandex/reports/report1.xml"
-          //val node = xml.XML.loadFile(file_name)
-
+          //Get current report Url 
           val reportUrl = getUrl
-          println("!!! URL: " + reportUrl)
-          Ok(Json generate reportUrl)
+
+          //download XML report from Yandex Url
+          val xml_node = API_yandex.getXML(reportUrl)
+          println("!!! XML: " + xml_node)
+
+          //post report to BID
+          val postToBid = API_bid.postReports(
+            user = (data \ ("user")).as[String],
+            net = (data \ ("net")).as[String],
+            id = c.network_campaign_id,
+            BannerPhrasePerformance = xml_node)
+          println("!!!!!!" + postToBid)
+
+          //remove current report from Yandex Server
+          if (API_yandex.deleteReport(login = c._login, token = c._token, reportID = newReportID))
+            println("!!! Report is DELETED !!!")
+          else
+            println("!!! Report is NOT DELETED !!!")
+
+          Ok(Json generate postToBid)
         }
       }
     }

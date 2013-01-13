@@ -23,7 +23,7 @@ object Networks extends Controller with Secured {
 
             try {
               val net = "Yandex"
-              val login = "krisp0"
+              val login = "vlad.ch01" //"krisp0" //45ps001
               val token = Json.parse[Map[String, String]](response_token).get("access_token").get
 
               /*

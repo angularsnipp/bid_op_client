@@ -76,9 +76,9 @@ object API_bid {
     user: String,
     net: String,
     id: String,
-    BannerPhrasePerformance: String): String = {
+    BannerPhrasePerformance: xml.Elem): String = {
     WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id + "/reports").
-      post(BannerPhrasePerformance).value.get.body
+      post[xml.Elem](BannerPhrasePerformance).value.get.body
   }
 
   def postBannerReports( /*ActualBids and NetAdvisedBids*/

@@ -109,7 +109,12 @@ object API_yandex {
 
     (report_List, json_reports)
   }
-  def getReportList(json_reports: String):List[ReportInfo] = responseData[ReportInfo](json_reports)
+  def getReportList(json_reports: String): List[ReportInfo] = responseData[ReportInfo](json_reports)
+
+  /* Download XML report*/
+  def getXML(reportUrl: String): xml.Elem = {
+    WS.url(reportUrl).get().value.get.xml
+  }
 
   /* DeleteReport */
   def deleteReport(login: String, token: String, reportID: Int) = {
@@ -119,7 +124,7 @@ object API_yandex {
         authdata = authData_Yandex(
           login = login,
           token = token),
-        method = "GetReportList",
+        method = "DeleteReport",
         param = reportID))
 
     val res = Json.parse[Map[String, String]](json_res)
