@@ -16,7 +16,7 @@ object Auth extends Controller {
     tuple(
       "user" -> mapping(
         "name" -> nonEmptyText,
-        "password" -> text)(User.apply)(User.unapply),
+        "password" -> nonEmptyText)(User.apply)(User.unapply),
       "create" -> boolean //checked("Create new User")    
       ) verifying ("Invalid user or password", lform => lform match {
         case (user, create) => {
@@ -42,21 +42,17 @@ object Auth extends Controller {
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.login(formWithErrors)),
       request => request match {
-        case (user, create) => Redirect(routes.Networks.index()).withSession(Security.username -> user.name)
+        case (user, create) => Redirect(routes.Networks.index()).withSession("name" -> user.name)
       })
   }
 
   /**
    * Logout and clean the session.
    */
-  def logout = Action {implicit request =>
+  def logout = Action { implicit request =>
     Redirect(routes.Auth.login).withNewSession.flashing(
       "success" -> "You've been logged out")
-  }
-
-  def yandex = Action {
-    Redirect(url_OAuthAuthorization)
-  }
+  }  
 
 }
 

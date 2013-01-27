@@ -7,13 +7,14 @@ GET     /                   		controllers.Networks.index(network: String ?= "")
 
 # Campaign page
 GET     /campaign_report			controllers.Networks.campaignReport(network: String, campaign: String)
-GET     /external_campaigns			controllers.Networks.externalCampaigns(network: String, login: String, token:String)
+GET     /external_login				controllers.Networks.externalLogin(network: String, token:String)
+GET     /external_campaigns			controllers.Networks.externalCampaigns(network: String, token:String)
 
 # Authentication
 GET     /login                      controllers.Auth.login
 POST    /login                      controllers.Auth.authenticate
 GET     /logout                     controllers.Auth.logout
-GET     /yOAuth						controllers.Auth.yandex
+GET     /yOAuth						controllers.Yandex.oAuth
 
 # Campaigns
 GET 	/clearDB 					controllers.Application.clearDB

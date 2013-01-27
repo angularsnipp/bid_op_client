@@ -2,65 +2,81 @@ package controllers
 
 import Application._
 import models._
+import play.api.mvc._
+
+import play.api.data._
+import play.api.data.Forms._
+
 import com.codahale.jerkson.Json
 import play.api.libs.ws.WS
 
-import play.api.mvc._
-
 object Networks extends Controller with Secured {
+
+  val getLoginForm = Form(
+    tuple(
+      "login" -> nonEmptyText,
+      "token" -> text,
+      "network" -> text) verifying ("Invalid user or password", lform => lform match {
+        case (login, token, network) => network match {
+          case "Yandex" => Yandex.isSuccess(login, token)
+          case "Google" => false
+          case "Begun" => false
+        }
+      }))
 
   def index(network: String) = IsAuthenticated {
     username =>
       implicit request => {
-        request.queryString.get("code") match {
-          // try to get token, if creating campaign
-          case Some(code) => {
-            val response_token = WS.url(url_OAuthToken).post(
-              "grant_type=authorization_code" +
-                "&code=" + code(0) +
-                "&client_id=" + app_id +
-                "&client_secret=" + app_secret).value.get.body
+        User.findByName(username).map { user =>
+          request.queryString.get("code") match {
+            // try to get token, if creating campaign
+            case Some(code) => {
+              //TODO
+              Yandex.getToken(code.head) match {
+                case None => BadRequest("Invalid token...")
+                case Some(token) =>
+                  val net = "Yandex"
+                  val login = "vlad.ch01" //"krisp0" //45ps001 
+                  Redirect(routes.Networks.externalLogin(net, token))
+              }
+            }
+            case None => {
+              network match {
 
-            try {
-              val net = "Yandex"
-              val login = "vlad.ch01" //"krisp0" //45ps001
-              val token = Json.parse[Map[String, String]](response_token).get("access_token").get
+                case "Yandex" => Ok(views.html.campaigns.yandex(user.name, "Yandex"))
 
-              /*
-             * val response_login = WS.url(url_apiLogin).post(
-             * "oauth_token=" + token).value.get.body
-             */
+                case "Google" => Ok(views.html.campaigns.google(user.name, "Goggle"))
 
-              Redirect(routes.Networks.externalCampaigns(net, login, token))              
+                case "Begun" => Ok(views.html.campaigns.begun(user.name, "Begun"))
 
-            } catch {
-              //case t => Ok(views.html.index(t.toString()))
-              case t => BadRequest
+                case "" => Ok(views.html.campaigns.index(user.name))
+
+              }
             }
           }
-          case None => {
-            network match {
-
-              case "Yandex" => Ok(views.html.campaigns.yandex(username, "Yandex"))
-
-              case "Google" => Ok(views.html.campaigns.google(username, "Goggle"))
-
-              case "Begun" => Ok(views.html.campaigns.begun(username, "Begun"))
-
-              case "" => Ok(views.html.campaigns.index(username))
-
-            }
-          }
-        } 
+        }.getOrElse(Forbidden)
       }
-  }  
- 
+
+  }
+
   def campaignReport(network: String, campaign: String) = IsAuthenticated {
     username => _ => Ok(views.html.reports.report(username, network, Json.parse[models.Campaign](campaign)))
   }
- 
-  def externalCampaigns(network: String, login: String, token: String) = IsAuthenticated {
-    username => _ => Ok(views.html.campaigns.external(username, network, login, token))
+
+  def externalLogin(network: String, token: String) = IsAuthenticated {
+    username => _ => Ok(views.html.campaigns.external_login(username, network, token, getLoginForm))
+  }
+
+  def externalCampaigns(network: String, token: String) = IsAuthenticated {
+    username =>
+      implicit request => {
+        getLoginForm.bindFromRequest.fold(
+          formWithErrors => BadRequest(views.html.campaigns.external_login(username, network, token, formWithErrors)),
+          request => request match {
+            case (login, token, network) => Ok(views.html.campaigns.external(username, network, login, token))
+          })
+
+      }
   }
 
 }

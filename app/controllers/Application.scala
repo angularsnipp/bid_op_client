@@ -1,39 +1,20 @@
 package controllers
 
 import models._
-
 import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.ws.WS
 import com.codahale.jerkson.Json
-
-import org.joda.time.format
 import org.joda.time._
 import java.util.{ Date, Locale }
 import java.text._
-
 import play.api.data.validation.Constraints._
 
-object Application extends Controller {
+import Bid._
 
-  // configuration parameters from conf/application.conf
-  val conf = Play.current.configuration
-
-  /* BID_OP information*/
-  val Base_URI = conf.getString("url.api.bid").get
-
-  /* YANDEX information*/
-  val url = conf.getString("url.api.yandex").get
-  val app_id = conf.getString("client_id.yandex").get
-  val app_secret = conf.getString("client_secret.yandex").get
-  val url_OAuthAuthorization = conf.getString("url.OAuth.authorization.yandex").get + app_id
-  val url_OAuthToken = conf.getString("url.OAuth.token.yandex").get
-  val url_apiLogin = conf.getString("url.api.login.yandex").get
-
-  val iso_fmt = format.ISODateTimeFormat.dateTime()
-  val date_fmt = new SimpleDateFormat("yyyy-MM-dd")
+object Application extends Controller { 
 
   /* ------------------ Actions ------------------ */
 
@@ -42,7 +23,7 @@ object Application extends Controller {
       request.body.asJson match {
         case None => BadRequest
         case Some(data) => {
-          val user = (data \ ("user")).as[String]
+          val user = User.findByName((data \ ("user")).as[String]).get
           val net = (data \ ("net")).as[String]
           val login = (data \ ("_login")).as[String]
           val token = (data \ ("_token")).as[String]
@@ -66,8 +47,8 @@ object Application extends Controller {
       request.body.asJson match {
         case None => BadRequest
         case Some(data) => {
-          val jstring = API_bid.postCampaign(
-            user = (data \ ("user")).as[String],
+          val camp = API_bid.postCampaign(
+            user = User.findByName((data \ ("user")).as[String]).get,
             net = (data \ ("net")).as[String],
             campaign = Campaign(
               _login = (data \ ("_login")).as[String],
@@ -76,9 +57,10 @@ object Application extends Controller {
               start_date = iso_fmt.parseDateTime((data \ ("start_date")).as[String]),
               daily_budget = (data \ ("daily_budget")).as[Double]))
 
-          println("CREATED CAMPAIGN!!!!!!!!!!")
-
-          Created("SUCCESS!")
+          if (camp.isDefined) {
+            println("CREATED CAMPAIGN!!!!!!!!!!")
+            Created("SUCCESS!")
+          } else BadRequest
         }
       }
     }
@@ -107,13 +89,17 @@ object Application extends Controller {
 
           //Post Statistics to BID
           val res_bid = API_bid.postStats(
-            user = (data \ ("user")).as[String],
+            user = User.findByName((data \ ("user")).as[String]).get,
             net = (data \ ("net")).as[String],
             id = c.network_campaign_id,
-            Performance = Performance(
+            performance = Performance(
               sd = new DateTime(start_date),
               ed = new DateTime(end_date),
               si = statItem_List.head))
+          if (res_bid.isDefined)
+            println("!!! Stats is POSTED to BID !!!")
+          else
+            println("??? Stats is NOT POSTED to BID ???")
 
           Ok(Json generate statItem_List.head)
         }
@@ -177,19 +163,22 @@ object Application extends Controller {
 
           //post report to BID
           val postToBid = API_bid.postReports(
-            user = (data \ ("user")).as[String],
+            user = User.findByName((data \ ("user")).as[String]).get,
             net = (data \ ("net")).as[String],
             id = c.network_campaign_id,
-            BannerPhrasePerformance = xml_node)
-          println("!!!!!!" + postToBid)
+            bannerPhrasePerformance = xml_node)
+          if (postToBid.isDefined)
+            println("!!! Report is POSTED to BID !!!")
+          else
+            println("??? Report is NOT POSTED to BID ???")
 
           //remove current report from Yandex Server
           if (API_yandex.deleteReport(login = c._login, token = c._token, reportID = newReportID))
-            println("!!! Report is DELETED !!!")
+            println("!!! Report is DELETED from Yandex!!!")
           else
-            println("!!! Report is NOT DELETED !!!")
+            println("??? Report is NOT DELETED from Yandex ???")
 
-          Ok(Json generate postToBid)
+          Ok(xml_node) as XML
         }
       }
     }
@@ -201,32 +190,40 @@ object Application extends Controller {
         case None => BadRequest
         case Some(data) => {
 
-          val user = (data \ ("user")).as[String]
+          val user = User.findByName((data \ ("user")).as[String]).get
           val net = (data \ ("net")).as[String]
           val login = (data \ ("_login")).as[String]
           val token = (data \ ("_token")).as[String]
           val id = (data \ ("network_campaign_id")).as[String]
 
           //get Recommendations from BID
-          val jstring = API_bid.getRecommendations(user, net, id, new DateTime().minusMonths(1))
-          val ppInfo_List = responseData_bid[PhrasePriceInfo](jstring).get
+          val ppInfo_List = API_bid.getRecommendations(user, net, id, new DateTime().minusMonths(2))
 
-          //Update Prices on Yandex
-          val res =
-            if (API_yandex.updatePrice(login, token, ppInfo_List))
-              println("TRUE: Prices is updated!!!")
-            else
-              println("FALSE: Prices is NOT updated!!!")
+          if (ppInfo_List.isDefined) {
+            //Update Prices on Yandex
+            val res =
+              if (API_yandex.updatePrice(login, token, ppInfo_List.get))
+                println("TRUE: Prices is updated!!!")
+              else
+                println("FALSE: Prices is NOT updated!!!")
 
-          Ok(Json generate ppInfo_List)
+            Ok(Json generate ppInfo_List.get)
+          } else BadRequest
         }
       }
     }
   }
 
   def clearDB = Action {
-    val r = API_bid.clearDB
-    println("!!! DB is CLEAR !!!")
-    Ok("success!")
+    if (API_bid.clearDB)
+      println("!!! BID DB is CLEAR !!!")
+    else
+      println("??? FAIL ---> BID DB is NOT CLEAR ???")
+
+    if (User.truncate)
+      println("!!! CLIENT DB is CLEAR !!!")
+    else
+      println("??? FAIL ---> CLIENT DB is NOT CLEAR ???")
+    Ok
   }
 }

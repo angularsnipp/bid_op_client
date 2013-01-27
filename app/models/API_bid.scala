@@ -1,14 +1,14 @@
 package models
 
-import controllers.Application._
+import controllers.Bid._
 
 import com.codahale.jerkson.Json.generate
 import play.api.libs.json.Json.parse
 import play.api.libs.json.JsValue
-
 import play.api.libs.ws.WS
 import org.joda.time._
 import scala.collection.immutable.List
+import play.mvc.Http
 
 object API_bid {
   /* Generate request to Bid Optimizer API as JSON String
@@ -18,86 +18,118 @@ object API_bid {
    * * id - network campaign id
    * */
 
-  def getUser(
-    user: String): String = {
-    WS.url(Base_URI + "/user/" + user).
+  /* STATUS:
+     200 - Ok
+     201 - Created
+     202 - Accepted
+     204 - NoContent
+     400 - BadRequest 
+     401 - Unauthorized
+     403 - Forbidden
+     404 - NotFound
+   */
+
+  /*def getUser(
+    user: User): String = {
+    WS.url(Base_URI + "/user/" + user.name).
       get().value.get.body
+  }*/
+
+  def getUser(user: User): Option[User] = {
+    val res = WS.url(Base_URI + "/user/" + user.name).
+      withHeaders(("password" -> user.password)).get().value.get
+
+    if (res.status == Http.Status.OK) Some(user) else None
   }
 
-  def getUser(
-    user: String,
-    password: String): String = {
-    val pass = Map("password" -> password)
-    WS.url(Base_URI + "/user/" + user).
-      post[JsValue](parse(generate(pass))).value.get.body
-  }
+  def postUser(user: User): Option[User] = {
+    val res = WS.url(Base_URI + "/user").post[JsValue](parse(generate(user))).value.get
 
-  def postUser(
-    user: String,
-    password: String): String = {
-    val user_pass = Map("name" -> user, "password" -> password)
-    WS.url(Base_URI + "/user").
-      post[JsValue](parse(generate(user_pass))).value.get.body
+    if (res.status == Http.Status.CREATED) Some(user) else None
   }
 
   def getCampaigns(
-    user: String,
-    net: String): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp").
-      get().value.get.body
+    user: User,
+    net: String): Option[List[Campaign]] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp").
+      withHeaders(("password" -> user.password)).get().value.get
+
+    if (res.status == Http.Status.OK) {
+      responseData_bid[Campaign](res.body)
+    } else None
   }
 
   def getCampaign(
-    user: String,
+    user: User,
     net: String,
-    id: String): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id).
-      get().value.get.body
+    id: String): Option[Campaign] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id).
+      withHeaders(("password" -> user.password)).get().value.get
+
+    if (res.status == Http.Status.OK) {
+      val cList = responseData_bid[Campaign](res.body)
+      cList.get.headOption
+    } else None
   }
 
   def postCampaign(
-    user: String,
+    user: User,
     net: String,
-    campaign: Campaign): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp").
-      post[JsValue](parse(generate(campaign))).value.get.body
-  } 
+    campaign: Campaign): Option[Campaign] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp").
+      withHeaders(("password" -> user.password)).post[JsValue](parse(generate(campaign))).value.get
+
+    if (res.status == Http.Status.CREATED) Some(campaign) else None
+  }
 
   def postStats( /*DURING the day*/
-    user: String,
+    user: User,
     net: String,
     id: String,
-    Performance: Performance): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id + "/stats").
-      post[JsValue](parse(generate(Performance))).value.get.body
+    performance: Performance): Option[Performance] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats").
+      withHeaders(("password" -> user.password)).post[JsValue](parse(generate(performance))).value.get
+
+    if (res.status == Http.Status.CREATED) Some(performance) else None
   }
 
   def postReports( /*at the END of the day*/
-    user: String,
+    user: User,
     net: String,
     id: String,
-    BannerPhrasePerformance: xml.Elem): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id + "/reports").
-      post[xml.Elem](BannerPhrasePerformance).value.get.body
+    bannerPhrasePerformance: xml.Elem): Option[xml.Elem] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/reports").
+      withHeaders(("password" -> user.password)).post[xml.Elem](bannerPhrasePerformance).value.get
+
+    if (res.status == Http.Status.CREATED) Some(bannerPhrasePerformance) else None
   }
 
   def postBannerReports( /*ActualBids and NetAdvisedBids*/
-    user: String,
+    user: User,
     net: String,
     id: String,
-    BannerPhraseReport: String): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id + "/bannerreports").
-      post[JsValue](parse(BannerPhraseReport)).value.get.body
+    bannerPhraseReport: String): Boolean = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports").
+      withHeaders(("password" -> user.password)).post[JsValue](parse(bannerPhraseReport)).value.get
+
+    if (res.status == Http.Status.CREATED) true else false
   }
 
   def getRecommendations(
-    user: String,
+    user: User,
     net: String,
     id: String,
-    datetime: DateTime = new DateTime): String = {
-    WS.url(Base_URI + "/user/" + user + "/net/" + net + "/camp/" + id + "/recommendations").
-      withHeaders(("If-Modified-Since", datetime.toString())).get().value.get.body
+    datetime: DateTime = new DateTime): Option[List[models.PhrasePriceInfo]] = {
+    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations").
+      withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password)).get().value.get
+
+    if (res.status == Http.Status.OK)
+      responseData_bid[PhrasePriceInfo](res.body)
+    else None
   }
 
-  def clearDB = WS.url(Base_URI + "/clear_db").get().value.get.body
+  def clearDB: Boolean = {
+    val res = WS.url(Base_URI + "/clear_db").get().value.get
+    if (res.status == Http.Status.OK) true else false
+  }
 }

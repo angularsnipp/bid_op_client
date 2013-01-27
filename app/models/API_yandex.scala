@@ -1,6 +1,7 @@
 package models
 
-import controllers.Application._
+import controllers.Yandex._
+
 import com.codahale.jerkson.Json
 import play.api.libs.ws.WS
 import java.util.Date
@@ -91,7 +92,7 @@ object API_yandex {
           EndDate = date_fmt.format(end_date))))
 
     val reportID = Json.parse[Map[String, String]](json_reportID)
-
+    println("***********" + json_reportID)
     reportID.get("data").get.toInt
   }
 
@@ -113,7 +114,10 @@ object API_yandex {
 
   /* Download XML report*/
   def getXML(reportUrl: String): xml.Elem = {
-    WS.url(reportUrl).get().value.get.xml
+    val b=WS.url(reportUrl).get()
+    val f = b.value.get.xml
+    println("****************"+b.toString())
+    f
   }
 
   /* DeleteReport */

@@ -6,10 +6,7 @@
 @import com.codahale.jerkson.Json
 @import play.api.libs.ws.WS
 
-@getCampaigns = @{
-	val res = API_bid.getCampaigns(user = user, net = net)
-	responseData_bid[Campaign](nullparser(res))
-}
+@getCampaigns = @{API_bid.getCampaigns(user = User.findByName(user).get, net = net)}
 
 @main("Bid Opt", user) {
 
@@ -67,8 +64,15 @@
 					  </table> 					  
 					</div>									
 				</div>
-				<a href="@routes.Auth.yandex">
+				<a href="@routes.Yandex.oAuth">
 					<button class="btn btn-large btn-success pull-right">Create campaign</button>
 				</a>
 			</div>
 }
+
+@**
+@getCampaigns = @{
+	val res = API_bid.getCampaigns(user = User.findByName(user).get, net = net)
+	responseData_bid[Campaign](nullparser(res))
+}
+**@

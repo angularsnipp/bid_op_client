@@ -1,6 +1,8 @@
 package models
 
-import controllers.Application._
+import controllers.Bid._
+import controllers.Yandex._
+
 import org.joda.time._
 import com.codahale.jerkson.Json
 import scala.Nothing
@@ -106,7 +108,8 @@ case class StatItem(
 case class NewReportInfo(
   val CampaignID: Int,
   val StartDate: String, //Date
-  val EndDate: String) //Date     
+  val EndDate: String, //Date
+  val GroupByColumns: List[String] = List("clBanner", "clPhrase")) //, "clPage", "clGeo", "clPositionType"))
 
 /* output Report ID : Int,  {"data" : 123456} */
 
@@ -116,22 +119,21 @@ case class NewReportInfo(
 case class ShortReportInfo(
   val ReportID: Int,
   val StatusReport: String)
-  
+
 case class ReportInfo(
   val ReportID: Int,
   val Url: String = "",
   val StatusReport: String)
-  
+
 /* ----- method DeleteReport ---------------------------------*/
 /* input T  - Report ID : Int */
 /* output If success: {"data" : 1} */
-
 
 /* method GetBanners (Live) -----  for postBannerReports ----------------------------------------------*/
 /* input */
 case class GetBannersInfo(
   val CampaignIDS: List[Int],
-  val FieldsNames: List[String] = List("BannerID", "Text", "Geo", "Phrases"),
+  //val FieldsNames: List[String] = List("BannerID", "Text", "Geo", "Phrases"),
   val GetPhrases: String = "WithPrices")
 
 /* output */

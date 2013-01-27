@@ -1,8 +1,6 @@
-@(form: Form[(models.User,Boolean)])(implicit flash: Flash, request: RequestHeader)
+@(form: Form[(models.User,Boolean)])(implicit flash: Flash)
 
-@clear_db = @{
-	models.API_bid.clearDB
-}
+@clear_db = @{models.API_bid.clearDB}
 
 <html>
 <head>

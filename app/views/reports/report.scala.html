@@ -206,12 +206,28 @@
 				endDate : $('#dtpReportID_e').val()
 			}),
 			contentType :'application/json; charset=utf-8',
-			dataType : 'json',
-			success : function(report) {
-				alert(report)
+			dataType : 'xml',
+			success : function(XMLreport) {
+				$('#report_tbodyID').empty()
+				var phDict = $(XMLreport).find("phrasesDict")
+				$(XMLreport).find("row").each(function (){
+					var phraseID = $(this).attr('phraseID')
+					var Shows = parseInt($(this).attr("shows_search"))+parseInt($(this).attr("shows_context"));
+					var Clicks = parseInt($(this).attr("clicks_search"))+parseInt($(this).attr("clicks_context"));;
+					var CTR = Clicks/Shows;
+					var Sum = parseFloat($(this).attr("sum_search"))+parseFloat($(this).attr("sum_context"));;					 
+					$('#report_tbodyID').append(
+						'<tr>'+
+							'<td class="center">'+$(phDict).find("phrase[phraseID="+phraseID+"]").attr("value")+'</td>'+
+							'<td class="center">'+Shows+'</td>'+
+							'<td class="center">'+Clicks+'</td>'+
+							'<td class="center">'+CTR+'</td>'+
+							'<td class="center">'+Sum+'</td>'+							
+						'</tr>')				
+				})				
 			}
 		});
-	}
+	}	
 	
 	function getBanners() {
 		$.ajax({
