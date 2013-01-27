@@ -14,11 +14,27 @@ object API_yandex {
    * */
   def post[T](data: inputData[T]): String = {
     println("*************API_Yandex************")
-    //println(data.toString)
     WS.url(url).post(Json generate data).value.get.body
   }
 
   /****************************** Methods implementation *******************************/
+
+  /* PingAPI */
+  def pingAPI(login: String, token: String) = {
+    val json_res = API_yandex.post[None.type](
+      data = inputData[None.type](
+        authdata = authData_Yandex(
+          login = login,
+          token = token),
+        method = "PingAPI"))
+
+    val res = Json.parse[Map[String, String]](json_res)
+
+    res.get("data").getOrElse(false) match {
+      case "1" => true
+      case _ => false
+    }
+  }
 
   /* GetCampaignsList */
   def getCampaignsList(login: String, token: String): List[ShortCampaignInfo] = {
@@ -114,9 +130,9 @@ object API_yandex {
 
   /* Download XML report*/
   def getXML(reportUrl: String): xml.Elem = {
-    val b=WS.url(reportUrl).get()
+    val b = WS.url(reportUrl).get()
     val f = b.value.get.xml
-    println("****************"+b.toString())
+    println("****************" + b.toString())
     f
   }
 

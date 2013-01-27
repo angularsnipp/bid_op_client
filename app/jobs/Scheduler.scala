@@ -7,7 +7,7 @@ import play.api._
 object Scheduler {
   
   def start(app: Application) {
-    Akka.system(app).scheduler.schedule(0 seconds, 1 minutes) {
+    Akka.system(app).scheduler.schedule(0 seconds, 2 minutes) {
       println("!!! SCHEDULER is WORKING !!!")
     }
   }

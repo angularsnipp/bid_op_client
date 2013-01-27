@@ -3,8 +3,8 @@ package controllers
 import play.api.mvc._
 import play.api.libs.ws.WS
 import play.mvc.Http
-
 import java.text._
+import models.API_yandex
 
 object Yandex extends Controller {
 
@@ -51,9 +51,9 @@ object Yandex extends Controller {
     } else None
   }
 
-  def isSuccess(login: String, token: String): Boolean = {
-    true
-  }
+  /* Check network is alive and user authorization is successful*/
+  def isSuccess(login: String, token: String): Boolean = API_yandex.pingAPI(login, token)
+
 }
 
 /* try to get Login

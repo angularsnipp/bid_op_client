@@ -36,7 +36,6 @@ object Networks extends Controller with Secured {
                 case None => BadRequest("Invalid token...")
                 case Some(token) =>
                   val net = "Yandex"
-                  val login = "vlad.ch01" //"krisp0" //45ps001 
                   Redirect(routes.Networks.externalLogin(net, token))
               }
             }
