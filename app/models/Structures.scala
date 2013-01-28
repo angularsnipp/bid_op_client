@@ -59,7 +59,14 @@ case class inputData[T](
 object responseData {
   def apply[T](jsonString: String)(implicit m: Manifest[T]): Option[List[T]] = {
     val dataMap = Json.parse[Map[String, List[T]]](jsonString)
-    dataMap.get("data")
+    val dataOpt = dataMap.get("data")
+    dataOpt match {
+      case None => None
+      case Some(listT) => listT match {
+        case Nil => None
+        case list => Some(list)
+      }
+    }
   }
 }
 
