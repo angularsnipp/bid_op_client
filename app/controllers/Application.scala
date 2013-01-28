@@ -14,7 +14,7 @@ import play.api.data.validation.Constraints._
 
 import Bid._
 
-object Application extends Controller { 
+object Application extends Controller {
 
   /* ------------------ Actions ------------------ */
 
@@ -32,11 +32,18 @@ object Application extends Controller {
           // get BannersInfo from Yandex
           val (bannerInfo_List, json_banners) = API_yandex.getBanners(login, token, List(id.toInt))
 
-          // post BannersInfo to BID
-          val bid_res = API_bid.postBannerReports(user, net, id, nullparser(json_banners))
+          if (bannerInfo_List.isDefined) {
+            println("!!! SUCCESS getBanners !!!")
 
-          //return List[BannerInfo] to client browser
-          Ok(Json generate bannerInfo_List)
+            // post BannersInfo to BID
+            if (API_bid.postBannerReports(user, net, id, nullparser(json_banners)))
+              println("!!! ActualBids and NetAdvisedBids is POSTED to BID !!!")
+            else
+              println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
+
+            //return List[BannerInfo] to client browser
+            Ok(Json generate bannerInfo_List.get)
+          } else println("??? FAILED getBanners ???"); BadRequest
         }
       }
     }
@@ -58,9 +65,10 @@ object Application extends Controller {
               daily_budget = (data \ ("daily_budget")).as[Double]))
 
           if (camp.isDefined) {
-            println("CREATED CAMPAIGN!!!!!!!!!!")
-            Created("SUCCESS!")
-          } else BadRequest
+            println("!!! SUCCESS postCampaign !!!")
+
+            Created
+          } else println("??? FAILED postCampaign ???"); BadRequest
         }
       }
     }
@@ -87,21 +95,25 @@ object Application extends Controller {
             start_date = start_date,
             end_date = end_date)
 
-          //Post Statistics to BID
-          val res_bid = API_bid.postStats(
-            user = User.findByName((data \ ("user")).as[String]).get,
-            net = (data \ ("net")).as[String],
-            id = c.network_campaign_id,
-            performance = Performance(
-              sd = new DateTime(start_date),
-              ed = new DateTime(end_date),
-              si = statItem_List.head))
-          if (res_bid.isDefined)
-            println("!!! Stats is POSTED to BID !!!")
-          else
-            println("??? Stats is NOT POSTED to BID ???")
+          if (statItem_List.isDefined) {
+            println("!!! SUCCESS getStats !!!")
 
-          Ok(Json generate statItem_List.head)
+            //Post Statistics to BID
+            val res_bid = API_bid.postStats(
+              user = User.findByName((data \ ("user")).as[String]).get,
+              net = (data \ ("net")).as[String],
+              id = c.network_campaign_id,
+              performance = Performance(
+                sd = new DateTime(start_date),
+                ed = new DateTime(end_date),
+                si = statItem_List.get.head))
+            if (res_bid.isDefined)
+              println("!!! Stats is POSTED to BID !!!")
+            else
+              println("??? Stats is NOT POSTED to BID ???")
+
+            Ok(Json generate statItem_List.get.head)
+          } else println("??? FAILED getStats ???"); BadRequest
         }
       }
     }
@@ -126,13 +138,12 @@ object Application extends Controller {
             campaignID = c.network_campaign_id.toInt,
             start_date = start_date,
             end_date = end_date)
-          println("!!! ReportID: " + newReportID)
 
           def getUrl: String = {
             try {
               val (short_reportInfo_List, json_reports) = API_yandex.getShortReportList(c._login, c._token)
               println(json_reports)
-              val short_reportInfo = short_reportInfo_List.filter(_.ReportID == newReportID).head
+              val short_reportInfo = short_reportInfo_List.get.filter(_.ReportID == newReportID.get).head
               short_reportInfo.StatusReport match {
                 case "Pending" => {
                   Thread.sleep(1000)
@@ -142,7 +153,7 @@ object Application extends Controller {
                 case "Done" => {
                   println("!!!!!! DONE !!!!!")
                   val reportInfo_List = API_yandex.getReportList(json_reports)
-                  val reportInfo = reportInfo_List.filter(_.ReportID == newReportID).head
+                  val reportInfo = reportInfo_List.get.filter(_.ReportID == newReportID.get).head
                   reportInfo.Url
                 }
               }
@@ -173,7 +184,7 @@ object Application extends Controller {
             println("??? Report is NOT POSTED to BID ???")
 
           //remove current report from Yandex Server
-          if (API_yandex.deleteReport(login = c._login, token = c._token, reportID = newReportID))
+          if (API_yandex.deleteReport(login = c._login, token = c._token, reportID = newReportID.get))
             println("!!! Report is DELETED from Yandex!!!")
           else
             println("??? Report is NOT DELETED from Yandex ???")
@@ -200,15 +211,16 @@ object Application extends Controller {
           val ppInfo_List = API_bid.getRecommendations(user, net, id, new DateTime().minusMonths(2))
 
           if (ppInfo_List.isDefined) {
+            println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
             //Update Prices on Yandex
             val res =
               if (API_yandex.updatePrice(login, token, ppInfo_List.get))
-                println("TRUE: Prices is updated!!!")
+                println("SUCCESS: Prices is updated!!!")
               else
-                println("FALSE: Prices is NOT updated!!!")
+                println("FAILED: Prices is NOT updated!!!")
 
             Ok(Json generate ppInfo_List.get)
-          } else BadRequest
+          } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???");BadRequest
         }
       }
     }

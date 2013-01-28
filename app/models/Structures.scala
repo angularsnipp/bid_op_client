@@ -57,9 +57,9 @@ case class inputData[T](
  * the main structure is: "data" -> List(T)
  * */
 object responseData {
-  def apply[T](jsonString: String)(implicit m: Manifest[T]): List[T] = {
+  def apply[T](jsonString: String)(implicit m: Manifest[T]): Option[List[T]] = {
     val dataMap = Json.parse[Map[String, List[T]]](jsonString)
-    dataMap.get("data").get
+    dataMap.get("data")
   }
 }
 

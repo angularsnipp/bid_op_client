@@ -4,15 +4,15 @@ import jobs._
 
 object Global extends GlobalSettings {
 
-  override def onStart(app: Application) {
+  override def onStart(app:Application) {
     Logger.info("!!! Application has STARTED...")
-    if (isDev(app)) Scheduler.start(app)
+    if (isDev) Scheduler.start
 
   }
 
-  override def onStop(app: Application) {
+  override def onStop(app:Application) {
     Logger.info("!!! Application has FINISHED...")
-    Scheduler.shutdown(app)
+    Scheduler.shutdown
   }
 
 }

@@ -8,8 +8,8 @@
 @import play.api.libs.ws.WS
 
 @getCampaigns_yandex = @{
-	val cList:List[ShortCampaignInfo] = API_yandex.getCampaignsList(login,token);
-    cList    	
+	val cList:Option[List[ShortCampaignInfo]] = API_yandex.getCampaignsList(login,token);
+    cList.get    	
 }
 
 @main("Bid Opt", user) {
