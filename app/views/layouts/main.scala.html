@@ -1,0 +1,73 @@
+@(title: String, user: Option[models.User], isPrivate:Boolean=true)(content: Html)
+
+@import layouts._
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>@title</title>
+	
+	<link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" id="bs-css" rel="stylesheet" media="screen">
+	<link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet">   
+	<link href="@routes.Assets.at("stylesheets/datetimepicker.css")" rel="stylesheet">
+	<link href="@routes.Assets.at("stylesheets/datetimepicker.less")" rel="stylesheet"> 
+	
+	<style type="text/css">
+		body {
+			padding-top: 60px;
+        	padding-bottom: 40px;
+		}
+		.sidebar-nav {
+			padding: 9px 0;
+		}   
+	</style>	
+</head>
+<body>
+	
+	@header(user)	
+	
+	<!-- content starts -->					
+	<section id="main">@content</section>
+	<!-- content ends -->
+	
+	@footer()
+	
+	<!-- external javascript
+	========================================================== 
+    Placed at the end of the document so the pages load faster -->
+
+	<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.0.0.min.js"></script>
+	<script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/bootstrap-datetimepicker.js")" type="text/javascript" ></script>
+	<script type="text/javascript">
+		$(".form_datetime").datetimepicker({
+			format : "dd MM yyyy - hh:ii",
+			autoclose : true,
+			todayBtn : true
+		});
+	</script>
+	
+</body>
+</html>
+
+@**
+@user.map{ user =>
+		<div id="content" class="span12">
+			
+			<!-- content starts -->					
+			<section id="main">@content</section>
+			<!-- content ends -->
+			
+		</div>
+	}.getOrElse{
+		@{if (isPrivate)
+			<!-- content starts -->					
+			<section id="main">@content</section>
+			<!-- content ends -->
+		else
+		
+		}
+	}
+**@

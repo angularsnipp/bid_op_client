@@ -1,0 +1,64 @@
+@(form: Form[(models.User,Boolean)])(implicit flash: Flash)
+
+@import layouts._
+
+@clear_db = @{models.API_bid.clearDB}
+
+@main("Login", None, false){ 
+    
+<div align="center">
+	<div class="container">
+        
+	@helper.form(routes.Auth.authenticate) {
+            
+            <h2 class="form-signin-heading">Please sign in</h2>
+            
+            @form.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+            }
+            
+            @flash.get("success").map { message =>
+                <p class="success">
+                    @message
+                </p>
+            }
+
+            <input type="text" class="input-block-level" name="user.name" placeholder="Login" id="usernameID" value="@form("user.name").value">
+
+            <input type="password" class="input-block-level" name="user.password" id="passwordID" placeholder="Password">
+
+           	<label for="checkboxID" class="checkbox">
+           		<input type="checkbox" name="create" id="checkboxID" value="true"/>Create a new User
+           	</label>
+           		<input 	type="hidden"  value="false">					
+            	
+            <p>
+                <button type="submit" class="btn btn-large btn-primary" id="loginbutton" >Login</button>
+            </p>	}
+        
+        <p class="note">
+            Try <em>guest</em> with <em>secret</em> as password.
+        </p>
+		<p align="center" style="color: transparent;">
+            <input type="button" id="cleardb" value="Clear_DB">            
+        </p>
+      
+    </div> 
+</div>
+		
+	@** javascripts ***********************************************************************************@	
+	<script type="text/javascript">        
+        	$('#cleardb').click(function() {        		
+        		$.ajax({
+        			type: 'GET',
+        			url: "@routes.Workspace.clearDB",
+        			dataType: 'json',
+        			data: {},
+        			success: function() {}
+        		});
+        	})
+    </script>
+	@** javascripts ***********************************************************************************@	
+}

@@ -1,0 +1,56 @@
+@(user: Option[models.User])
+<header>
+<!-- navbar starts -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+  	<div class="navbar-inner">
+		<div class="container-fluid">
+	  		<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+	  		</a>
+	  		
+	  		<a class="brand" href="index.html">	    		
+	    		<span>AdvOpt Service</span>
+	  		</a>			
+			
+          	<div class="nav-collapse collapse">
+            	<ul class="nav">
+              		<li class="active"><a href="/home">Home</a></li>
+              		<li><a href="/about">About</a></li>
+              		<li><a href="/help">Help</a></li>
+              		<li><a href="/contact">Contact</a></li>
+            	</ul>
+          	</div><!--/.nav-collapse -->
+          	
+          	@user.map{user=>
+          	<!-- user dropdown starts -->
+	  		<div class="btn-group pull-right" >
+				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+		  			<i class="icon-user"></i>
+		  			<span class="hidden-phone">@user</span>
+		  			<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+		 			<li><a href="#">Profile</a></li>
+		  			<li class="divider"></li>
+		  			<li><a href="@routes.Auth.logout()">Logout</a></li>
+				</ul>
+	  		</div>
+			<!-- user dropdown ends -->	
+			}.getOrElse{          	
+          	<div class="nav-collapse collapse pull-right">
+            	<ul class="nav">
+              		<li><a href="/login">Sign In</a></li>
+              		<li><a href="/register">Sign Up</a></li>              		
+            	</ul>
+          	</div><!--/.nav-collapse -->
+          	}
+          	
+	  											
+			
+		</div>
+	</div>
+</div>
+<!-- navbar ends -->
+</header>

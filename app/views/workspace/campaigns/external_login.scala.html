@@ -1,0 +1,47 @@
+@(user: Option[models.User], net: String, token:String, lform: Form[(String,String,String)])
+   
+@import layouts._
+      
+@import models._
+@import helper._
+
+
+@main("Bid Opt", user) {
+
+<div>
+	<ul class="breadcrumb">
+		<li><a href="#">Networks</a> <span class="divider">/</span></li>
+		<li><a href="#">@net</a></li>
+	</ul>
+</div>
+
+<div align="center">
+		@helper.form(routes.Networks.externalCampaigns(net,token)) {
+            
+            <h2>Input your login in Yandex network</h2>
+            
+            @lform.globalError.map { error =>
+                <p class="error">
+                    @error.message
+                </p>
+            }            
+                    
+            <p>
+                <input type="text" name="login" placeholder="login" id="LoginID">
+            </p> 
+            <p>
+                <input type="hidden" name="token" placeholder="token" id="TokenID"
+                value="@token">
+            </p> 
+            <p>
+                <input type="hidden" name="network" placeholder="network" id="NetworkID"
+                value="@net">
+            </p>            
+            	
+            <p>
+                <button type="submit">Login</button>
+            </p>	
+    	}
+</div>
+
+}
