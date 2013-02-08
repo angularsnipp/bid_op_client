@@ -1,6 +1,7 @@
 package jobs
 
-import akka.util.duration._
+import scala.concurrent.duration._
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.concurrent.Akka
 import controllers._
 import models._
@@ -10,6 +11,9 @@ import java.util.concurrent.TimeUnit
 import play.api.Play.current //or use (implicit app: play.api.Application)
 
 import org.joda.time.DateTime
+
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 object Scheduler {
 
@@ -35,7 +39,7 @@ object Scheduler {
   def start {
     Akka.system.scheduler.schedule(0 seconds, 1 minutes) {
       println("!!! START Job ============================================================================ !!!")
-      executeAll
+      //executeAll
       println("!!! END Job ============================================================================== !!!")
     }
   }
@@ -92,7 +96,7 @@ object Scheduler {
       println("!!! SUCCESS: getBanners from " + network + "!!!")
 
       /* 2. */
-      if (API_bid.postBannerReports(user, network, campaignID, nullparser(json_banners))) {
+      if (API_bid.postBannerReports(user, network, campaignID, json_banners)) {
         println("!!! SUCCESS: ActualBids and NetAdvisedBids have POSTED to BID")
 
         /* 3. LIMIT = 100 in the day!!! */
@@ -101,7 +105,7 @@ object Scheduler {
           println("!!! SUCCESS: getStats !!!")
 
           /* 4. */
-          val performance = API_bid.postStats(user, network, campaignID, Performance(start_date, end_date, statItem_List.get.head))
+          val performance = API_bid.postStats(user, network, campaignID, Performance.applyStatItem(start_date, end_date, statItem_List.get.head))
           if (performance.isDefined) {
             println("!!! SUCCESS: Stats have POSTED to BID")
 
@@ -111,7 +115,8 @@ object Scheduler {
               println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
 
               /* 6. */
-              if (API_yandex.updatePrice(login, token, ppInfo_List.get)) {
+              implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
+              if (API_yandex.updatePrice(login, token, Json.toJson(ppInfo_List.get))) {
                 println("SUCCESS: Prices is updated!!!")
               } else println("??? FAILED: Prices is NOT updated ???")
             } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???")

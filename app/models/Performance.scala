@@ -12,10 +12,10 @@ case class Performance(
   val clicks_search: Int = 0,
   val clicks_context: Int = 0)
 
-object Performance {
+object Performance extends Function8[DateTime, DateTime, Double, Double, Int, Int, Int, Int, Performance] {
   /* constructor for request to BID API 
    * si - we take from YANDEX API*/
-  def apply(sd: DateTime, ed: DateTime, si: StatItem): Performance = Performance(
+  def applyStatItem(sd: DateTime, ed: DateTime, si: StatItem): Performance = Performance(
     start_date = sd,
     end_date = ed,
     sum_search = si.SumSearch,

@@ -4,10 +4,13 @@ import controllers.Bid._
 import controllers.Yandex._
 
 import org.joda.time._
-import com.codahale.jerkson.Json
+//import com.codahale.jerkson.Json
 import scala.Nothing
 import play.libs.Scala
 import java.util.Date
+
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 /*--------------------------------------------------------------------------------------------------*/
 /*---------------------------------------WEB FORMS--------------------------------------------------*/
@@ -23,32 +26,16 @@ case class cForm(
 
 /*--------- input data ----------*/
 /* main structure of input data*/
-case class authData(
-  val base_URI: String = "",
-  val url: String = "",
-  val login: String = "",
-  val application_id: String = "",
-  val token: String = "",
-  val locale: String = "")
-
-object authData_Yandex {
-  def apply(login: String, token: String): authData = authData(
-    base_URI = Base_URI,
-    url = url,
-    login = login,
-    application_id = app_id,
-    token = token,
-    locale = "en")
-}
-
-case class inputData[T](
-  @transient val authdata: authData,
-  val method: String = "",
-  val param: T = None) {
-  val login = authdata.login
-  val application_id = authdata.application_id
-  val token = authdata.token
-  val locale = authdata.locale
+object InputData {
+  def apply(login: String, token: String, method: String, param: JsValue = JsNull): JsValue =
+    Json.toJson(
+      Json.obj(
+        "login" -> login,
+        "token" -> token,
+        "application_id" -> app_id,
+        "locale" -> "en",
+        "method" -> method,
+        "param" -> param))
 }
 
 /*--------- response data ----------*/
@@ -56,9 +43,10 @@ case class inputData[T](
 /* Parse json string with elements of T type. 
  * the main structure is: "data" -> List(T)
  * */
-object responseData {
-  def apply[T](jsonString: String)(implicit m: Manifest[T]): Option[List[T]] = {
-    val dataMap = Json.parse[Map[String, List[T]]](jsonString)
+/*object responseData {
+  def apply[T](jsValue: JsValue)(implicit m: Manifest[T]): Option[List[T]] = {
+    //val dataMap = Json.parse[Map[String, List[T]]](jsonString)
+    val dataMap = (jsValue \("data")).validate[List[T]]dataMap 
     val dataOpt = dataMap.get("data")
     dataOpt match {
       case None => None
@@ -67,6 +55,19 @@ object responseData {
         case list => Some(list)
       }
     }
+  }
+}*/
+
+object responseData {
+  def apply[T](jsData: JsValue)(implicit m: Manifest[T], f: Format[List[T]]): Option[List[T]] = {
+    Json.fromJson[List[T]](jsData).map {
+      listT => Some(listT)
+    }.recoverTotal(err => None)
+
+    /*listT match {
+        case Nil => None
+        case list => Some(list)
+      }*/
   }
 }
 
@@ -97,7 +98,11 @@ case class ShortCampaignInfo(
 case class GetSummaryStatRequest(
   val CampaignIDS: List[Int],
   val StartDate: String, //Date
-  val EndDate: String) //Date) //DateTime = new DateTime)
+  val EndDate: String) {
+
+  @transient implicit val format = Json.format[GetSummaryStatRequest]
+  def toJson = Json.toJson(this)
+}
 
 /* output List[T] */
 case class StatItem(
@@ -117,6 +122,10 @@ case class NewReportInfo(
   val StartDate: String, //Date
   val EndDate: String, //Date
   val GroupByColumns: List[String] = List("clBanner", "clPhrase")) //, "clPage", "clGeo", "clPositionType"))
+  {
+  @transient implicit val format = Json.format[NewReportInfo]
+  def toJson = Json.toJson(this)
+}
 
 /* output Report ID : Int,  {"data" : 123456} */
 
@@ -141,7 +150,11 @@ case class ReportInfo(
 case class GetBannersInfo(
   val CampaignIDS: List[Int],
   //val FieldsNames: List[String] = List("BannerID", "Text", "Geo", "Phrases"),
-  val GetPhrases: String = "WithPrices")
+  val GetPhrases: String = "WithPrices") {
+
+  @transient implicit val format = Json.format[GetBannersInfo]
+  def toJson = Json.toJson(this)
+}
 
 /* output */
 case class BannerInfo(
@@ -171,11 +184,11 @@ case class PhrasePriceInfo(
   val PhraseID: Int = 0,
   val BannerID: Int = 0,
   val CampaignID: Int = 0,
-  val Price: Double = 0.0) {
-  /////////////////////////
-  def AutoBroker: String = "Yes"
-  def AutoBudgetPriority: String = "Medium"
-  def ContextPrice: Double = 0.0
+  val Price: Double = 0.0){
+  //////////////////////////////
+  val AutoBroker: String = "Yes"
+  val AutoBudgetPriority: String = "Medium"
+  val ContextPrice: Double = 0.0
 }
 
 /* output */
@@ -198,7 +211,7 @@ case class PhrasePriceInfo(
 /* Parse json string of BID API response with elements of T type. 
  * the main structure is: List(T)
  * */
-object responseData_bid {
+/*object responseData_bid {
   def apply[T](jsonString: String)(implicit m: Manifest[T]): Option[List[T]] = {
     try {
       Some(Json.parse[List[T]](jsonString))
@@ -206,7 +219,7 @@ object responseData_bid {
       case t => None
     }
   }
-}
+}*/
 
 object nullparser {
   //replace all "null" to "0" in Yandex response

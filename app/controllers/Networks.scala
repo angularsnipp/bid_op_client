@@ -7,8 +7,10 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
-import com.codahale.jerkson.Json
 import play.api.libs.ws.WS
+
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 object Networks extends Controller with Secured {
 
@@ -25,54 +27,52 @@ object Networks extends Controller with Secured {
       }))
 
   def index(network: String) = IsAuthenticated {
-    username =>
+    user =>
       implicit request => {
-        User.findByName(username).map { user =>
-          request.queryString.get("code") match {
-            // try to get token, if creating campaign
-            case Some(code) => {
-              //TODO
-              Yandex.getToken(code.head) match {
-                case None => BadRequest("Invalid token...")
-                case Some(token) =>
-                  val net = "Yandex"
-                  Redirect(routes.Networks.externalLogin(net, token))
-              }
-            }
-            case None => {
-              network match {
-
-                case "Yandex" => Ok(views.html.campaigns.yandex(user.name, "Yandex"))
-
-                case "Google" => Ok(views.html.campaigns.google(user.name, "Goggle"))
-
-                case "Begun" => Ok(views.html.campaigns.begun(user.name, "Begun"))
-
-                case "" => Ok(views.html.campaigns.index(user.name))
-
-              }
+        request.queryString.get("code") match {
+          // try to get token, if creating campaign
+          case Some(code) => {
+            //TODO
+            Yandex.getToken(code.head) match {
+              case None => BadRequest("Invalid token...")
+              case Some(token) =>
+                val net = "Yandex"
+                Redirect(routes.Networks.externalLogin(net, token))
             }
           }
-        }.getOrElse(Forbidden)
+          case None => {
+            network match {
+
+              case "Yandex" => Ok(views.html.workspace.campaigns.yandex(user, "Yandex"))
+
+              case "Google" => Ok(views.html.workspace.campaigns.google(user, "Google"))
+
+              case "Begun" => Ok(views.html.workspace.campaigns.begun(user, "Begun"))
+
+              case "" => Ok(views.html.workspace.campaigns.index(user))
+
+            }
+          }
+        }
       }
 
   }
 
   def campaignReport(network: String, campaign: String) = IsAuthenticated {
-    username => _ => Ok(views.html.reports.report(username, network, Json.parse[models.Campaign](campaign)))
+    user => _ => Ok(views.html.workspace.reports.report(user, network, Json.fromJson[Campaign](Json.parse(campaign))(models.Formats.campaign).get))
   }
 
   def externalLogin(network: String, token: String) = IsAuthenticated {
-    username => _ => Ok(views.html.campaigns.external_login(username, network, token, getLoginForm))
+    user => _ => Ok(views.html.workspace.campaigns.external_login(user, network, token, getLoginForm))
   }
 
   def externalCampaigns(network: String, token: String) = IsAuthenticated {
-    username =>
+    user =>
       implicit request => {
         getLoginForm.bindFromRequest.fold(
-          formWithErrors => BadRequest(views.html.campaigns.external_login(username, network, token, formWithErrors)),
+          formWithErrors => BadRequest(views.html.workspace.campaigns.external_login(user, network, token, formWithErrors)),
           request => request match {
-            case (login, token, network) => Ok(views.html.campaigns.external(username, network, login, token))
+            case (login, token, network) => Ok(views.html.workspace.campaigns.external(user, network, login, token))
           })
 
       }

@@ -3,26 +3,31 @@
 # ~~~~
 
 # Home page
-GET     /                   		controllers.Networks.index(network: String ?= "")
-
-# Campaign page
-GET     /campaign_report			controllers.Networks.campaignReport(network: String, campaign: String)
-GET     /external_login				controllers.Networks.externalLogin(network: String, token:String)
-GET     /external_campaigns			controllers.Networks.externalCampaigns(network: String, token:String)
+GET     /                   					controllers.Networks.index(network: String ?= "")
+GET     /home                  					controllers.Application.home
+GET     /about                 					controllers.Application.about
+GET     /contact               					controllers.Application.contact
+GET     /help                  					controllers.Application.help
 
 # Authentication
-GET     /login                      controllers.Auth.login
-POST    /login                      controllers.Auth.authenticate
-GET     /logout                     controllers.Auth.logout
-GET     /yOAuth						controllers.Yandex.oAuth
+GET     /login                      			controllers.Auth.login
+POST    /login                      			controllers.Auth.authenticate
+GET     /logout                     			controllers.Auth.logout
+GET     /yOAuth									controllers.Yandex.oAuth
 
-# Campaigns
-GET 	/clearDB 					controllers.Application.clearDB
-POST 	/postCampaign 				controllers.Application.postCampaign
-POST 	/getRecommendations			controllers.Application.getRecommendations
-POST 	/getStats					controllers.Application.getStats
-POST 	/getBanners					controllers.Application.getBanners
-POST	/getReport					controllers.Application.getReport
+# Workspace
+## Campaigns list page
+GET     /workspace/campaign_report				controllers.Networks.campaignReport(network: String, campaign: String)
+GET     /workspace/external_login				controllers.Networks.externalLogin(network: String, token:String)
+GET     /workspace/external_campaigns			controllers.Networks.externalCampaigns(network: String, token:String)
+
+## Interactive work with Campaigns
+GET 	/workspace/clearDB 						controllers.Workspace.clearDB
+POST 	/workspace/postCampaign 				controllers.Workspace.postCampaign
+POST 	/workspace/getRecommendations			controllers.Workspace.getRecommendations
+POST 	/workspace/getStats						controllers.Workspace.getStats
+POST 	/workspace/getBanners					controllers.Workspace.getBanners
+POST	/workspace/getReport					controllers.Workspace.getReport
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

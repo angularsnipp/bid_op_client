@@ -1,10 +1,15 @@
 package models
 
 import controllers.Yandex._
-
-import com.codahale.jerkson.Json
 import play.api.libs.ws.{ WS, Response }
 import java.util.Date
+
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
+import models.Formats._
+
+import controllers.Yandex
 
 object API_yandex {
 
@@ -12,19 +17,21 @@ object API_yandex {
    * and return response as JSON String 
    * T is a request(or input) type (i.e., GetBannersInfo or GetSummaryStatRequest)
    * */
-  def post[T](data: inputData[T]): Response = {
-    WS.url(url).post(Json generate data).value.get
+  
+  /****************************** POST request *****************************************/
+
+  def post(jsData: JsValue): Response = {
+    WS.url(url).post(Json.stringify(jsData)).value.get.get
   }
 
   /****************************** Methods implementation *******************************/
 
   /* PingAPI */
-  def pingAPI(login: String, token: String) = {
-    val res = API_yandex.post[None.type](
-      data = inputData[None.type](
-        authdata = authData_Yandex(
-          login = login,
-          token = token),
+  def pingAPI(login: String, token: String): Boolean = {
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "PingAPI"))
 
     (res.json \ ("data")).asOpt[String].getOrElse(false) match {
@@ -36,28 +43,40 @@ object API_yandex {
   /* GetCampaignsList */
   def getCampaignsList(login: String, token: String): Option[List[ShortCampaignInfo]] = {
 
-    val res = API_yandex.post[None.type](
-      data = inputData[None.type](
-        authdata = authData_Yandex(login, token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "GetCampaignsList"))
 
-    val campaigns_List = responseData[ShortCampaignInfo](nullparser(res.body))
+    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](res.json \ ("data")).map {
+      list => Some(list)
+    }.recoverTotal(err => None)
+
+    /*listT match {
+        case Nil => None
+        case list => Some(list)
+      }*/
 
     campaigns_List
   }
 
   /* GetBanners */
-  def getBanners(login: String, token: String, campaignIDS: List[Int]): (Option[List[BannerInfo]], String) = {
+  def getBanners(login: String, token: String, campaignIDS: List[Int]): (Option[List[BannerInfo]], JsValue) = {
 
-    val res = API_yandex.post[GetBannersInfo](
-      data = inputData[GetBannersInfo](
-        authdata = authData_Yandex(login, token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "GetBanners",
-        param = GetBannersInfo(campaignIDS)))
+        param = GetBannersInfo(campaignIDS).toJson))
 
-    val bannerInfo_List = responseData[BannerInfo](nullparser(res.body))
+    val bannerInfo_List = Json.fromJson[List[BannerInfo]](res.json \ ("data")).map {
+      list => Some(list)
+    }.recoverTotal(err => None)
 
-    (bannerInfo_List, nullparser(res.body))
+    (bannerInfo_List, res.json)
+
   }
 
   /* GetSummaryStat */
@@ -66,22 +85,23 @@ object API_yandex {
     token: String,
     campaignIDS: List[Int],
     start_date: Date,
-    end_date: Date): (Option[List[StatItem]], String) = {
+    end_date: Date): (Option[List[StatItem]], JsValue) = {
 
-    val res = API_yandex.post[GetSummaryStatRequest](
-      data = inputData[GetSummaryStatRequest](
-        authdata = authData_Yandex(
-          login = login,
-          token = token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "GetSummaryStat",
         param = GetSummaryStatRequest(
           CampaignIDS = campaignIDS,
           StartDate = date_fmt.format(start_date),
-          EndDate = date_fmt.format(end_date))))
+          EndDate = date_fmt.format(end_date)).toJson))
 
-    val statItem_List = responseData[StatItem](nullparser(res.body))
+    val statItem_List = Json.fromJson[List[StatItem]](res.json \ ("data")).map {
+      list => Some(list)
+    }.recoverTotal(err => None)
 
-    (statItem_List, nullparser(res.body))
+    (statItem_List, res.json)
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/
@@ -93,16 +113,15 @@ object API_yandex {
     start_date: Date,
     end_date: Date): Option[Int] = {
 
-    val res = API_yandex.post[NewReportInfo](
-      data = inputData[NewReportInfo](
-        authdata = authData_Yandex(
-          login = login,
-          token = token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "CreateNewReport",
         param = NewReportInfo(
           CampaignID = campaignID,
           StartDate = date_fmt.format(start_date),
-          EndDate = date_fmt.format(end_date))))
+          EndDate = date_fmt.format(end_date)).toJson))
 
     (res.json \ ("data")).asOpt[String] match {
       case None => None
@@ -111,36 +130,43 @@ object API_yandex {
   }
 
   /* GetReportList */
-  def getShortReportList(login: String, token: String): (Option[List[ShortReportInfo]], String) = {
+  def getShortReportList(login: String, token: String): (Option[List[ShortReportInfo]], JsValue) = {
 
-    val res = API_yandex.post[None.type](
-      data = inputData[None.type](
-        authdata = authData_Yandex(
-          login = login,
-          token = token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "GetReportList"))
 
-    val report_List = responseData[ShortReportInfo](res.body)
+    val report_List = Json.fromJson[List[ShortReportInfo]](res.json \ ("data")).map {
+      list => Some(list)
+    }.recoverTotal(err => None)
 
-    (report_List, res.body)
+    (report_List, res.json)
+
   }
-  def getReportList(json_reports: String): Option[List[ReportInfo]] = responseData[ReportInfo](json_reports)
+  def getReportList(json_reports: JsValue): Option[List[ReportInfo]] = {
+    val report_List = Json.fromJson[List[ReportInfo]](json_reports).map {
+      list => Some(list)
+    }.recoverTotal(err => None)
+
+    report_List
+  }
 
   /* Download XML report*/
   def getXML(reportUrl: String): xml.Elem = {
-    WS.url(reportUrl).get().value.get.xml
+    WS.url(reportUrl).get().value.get.get.xml
   }
 
   /* DeleteReport */
   def deleteReport(login: String, token: String, reportID: Int): Boolean = {
 
-    val res = API_yandex.post[Int](
-      data = inputData[Int](
-        authdata = authData_Yandex(
-          login = login,
-          token = token),
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "DeleteReport",
-        param = reportID))
+        param = Json.toJson(reportID)))
 
     (res.json \ ("data")).asOpt[String].getOrElse(false) match {
       case "1" => true
@@ -149,11 +175,12 @@ object API_yandex {
   }
 
   /* UpdatePrices */
-  def updatePrice(login: String, token: String, phrasepriceInfo_List: List[PhrasePriceInfo]): Boolean = {
-
-    val res = API_yandex.post[List[PhrasePriceInfo]](
-      data = inputData[List[PhrasePriceInfo]](
-        authdata = authData_Yandex(login, token),
+  //def updatePrice(login: String, token: String, phrasepriceInfo_List: List[PhrasePriceInfo]): Boolean = {
+  def updatePrice(login: String, token: String, phrasepriceInfo_List: JsValue): Boolean = {
+    val res = API_yandex.post(
+      InputData(
+        login = login,
+        token = token,
         method = "UpdatePrices",
         param = phrasepriceInfo_List))
 

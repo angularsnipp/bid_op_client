@@ -1,17 +1,17 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object Dependencies {
-  val scalatest = "org.scalatest" %% "scalatest" % "1.8" % "test"
-  val codahale = "com.codahale" %% "jerkson" % "0.5.0"
+  val scalatest = "org.scalatest" %% "scalatest" % "1.9" % "test"
+  //val codahale = "com.codahale" %% "jerkson" % "0.5.0"
   val fasterxml = "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.0-RC3"
-  val squeryl_orm = "org.squeryl" %% "squeryl" % "0.9.5-2"
+  val squeryl_orm = "org.squeryl" %% "squeryl" % "0.9.5-6"
   val postgresDriver = "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
 }
 
 object Resolvers {
-  val codahale = "codahale" at "http://repo.codahale.com"
+  //val codahale = "codahale" at "http://repo.codahale.com"
 }
 
 object ApplicationBuild extends Build {
@@ -22,11 +22,11 @@ object ApplicationBuild extends Build {
   import Dependencies._
   val appDependencies = Seq(
     // Add your project dependencies here
-    scalatest, codahale, fasterxml, squeryl_orm, postgresDriver)
+    jdbc, anorm, scalatest, fasterxml, squeryl_orm, postgresDriver) //, codahale)
 
-  val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
+  val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
-    testOptions in Test := Nil,
-    resolvers += Resolvers.codahale)
+    testOptions in Test := Nil) /*,
+    resolvers += Resolvers.codahale)*/
 
 }

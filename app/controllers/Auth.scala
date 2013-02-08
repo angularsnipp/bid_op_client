@@ -29,10 +29,17 @@ object Auth extends Controller {
       }))
 
   /**
+   * Home page.
+   */
+  def home = Action { implicit request =>
+    Ok(views.html.static_pages.home(None))
+  }
+  
+  /**
    * Login page.
    */
   def login = Action { implicit request =>
-    Ok(views.html.login(loginForm))
+    Ok(views.html.auth.login(loginForm))
   }
 
   /**
@@ -40,7 +47,7 @@ object Auth extends Controller {
    */
   def authenticate = Action { implicit request =>
     loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.login(formWithErrors)),
+      formWithErrors => BadRequest(views.html.auth.login(formWithErrors)),
       request => request match {
         case (user, create) => Redirect(routes.Networks.index()).withSession("name" -> user.name)
       })

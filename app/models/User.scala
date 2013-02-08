@@ -1,7 +1,5 @@
 package models
 
-import com.codahale.jerkson.Json
-
 import play.api.db._
 import play.api.Play.current
 import anorm._
@@ -11,7 +9,7 @@ case class User(
   val name: String,
   val password: String)
 
-object User {
+object User extends Function2[String, String, User] {
 
   // -- Parsers
 

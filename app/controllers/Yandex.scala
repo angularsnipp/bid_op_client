@@ -44,7 +44,7 @@ object Yandex extends Controller {
       "grant_type=authorization_code" +
         "&code=" + code +
         "&client_id=" + app_id +
-        "&client_secret=" + app_secret).value.get
+        "&client_secret=" + app_secret).value.get.get
 
     if (res.status == Http.Status.OK) {
       (res.json \ ("access_token")).asOpt[String]
