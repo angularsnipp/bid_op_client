@@ -60,6 +60,13 @@ object Auth extends Controller {
     Redirect(routes.Auth.login).withNewSession.flashing(
       "success" -> "You've been logged out")
   }  
+  
+  /**
+   * Login page.
+   */
+  def register = Action { implicit request =>
+    Ok(views.html.auth.register(loginForm))
+  }
 
 }
 

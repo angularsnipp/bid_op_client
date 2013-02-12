@@ -1,4 +1,4 @@
-@(user: Option[models.User])
+@(user: Option[models.User], nav: String)
 <header>
 <!-- navbar starts -->
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -11,42 +11,51 @@
 	  		</a>
 	  		
 	  		<a class="brand" href="index.html">	    		
-	    		<span>AdvOpt Service</span>
+	    		<span>BID Optimizer</span>
 	  		</a>			
 			
           	<div class="nav-collapse collapse">
             	<ul class="nav">
-              		<li class="active"><a href="/home">Home</a></li>
-              		<li><a href="/about">About</a></li>
-              		<li><a href="/help">Help</a></li>
-              		<li><a href="/contact">Contact</a></li>
+              		<li class="@("active".when(nav == "home"))"><a href="/home">Home</a></li>
+              		<li class="@("active".when(nav == "about"))"><a href="/about">About</a></li>
+              		<li class="@("active".when(nav == "help"))"><a href="/help">Help</a></li>
+              		<li class="@("active".when(nav == "contact"))"><a href="/contact">Contact</a></li>
             	</ul>
           	</div><!--/.nav-collapse -->
           	
+          	
+          	<div class="nav-collapse collapse pull-right" >
+          		
+          		<ul class="nav">
+              		<li class="@("active".when(nav == "workspace"))"><a href="/workspace">Workspace</a></li>              		
+            	</ul>
+            	
           	@user.map{user=>
-          	<!-- user dropdown starts -->
-	  		<div class="btn-group pull-right" >
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+          	<!-- user dropdown starts -->	  		
+				<ul class="nav" data-toggle="dropdown">
+		  			<li>
+		  			<a>
 		  			<i class="icon-user"></i>
-		  			<span class="hidden-phone">@user</span>
+		  			<span class="hidden-phone">@user.name</span>
 		  			<span class="caret"></span>
-				</a>
+		  			</a>
+		  			</li>
+		  			
+				</ul>
 				<ul class="dropdown-menu">
 		 			<li><a href="#">Profile</a></li>
 		  			<li class="divider"></li>
 		  			<li><a href="@routes.Auth.logout()">Logout</a></li>
 				</ul>
-	  		</div>
 			<!-- user dropdown ends -->	
-			}.getOrElse{          	
-          	<div class="nav-collapse collapse pull-right">
+			}.getOrElse{
             	<ul class="nav">
-              		<li><a href="/login">Sign In</a></li>
-              		<li><a href="/register">Sign Up</a></li>              		
+              		<li class="@("active".when(nav == "login"))"><a href="/login">Sign In</a></li>
+              		<li class="@("active".when(nav == "register"))"><a href="/register">Sign Up</a></li>              		
             	</ul>
-          	</div><!--/.nav-collapse -->
           	}
-          	
+           	
+           	</div><!--/.nav-collapse -->         	
 	  											
 			
 		</div>

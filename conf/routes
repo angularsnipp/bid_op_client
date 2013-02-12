@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                   					controllers.Networks.index(network: String ?= "")
+GET     /                   					controllers.Application.index
 GET     /home                  					controllers.Application.home
 GET     /about                 					controllers.Application.about
 GET     /contact               					controllers.Application.contact
@@ -11,11 +11,15 @@ GET     /help                  					controllers.Application.help
 
 # Authentication
 GET     /login                      			controllers.Auth.login
+GET     /register                     			controllers.Auth.register
 POST    /login                      			controllers.Auth.authenticate
 GET     /logout                     			controllers.Auth.logout
 GET     /yOAuth									controllers.Yandex.oAuth
 
 # Workspace
+
+GET     /workspace             					controllers.Networks.index(network: String ?= "")
+
 ## Campaigns list page
 GET     /workspace/campaign_report				controllers.Networks.campaignReport(network: String, campaign: String)
 GET     /workspace/external_login				controllers.Networks.externalLogin(network: String, token:String)

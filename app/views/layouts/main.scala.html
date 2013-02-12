@@ -1,4 +1,4 @@
-@(title: String, user: Option[models.User], isPrivate:Boolean=true)(content: Html)
+@(title: String, user: Option[models.User], nav: String = "", isPrivate: Boolean = true)(content: Html)
 
 @import layouts._
 
@@ -8,14 +8,18 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>@title</title>
 	
+
 	<link href="@routes.Assets.at("stylesheets/bootstrap.min.css")" id="bs-css" rel="stylesheet" media="screen">
-	<link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet">   
+	<link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet"> 
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+
 	<link href="@routes.Assets.at("stylesheets/datetimepicker.css")" rel="stylesheet">
 	<link href="@routes.Assets.at("stylesheets/datetimepicker.less")" rel="stylesheet"> 
 	
 	<style type="text/css">
 		body {
-			padding-top: 60px;
+			padding-top: 80px;
         	padding-bottom: 40px;
 		}
 		.sidebar-nav {
@@ -25,10 +29,10 @@
 </head>
 <body>
 	
-	@header(user)	
+	@header(user, nav)	
 	
 	<!-- content starts -->					
-	<section id="main">@content</section>
+	<section id="main"> @content	</section>
 	<!-- content ends -->
 	
 	@footer()
