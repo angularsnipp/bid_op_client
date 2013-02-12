@@ -27,26 +27,31 @@
           	<div class="nav-collapse collapse pull-right" >
           		
           		<ul class="nav">
-              		<li class="@("active".when(nav == "workspace"))"><a href="/workspace">Workspace</a></li>              		
+              		<li class="@("active".when(nav == "workspace"))">              			
+              			<a href="/workspace">
+              				<i class="icon-lock"></i>
+              				<span>Workspace</span>
+              			</a>
+              		</li>              		
             	</ul>
             	
           	@user.map{user=>
           	<!-- user dropdown starts -->	  		
-				<ul class="nav" data-toggle="dropdown">
-		  			<li>
-		  			<a>
-		  			<i class="icon-user"></i>
-		  			<span class="hidden-phone">@user.name</span>
-		  			<span class="caret"></span>
-		  			</a>
-		  			</li>
-		  			
+				<ul class="nav">				
+					<li class="dropdown">
+                  		<a class="dropdown-toggle" data-toggle="dropdown">
+                  			<i class="icon-user"></i>
+                  			@user.name 
+                  			<b class="caret"></b>
+                  		</a>
+                  		<ul class="dropdown-menu" role="menu">
+                    		<li><a href="#">Profile</a></li>
+		  					<li class="divider"></li>
+		  					<li><a href="/logout">Logout</a></li>
+                  		</ul>
+                	</li>		  			
 				</ul>
-				<ul class="dropdown-menu">
-		 			<li><a href="#">Profile</a></li>
-		  			<li class="divider"></li>
-		  			<li><a href="@routes.Auth.logout()">Logout</a></li>
-				</ul>
+			
 			<!-- user dropdown ends -->	
 			}.getOrElse{
             	<ul class="nav">

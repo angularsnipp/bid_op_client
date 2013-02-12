@@ -1,11 +1,12 @@
 @(user: Option[models.User],net: String)
          
-@import layouts._
+@import workspace._
+
 @import models._
 @import helper._
 
 
-@main("Bid Opt", user) {
+@main_workspace(user, nav = net) {
 
 <div>
 	<ul class="breadcrumb">

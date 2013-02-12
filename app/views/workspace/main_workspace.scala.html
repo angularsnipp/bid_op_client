@@ -1,0 +1,36 @@
+@(user: Option[models.User], nav: String = "")(content: Html)
+
+@import layouts._
+
+@main(title = "Workspace", user = user, nav = "workspace", isPrivate = true) {
+
+<div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Networks</li>
+              <li class="@("active".when(nav == "ALL"))"><a href="@routes.Networks.index()">ALL</a></li>
+              <li class="@("active".when(nav == "Yandex"))"><a href="@routes.Networks.index("Yandex")">Yandex</a></li>
+              <li class="@("active".when(nav == "Google"))"><a href="@routes.Networks.index("Google")">Google</a></li>
+              <li class="@("active".when(nav == "Begun"))"><a href="@routes.Networks.index("Begun")">Begun</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->  
+        
+        <div id="content" class="span10">
+				<!-- content starts -->					
+				<section id="main_workspace">@content</section>
+		</div>
+			      
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; Krispo Inc. 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+}

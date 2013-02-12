@@ -41,16 +41,20 @@ object Networks extends Controller with Secured {
             }
           }
           case None => {
-            network match {
+            user match {
+              case None => Redirect(routes.Application.home)
+              case Some(someuser) =>
+                network match {
 
-              case "Yandex" => Ok(views.html.workspace.campaigns.yandex(user, "Yandex"))
+                  case "Yandex" => Ok(views.html.workspace.campaigns.yandex(user, "Yandex"))
 
-              case "Google" => Ok(views.html.workspace.campaigns.google(user, "Google"))
+                  case "Google" => Ok(views.html.workspace.campaigns.google(user, "Google"))
 
-              case "Begun" => Ok(views.html.workspace.campaigns.begun(user, "Begun"))
+                  case "Begun" => Ok(views.html.workspace.campaigns.begun(user, "Begun"))
 
-              case "" => Ok(views.html.workspace.campaigns.index(user))
+                  case "" => Ok(views.html.workspace.campaigns.index(user))
 
+                }
             }
           }
         }
