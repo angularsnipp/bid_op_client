@@ -1,13 +1,18 @@
 package models
 
 import controllers.Yandex._
+
 import play.api.libs.ws.{ WS, Response }
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import play.api.libs.concurrent.Execution.Implicits._
+
 import java.util.Date
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-import models.Formats._
+import models.Reads._
 
 import controllers.Yandex
 
@@ -17,25 +22,26 @@ object API_yandex {
    * and return response as JSON String 
    * T is a request(or input) type (i.e., GetBannersInfo or GetSummaryStatRequest)
    * */
-  
+
   /****************************** POST request *****************************************/
 
   def post(jsData: JsValue): Response = {
-    WS.url(url).post(Json.stringify(jsData)).value.get.get
+    val result = WS.url(url).post[JsValue](jsData)
+    Await.result(result, Duration.Inf)
   }
 
   /****************************** Methods implementation *******************************/
 
   /* PingAPI */
   def pingAPI(login: String, token: String): Boolean = {
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "PingAPI"))
 
-    (res.json \ ("data")).asOpt[String].getOrElse(false) match {
-      case "1" => true
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
+      case 1 => true
       case _ => false
     }
   }
@@ -43,15 +49,16 @@ object API_yandex {
   /* GetCampaignsList */
   def getCampaignsList(login: String, token: String): Option[List[ShortCampaignInfo]] = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "GetCampaignsList"))
-
-    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](res.json \ ("data")).map {
+    println("********" + response.json)
+    println("%%%%%%%%" + response.json \ ("data"))
+    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](response.json \ ("data")).map {
       list => Some(list)
-    }.recoverTotal(err => None)
+    }.recoverTotal(err => { println(err); None })
 
     /*listT match {
         case Nil => None
@@ -64,18 +71,18 @@ object API_yandex {
   /* GetBanners */
   def getBanners(login: String, token: String, campaignIDS: List[Int]): (Option[List[BannerInfo]], JsValue) = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "GetBanners",
         param = GetBannersInfo(campaignIDS).toJson))
 
-    val bannerInfo_List = Json.fromJson[List[BannerInfo]](res.json \ ("data")).map {
+    val bannerInfo_List = Json.fromJson[List[BannerInfo]](response.json \ ("data")).map {
       list => Some(list)
     }.recoverTotal(err => None)
 
-    (bannerInfo_List, res.json)
+    (bannerInfo_List, response.json)
 
   }
 
@@ -87,7 +94,7 @@ object API_yandex {
     start_date: Date,
     end_date: Date): (Option[List[StatItem]], JsValue) = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
@@ -97,11 +104,11 @@ object API_yandex {
           StartDate = date_fmt.format(start_date),
           EndDate = date_fmt.format(end_date)).toJson))
 
-    val statItem_List = Json.fromJson[List[StatItem]](res.json \ ("data")).map {
+    val statItem_List = Json.fromJson[List[StatItem]](response.json \ ("data")).map {
       list => Some(list)
     }.recoverTotal(err => None)
 
-    (statItem_List, res.json)
+    (statItem_List, response.json)
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/
@@ -113,7 +120,7 @@ object API_yandex {
     start_date: Date,
     end_date: Date): Option[Int] = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
@@ -123,7 +130,7 @@ object API_yandex {
           StartDate = date_fmt.format(start_date),
           EndDate = date_fmt.format(end_date)).toJson))
 
-    (res.json \ ("data")).asOpt[String] match {
+    (response.json \ ("data")).asOpt[String] match {
       case None => None
       case Some(str) => Some(str.toInt)
     }
@@ -132,17 +139,17 @@ object API_yandex {
   /* GetReportList */
   def getShortReportList(login: String, token: String): (Option[List[ShortReportInfo]], JsValue) = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "GetReportList"))
 
-    val report_List = Json.fromJson[List[ShortReportInfo]](res.json \ ("data")).map {
+    val report_List = Json.fromJson[List[ShortReportInfo]](response.json \ ("data")).map {
       list => Some(list)
     }.recoverTotal(err => None)
 
-    (report_List, res.json)
+    (report_List, response.json)
 
   }
   def getReportList(json_reports: JsValue): Option[List[ReportInfo]] = {
@@ -161,14 +168,14 @@ object API_yandex {
   /* DeleteReport */
   def deleteReport(login: String, token: String, reportID: Int): Boolean = {
 
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "DeleteReport",
         param = Json.toJson(reportID)))
 
-    (res.json \ ("data")).asOpt[String].getOrElse(false) match {
+    (response.json \ ("data")).asOpt[String].getOrElse(false) match {
       case "1" => true
       case _ => false
     }
@@ -177,14 +184,14 @@ object API_yandex {
   /* UpdatePrices */
   //def updatePrice(login: String, token: String, phrasepriceInfo_List: List[PhrasePriceInfo]): Boolean = {
   def updatePrice(login: String, token: String, phrasepriceInfo_List: JsValue): Boolean = {
-    val res = API_yandex.post(
+    val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "UpdatePrices",
         param = phrasepriceInfo_List))
 
-    (res.json \ ("data")).asOpt[String].getOrElse(false) match {
+    (response.json \ ("data")).asOpt[String].getOrElse(false) match {
       case "1" => true
       case _ => false
     }

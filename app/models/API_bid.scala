@@ -2,14 +2,17 @@ package models
 
 import controllers.Bid._
 
-//import com.codahale.jerkson.Json.generate
-
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 import models.Formats._
 
 import play.api.libs.ws.WS
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import play.api.libs.concurrent.Execution.Implicits._
+
 import org.joda.time._
 import scala.collection.immutable.List
 import play.mvc.Http
@@ -42,55 +45,73 @@ object API_bid {
   }*/
 
   def getUser(user: User): Option[User] = {
-    val res = WS.url(Base_URI + "/user/" + user.name).
-      withHeaders(("password" -> user.password)).get().value.get.get
-
-    if (res.status == Http.Status.OK) Some(user) else None
+    val result = WS.url(Base_URI + "/user/" + user.name)
+      .withHeaders(("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) Some(user) else None
+      }
+    Await.result(result, Duration.Inf)
   }
 
   def postUser(user: User): Option[User] = {
-    val res = WS.url(Base_URI + "/user").post[JsValue](Json.toJson(user)(Formats.user)).value.get.get
-
-    if (res.status == Http.Status.CREATED) Some(user) else None
+    val result = WS.url(Base_URI + "/user")
+      .post[JsValue](Json.toJson(user)(Formats.user))
+      .map { response =>
+        if (response.status == Http.Status.CREATED) Some(user) else None
+      }
+    Await.result(result, Duration.Inf)
   }
 
   def getCampaigns(
     user: User,
     net: String): Option[List[Campaign]] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp").
-      withHeaders(("password" -> user.password)).get().value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp")
+      .withHeaders(("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) {
+          val campaigns_List = (response.json \ ("key1")).validate[List[Campaign]].map {
+            list => Some(list)
+          }.recoverTotal(err => None)
+          campaigns_List
+        } else None
+      }
 
-    if (res.status == Http.Status.OK) {
-      val campaigns_List = Json.fromJson[List[Campaign]](res.json).map {
-        list => Some(list)
-      }.recoverTotal(err => None)
-      campaigns_List
-    } else None
+    Await.result(result, Duration.Inf)
   }
 
   def getCampaign(
     user: User,
     net: String,
     id: String): Option[Campaign] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id).
-      withHeaders(("password" -> user.password)).get().value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id)
+      .withHeaders(("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) {
+          val campaigns_List = (response.json \ ("key1")).validate[List[Campaign]].map {
+            list => Some(list)
+          }.recoverTotal(err => None)
+          campaigns_List.get.headOption
+        } else None
+      }
 
-    if (res.status == Http.Status.OK) {
-      val campaigns_List = Json.fromJson[List[Campaign]](res.json).map {
-        list => Some(list)
-      }.recoverTotal(err => None)
-      campaigns_List.get.headOption
-    } else None
+    Await.result(result, Duration.Inf)
   }
 
   def postCampaign(
     user: User,
     net: String,
     campaign: Campaign): Option[Campaign] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp").
-      withHeaders(("password" -> user.password)).post[JsValue](Json.toJson(campaign)(Formats.campaign)).value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](Json.toJson(campaign)(Formats.campaign))
+      .map { response =>
+        if (response.status == Http.Status.CREATED) Some(campaign) else None
+      }
 
-    if (res.status == Http.Status.CREATED) Some(campaign) else None
+    Await.result(result, Duration.Inf)
   }
 
   def postStats( /*DURING the day*/
@@ -98,10 +119,14 @@ object API_bid {
     net: String,
     id: String,
     performance: Performance): Option[Performance] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats").
-      withHeaders(("password" -> user.password)).post[JsValue](Json.toJson(performance)(Formats.performance)).value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](Json.toJson(performance)(Formats.performance))
+      .map { response =>
+        if (response.status == Http.Status.CREATED) Some(performance) else None
+      }
 
-    if (res.status == Http.Status.CREATED) Some(performance) else None
+    Await.result(result, Duration.Inf)
   }
 
   def postReports( /*at the END of the day*/
@@ -109,10 +134,14 @@ object API_bid {
     net: String,
     id: String,
     bannerPhrasePerformance: xml.Elem): Option[xml.Elem] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/reports").
-      withHeaders(("password" -> user.password)).post[xml.Elem](bannerPhrasePerformance).value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/reports")
+      .withHeaders(("password" -> user.password))
+      .post[xml.Elem](bannerPhrasePerformance)
+      .map { response =>
+        if (response.status == Http.Status.CREATED) Some(bannerPhrasePerformance) else None
+      }
 
-    if (res.status == Http.Status.CREATED) Some(bannerPhrasePerformance) else None
+    Await.result(result, Duration.Inf)
   }
 
   def postBannerReports( /*ActualBids and NetAdvisedBids*/
@@ -120,10 +149,14 @@ object API_bid {
     net: String,
     id: String,
     bannerPhraseReport: JsValue): Boolean = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports").
-      withHeaders(("password" -> user.password)).post[JsValue](bannerPhraseReport).value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](bannerPhraseReport)
+      .map { response =>
+        if (response.status == Http.Status.CREATED) true else false
+      }
 
-    if (res.status == Http.Status.CREATED) true else false
+    Await.result(result, Duration.Inf)
   }
 
   def getRecommendations(
@@ -131,20 +164,28 @@ object API_bid {
     net: String,
     id: String,
     datetime: DateTime = new DateTime): Option[List[models.PhrasePriceInfo]] = {
-    val res = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations").
-      withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password)).get().value.get.get
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations")
+      .withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) {
+          implicit val phrasePriceInfo = Json.format[PhrasePriceInfo]
+          Json.fromJson[List[PhrasePriceInfo]](response.json).map {
+            list => Some(list)
+          }.recoverTotal(err => None)
+        } else None
+      }
 
-    if (res.status == Http.Status.OK) {
-      implicit val phrasePriceInfo = Json.format[PhrasePriceInfo]
-      val k = Json.fromJson[List[PhrasePriceInfo]](res.json).map {
-        list => Some(list)
-      }.recoverTotal(err => None)
-      k
-    } else None
+    Await.result(result, Duration.Inf)
   }
 
   def clearDB: Boolean = {
-    val res = WS.url(Base_URI + "/clear_db").get().value.get.get
-    if (res.status == Http.Status.OK) true else false
+    val result = WS.url(Base_URI + "/clear_db")
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) true else false
+      }
+
+    Await.result(result, Duration.Inf)
   }
 }

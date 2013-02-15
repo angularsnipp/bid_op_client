@@ -84,14 +84,14 @@ case class ShortCampaignInfo(
   val SumAvailableForTransfer: Double = 0.0,
   val Shows: Int = 0,
   val Clicks: Int = 0,
-  val Status: String = "",
-  val StatusShow: String = "",
-  val StatusArchive: String = "",
-  val StatusActivating: String = "",
-  val StatusModerate: String = "",
-  val IsActive: String = "",
-  val ManagerName: String = "",
-  val AgencyName: String = "")
+  val Status: Option[String] = None,
+  val StatusShow: Option[String] = None,
+  val StatusArchive: Option[String] = None,
+  val StatusActivating: Option[String] = None,
+  val StatusModerate: Option[String] = None,
+  val IsActive: Option[String] = None,
+  val ManagerName: Option[String] = None,
+  val AgencyName: Option[String] = None)
 
 /* method GetSummaryStat -----  for postStats ----------------------------------------------*/
 /* input T */
@@ -221,8 +221,8 @@ case class PhrasePriceInfo(
   }
 }*/
 
-object nullparser {
+/*object nullparser {
   //replace all "null" to "0" in Yandex response
   def apply(s: String): String = s.replaceAll("null", "0")
-}
+}*/
   

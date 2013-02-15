@@ -6,13 +6,13 @@ object Global extends GlobalSettings {
 
   override def onStart(app:Application) {
     Logger.info("!!! Application has STARTED...")
-    if (isDev) Scheduler.start
+    //if (isDev) Scheduler.start
 
   }
 
   override def onStop(app:Application) {
     Logger.info("!!! Application has FINISHED...")
-    Scheduler.shutdown
+    //Scheduler.shutdown
   }
 
 }
