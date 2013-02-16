@@ -55,7 +55,7 @@ object API_yandex {
         token = token,
         method = "GetCampaignsList"))
     println("********" + response.json)
-    println("%%%%%%%%" + response.json \ ("data"))
+    println("%%%%%%%%" + response.json \ ("data")) 
     val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](response.json \ ("data")).map {
       list => Some(list)
     }.recoverTotal(err => { println(err); None })

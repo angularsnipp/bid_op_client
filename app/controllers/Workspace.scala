@@ -45,7 +45,7 @@ object Workspace extends Controller {
           println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
 
         //return List[BannerInfo] to client browser
-        Ok(Json.toJson[List[BannerInfo]](bannerInfo_List.get))
+        Ok(Json.toJson(bannerInfo_List.get))
       } else println("??? FAILED getBanners ???"); BadRequest
     }
   }
