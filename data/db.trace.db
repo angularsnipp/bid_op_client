@@ -864,3 +864,37 @@ java.lang.InterruptedException: sleep interrupted
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
 	at java.lang.Thread.run(Unknown Source)
+02-16 23:33:14 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-167]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1383)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1361)
+	at org.h2.jdbc.JdbcConnection.getAutoCommit(JdbcConnection.java:423)
+	at com.onseven.dbvis.g.B.C.ā(Z:3551)
+	at com.onseven.dbvis.g.B.F$A.call(Z:1474)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+02-16 23:33:14 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Объект уже закрыт
+The object is already closed [90007-167]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.message.DbException.get(DbException.java:135)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1383)
+	at org.h2.jdbc.JdbcConnection.checkClosed(JdbcConnection.java:1361)
+	at org.h2.jdbc.JdbcConnection.getAutoCommit(JdbcConnection.java:423)
+	at com.onseven.dbvis.g.B.C.ā(Z:3551)
+	at com.onseven.dbvis.g.B.F$A.call(Z:1474)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)

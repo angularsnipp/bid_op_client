@@ -47,3 +47,4 @@ pip-log.txt
 
 #DataBase
 data
+*.db

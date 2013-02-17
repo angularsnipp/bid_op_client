@@ -1,7 +1,6 @@
 package models
 
-import controllers.Bid._
-import controllers.Yandex._
+import common.Yandex
 
 import org.joda.time._
 //import com.codahale.jerkson.Json
@@ -32,7 +31,7 @@ object InputData {
       Json.obj(
         "login" -> login,
         "token" -> token,
-        "application_id" -> app_id,
+        "application_id" -> Yandex.app_id,
         "locale" -> "en",
         "method" -> method,
         "param" -> param))

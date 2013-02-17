@@ -1,6 +1,6 @@
 package models
 
-import controllers.Bid._
+import common.Bid._
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._

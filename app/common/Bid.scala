@@ -1,4 +1,4 @@
-package controllers
+package common
 
 import play.api.mvc._
 import org.joda.time.format

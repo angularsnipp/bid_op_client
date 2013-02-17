@@ -1,6 +1,7 @@
 package controllers
 
 import models._
+import common.Bid
 import play.api._
 import play.api.mvc._
 import play.api.mvc.BodyParsers.parse
@@ -10,11 +11,8 @@ import org.joda.time._
 import java.util.{ Date, Locale }
 import java.text._
 import play.api.data.validation.Constraints._
-import Bid._
-
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-
 import models.Formats._
 
 object Workspace extends Controller {
@@ -60,7 +58,7 @@ object Workspace extends Controller {
           _login = (data \ ("_login")).as[String],
           _token = (data \ ("_token")).as[String],
           network_campaign_id = (data \ ("network_campaign_id")).as[Long].toString(),
-          start_date = iso_fmt.parseDateTime((data \ ("start_date")).as[String]),
+          start_date = Bid.iso_fmt.parseDateTime((data \ ("start_date")).as[String]),
           daily_budget = (data \ ("daily_budget")).as[Double]))
 
       if (camp.isDefined) {

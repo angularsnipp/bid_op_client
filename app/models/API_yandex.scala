@@ -1,20 +1,15 @@
 package models
 
-import controllers.Yandex._
-
+import common.Yandex
 import play.api.libs.ws.{ WS, Response }
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import play.api.libs.concurrent.Execution.Implicits._
-
 import java.util.Date
-
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-
 import models.Reads._
 
-import controllers.Yandex
 
 object API_yandex {
 
@@ -25,7 +20,7 @@ object API_yandex {
 
   /****************************** POST request *****************************************/
 
-  def post(jsData: JsValue): Response = {
+  def post(jsData: JsValue, url: String = Yandex.url): Response = {
     val result = WS.url(url).post[JsValue](jsData)
     Await.result(result, Duration.Inf)
   }
@@ -33,12 +28,13 @@ object API_yandex {
   /****************************** Methods implementation *******************************/
 
   /* PingAPI */
-  def pingAPI(login: String, token: String): Boolean = {
+  def pingAPI(login: String, token: String, url: String = Yandex.url): Boolean = {
     val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
-        method = "PingAPI"))
+        method = "PingAPI"),
+      url)
 
     (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
       case 1 => true
@@ -48,29 +44,24 @@ object API_yandex {
 
   /* GetCampaignsList */
   def getCampaignsList(login: String, token: String): Option[List[ShortCampaignInfo]] = {
-
     val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "GetCampaignsList"))
-    println("********" + response.json)
-    println("%%%%%%%%" + response.json \ ("data")) 
-    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](response.json \ ("data")).map {
+
+    getCampaignsList(response.json \ ("data"))
+  }
+
+  def getCampaignsList(response_data: JsValue): Option[List[ShortCampaignInfo]] = {
+    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](response_data).map {
       list => Some(list)
     }.recoverTotal(err => { println(err); None })
-
-    /*listT match {
-        case Nil => None
-        case list => Some(list)
-      }*/
-
     campaigns_List
   }
 
   /* GetBanners */
   def getBanners(login: String, token: String, campaignIDS: List[Int]): (Option[List[BannerInfo]], JsValue) = {
-
     val response = API_yandex.post(
       InputData(
         login = login,
@@ -78,12 +69,14 @@ object API_yandex {
         method = "GetBanners",
         param = GetBannersInfo(campaignIDS).toJson))
 
-    val bannerInfo_List = Json.fromJson[List[BannerInfo]](response.json \ ("data")).map {
+    (getBanners(response.json \ ("data")), response.json)
+  }
+
+  def getBanners(response_data: JsValue): Option[List[BannerInfo]] = {
+    val bannerInfo_List = Json.fromJson[List[BannerInfo]](response_data).map {
       list => Some(list)
     }.recoverTotal(err => None)
-
-    (bannerInfo_List, response.json)
-
+    bannerInfo_List
   }
 
   /* GetSummaryStat */
@@ -101,14 +94,17 @@ object API_yandex {
         method = "GetSummaryStat",
         param = GetSummaryStatRequest(
           CampaignIDS = campaignIDS,
-          StartDate = date_fmt.format(start_date),
-          EndDate = date_fmt.format(end_date)).toJson))
+          StartDate = Yandex.date_fmt.format(start_date),
+          EndDate = Yandex.date_fmt.format(end_date)).toJson))
 
-    val statItem_List = Json.fromJson[List[StatItem]](response.json \ ("data")).map {
+    (getSummaryStat(response.json \ ("data")), response.json)
+  }
+
+  def getSummaryStat(response_data: JsValue): Option[List[StatItem]] = {
+    val statItem_List = Json.fromJson[List[StatItem]](response_data).map {
       list => Some(list)
     }.recoverTotal(err => None)
-
-    (statItem_List, response.json)
+    statItem_List
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/
@@ -127,13 +123,10 @@ object API_yandex {
         method = "CreateNewReport",
         param = NewReportInfo(
           CampaignID = campaignID,
-          StartDate = date_fmt.format(start_date),
-          EndDate = date_fmt.format(end_date)).toJson))
+          StartDate = Yandex.date_fmt.format(start_date),
+          EndDate = Yandex.date_fmt.format(end_date)).toJson))
 
-    (response.json \ ("data")).asOpt[String] match {
-      case None => None
-      case Some(str) => Some(str.toInt)
-    }
+    (response.json \ ("data")).asOpt[Int]
   }
 
   /* GetReportList */
@@ -145,13 +138,16 @@ object API_yandex {
         token = token,
         method = "GetReportList"))
 
-    val report_List = Json.fromJson[List[ShortReportInfo]](response.json \ ("data")).map {
+    (getShortReportList(response.json \ ("data")), response.json)
+  }
+
+  def getShortReportList(response_data: JsValue): Option[List[ShortReportInfo]] = {
+    val report_List = Json.fromJson[List[ShortReportInfo]](response_data).map {
       list => Some(list)
     }.recoverTotal(err => None)
-
-    (report_List, response.json)
-
+    report_List
   }
+
   def getReportList(json_reports: JsValue): Option[List[ReportInfo]] = {
     val report_List = Json.fromJson[List[ReportInfo]](json_reports).map {
       list => Some(list)
@@ -175,8 +171,8 @@ object API_yandex {
         method = "DeleteReport",
         param = Json.toJson(reportID)))
 
-    (response.json \ ("data")).asOpt[String].getOrElse(false) match {
-      case "1" => true
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
+      case 1 => true
       case _ => false
     }
   }
@@ -191,8 +187,8 @@ object API_yandex {
         method = "UpdatePrices",
         param = phrasepriceInfo_List))
 
-    (response.json \ ("data")).asOpt[String].getOrElse(false) match {
-      case "1" => true
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
+      case 1 => true
       case _ => false
     }
   }

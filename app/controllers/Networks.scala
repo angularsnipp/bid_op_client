@@ -3,14 +3,12 @@ package controllers
 import Application._
 import models._
 import play.api.mvc._
-
 import play.api.data._
 import play.api.data.Forms._
-
 import play.api.libs.ws.WS
-
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import common.Yandex
 
 object Networks extends Controller with Secured {
 
@@ -20,7 +18,7 @@ object Networks extends Controller with Secured {
       "token" -> text,
       "network" -> text) verifying ("Invalid user or password", lform => lform match {
         case (login, token, network) => network match {
-          case "Yandex" => Yandex.isSuccess(login, token)
+          case "Yandex" => true //{ println("!!!!!!!!!!"); val b = Yandex.isSuccess(login, token); println("^^^^^^^^ " + b + "^^^^^^^^"); b }
           case "Google" => false
           case "Begun" => false
         }
