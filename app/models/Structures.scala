@@ -80,9 +80,9 @@ case class ShortCampaignInfo(
   val StartDate: DateTime = new DateTime,
   val Sum: Double = 0.0,
   val Rest: Double = 0.0,
-  val SumAvailableForTransfer: Double = 0.0,
   val Shows: Int = 0,
   val Clicks: Int = 0,
+  val SumAvailableForTransfer: Option[Double] = Some(0.0),
   val Status: Option[String] = None,
   val StatusShow: Option[String] = None,
   val StatusArchive: Option[String] = None,
@@ -183,7 +183,7 @@ case class PhrasePriceInfo(
   val PhraseID: Int = 0,
   val BannerID: Int = 0,
   val CampaignID: Int = 0,
-  val Price: Double = 0.0){
+  val Price: Double = 0.0) {
   //////////////////////////////
   val AutoBroker: String = "Yes"
   val AutoBudgetPriority: String = "Medium"
