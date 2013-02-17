@@ -130,22 +130,14 @@ object API_yandex {
   }
 
   /* GetReportList */
-  def getShortReportList(login: String, token: String): (Option[List[ShortReportInfo]], JsValue) = {
-
+  def getReportList(login: String, token: String): (Option[List[ReportInfo]], JsValue) = {
     val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "GetReportList"))
 
-    (getShortReportList(response.json \ ("data")), response.json)
-  }
-
-  def getShortReportList(response_data: JsValue): Option[List[ShortReportInfo]] = {
-    val report_List = Json.fromJson[List[ShortReportInfo]](response_data).map {
-      list => Some(list)
-    }.recoverTotal(err => None)
-    report_List
+    (getReportList(response.json \ ("data")), response.json)
   }
 
   def getReportList(json_reports: JsValue): Option[List[ReportInfo]] = {

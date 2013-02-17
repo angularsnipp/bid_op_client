@@ -201,70 +201,42 @@ class API_yandexSpec extends Specification with AllExpectations {
       res.head.SumSearch must_== (1.0)
       res.head.ClicksContext must_== (40)
     }
-  }  
+  }
+
+  /*------------- Get REPORT LIST ---------------------------------------------------*/
+  "getReportList" should {
+    sequential
+
+    "take wrong data null" in {
+      val data = JsNull
+      getReportList(data) must_== (None)
+    }
+
+    "take WRONG data" in {
+      /* wrong data */
+      val data = """[
+      {"ReportID": "error",
+       "StatusReport": null}]"""
+
+      getReportList(Json.parse(data)) must_== (None)
+    }
+
+    "take TRUE data" in {
+      val data = """[
+      {"ReportID": 100,
+       "StatusReport": "Pending"},
+      {"ReportID": 200,
+       "Url": "https://some.address",
+       "StatusReport": "Done"}  
+      ]"""
+
+      val Some(res) = getReportList(Json.parse(data))
+      res.length must_== (2)
+
+      res.head.ReportID must_== (100)
+      res.head.Url must_== (None)
+      res.last.Url must_== (Some("https://some.address"))
+      res.last.StatusReport must_== ("Done")
+    }
+  }
 }
-
-
-/*val sci = Map(
-        "CampaignID" -> 100,
-        "Login" -> "krisp0",
-        "Name" -> "some_name",
-        "StartDate" -> Yandex.date_fmt.format(date),
-        "Sum" -> 10.3,
-        "Rest" -> 20.1,
-        "SumAvailableForTransfer" -> 30.0,
-        "Shows" -> 100,
-        "Clicks" -> 10,
-        "Status" -> null,
-        "StatusShow" -> null,
-        "StatusArchive" -> null,
-        "StatusActivating" -> null,
-        "StatusModerate" -> null,
-        "IsActive" -> "yes",
-        "ManagerName" -> "manager",
-        "AgencyName" -> null)*/
-
-/*"""[
-      {"BannerID": 100,
-        "Text": "text1",
-        "Geo": "geo1",
-        "Phrases":[
-          {"BannerID": 100,
-    	   "PhraseID": 1000,
-    	   "CampaignID": 10,
-    	   "Phrase": "phrase1",
-    	   "Min": 1.0,
-           "Max": 10.9,
-           "PremiumMin": 1.1,
-           "PremiumMax": Double = 0.0,
-  //  val ContextPrice: Double = 0.0, //CPC on sites in the Yandex Advertising Network
-  val AutoBroker: String = "", // Yes / No
-  val Price: Double = 0.0, // Maximum CPC on Yandex search set for the phrase.
-  val CurrentOnSearch: Double = 0.0
-           "SomeField": "somevalue"},
-          {"BannerID": 100,
-    	   "PhraseID": 2000,
-    	   "CampaignID": 10,
-    	   "Phrase": "phrase2",
-    	   "Min": 9.0,
-           "Max": 10.9,
-           "SomeField": "somevalue"}]},
-      {"BannerID": 200,
-        "Text": "text1",
-        "Geo": "geo2",
-        "Phrases":[
-          {"BannerID": 200,
-    	   "PhraseID": 1000,
-    	   "CampaignID": 10,
-    	   "Phrase": "phrase1",
-    	   "Min": 9.0,
-           "Max": 10.9,
-           "SomeField": "somevalue"},
-          {"BannerID": 200,
-    	   "PhraseID": 2000,
-    	   "CampaignID": 10,
-    	   "Phrase": "phrase2",
-    	   "Min": 9.0,
-           "Max": 10.9,
-           "SomeField": "somevalue"}]
-        }]"""*/

@@ -131,13 +131,10 @@ case class NewReportInfo(
 /* ----- method GetReportList --------------------------------*/
 /* input T  - None.type */
 /* output List[T] */
-case class ShortReportInfo(
-  val ReportID: Int,
-  val StatusReport: String)
 
 case class ReportInfo(
   val ReportID: Int,
-  val Url: String = "",
+  val Url: Option[String] = None,
   val StatusReport: String)
 
 /* ----- method DeleteReport ---------------------------------*/

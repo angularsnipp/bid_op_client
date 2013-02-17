@@ -15,8 +15,6 @@ object Formats {
 
   implicit lazy val statItem = Json.format[StatItem]
 
-  implicit lazy val shortReportInfo = Json.format[ShortReportInfo]
-
   implicit lazy val reportInfo = Json.format[ReportInfo]
 
   implicit lazy val user = Json.format[User]
@@ -39,8 +37,6 @@ object Reads {
 
   implicit lazy val statItem = Json.reads[StatItem]
 
-  implicit lazy val shortReportInfo = Json.reads[ShortReportInfo]
-
   implicit lazy val reportInfo = Json.reads[ReportInfo]
 
   implicit lazy val user = Json.reads[User]
@@ -62,8 +58,6 @@ object Writes {
   implicit lazy val bannerInfo = Json.writes[BannerInfo]
 
   implicit lazy val statItem = Json.writes[StatItem]
-
-  implicit lazy val shortReportInfo = Json.writes[ShortReportInfo]
 
   implicit lazy val reportInfo = Json.writes[ReportInfo]
 

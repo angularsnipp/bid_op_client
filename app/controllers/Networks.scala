@@ -8,7 +8,6 @@ import play.api.data.Forms._
 import play.api.libs.ws.WS
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import common.Yandex
 
 object Networks extends Controller with Secured {
 
@@ -18,7 +17,7 @@ object Networks extends Controller with Secured {
       "token" -> text,
       "network" -> text) verifying ("Invalid user or password", lform => lform match {
         case (login, token, network) => network match {
-          case "Yandex" => true //{ println("!!!!!!!!!!"); val b = Yandex.isSuccess(login, token); println("^^^^^^^^ " + b + "^^^^^^^^"); b }
+          case "Yandex" => OAuth_yandex.isSuccess(login, token)
           case "Google" => false
           case "Begun" => false
         }
@@ -31,7 +30,7 @@ object Networks extends Controller with Secured {
           // try to get token, if creating campaign
           case Some(code) => {
             //TODO
-            Yandex.getToken(code.head) match {
+            OAuth_yandex.getToken(code.head) match {
               case None => BadRequest("Invalid token...")
               case Some(token) => Redirect(routes.Networks.externalLogin(network, token))
             }

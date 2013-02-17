@@ -129,10 +129,10 @@ object Workspace extends Controller {
 
       def getUrl: String = {
         try {
-          val (short_reportInfo_List, json_reports) = API_yandex.getShortReportList(c._login, c._token)
+          val (reportInfo_List, json_reports) = API_yandex.getReportList(c._login, c._token)
           println(json_reports)
-          val short_reportInfo = short_reportInfo_List.get.filter(_.ReportID == newReportID.get).head
-          short_reportInfo.StatusReport match {
+          val reportInfo = reportInfo_List.get.filter(_.ReportID == newReportID.get).head
+          reportInfo.StatusReport match {
             case "Pending" => {
               Thread.sleep(1000)
               println("!!!!!! PENDING !!!!!");
@@ -140,9 +140,7 @@ object Workspace extends Controller {
             }
             case "Done" => {
               println("!!!!!! DONE !!!!!")
-              val reportInfo_List = API_yandex.getReportList(json_reports)
-              val reportInfo = reportInfo_List.get.filter(_.ReportID == newReportID.get).head
-              reportInfo.Url
+              reportInfo.Url.get
             }
           }
         } catch {
