@@ -44,13 +44,6 @@ class API_yandexSpec extends Specification with AllExpectations {
         "Login": "krisp0"}]"""
 
       getCampaignsList(Json.parse(data1)) must_== (None)
-
-      /* take null, but required Int */
-      val data2 = """[
-      {"CampaignID": null,
-        "Login": "krisp0"}]"""
-
-      getCampaignsList(Json.parse(data2)) must_== (None)
     }
 
     "take TRUE data" in {
@@ -142,25 +135,13 @@ class API_yandexSpec extends Specification with AllExpectations {
     }
 
     "take WRONG data" in {
-      /* wrong campaign id type */
+      /* wrong data */
       val data1 = """[
-      {"BannerID": 100,
-        "Text": "text1",
-        "Geo": "geo1",
-        "Phrases":[]
+      {"BannerID": "100",
+        "Text": "text1"
         }]"""
 
       getCampaignsList(Json.parse(data1)) must_== (None)
-
-      /* take null, but required Int */
-      val data2 = """[
-      {"BannerID": "100",
-        "Text": "text1",
-        "Geo": "geo1",
-        "Phrases":[]
-        }]"""
-
-      getCampaignsList(Json.parse(data2)) must_== (None)
     }
 
     "take TRUE data" in {
@@ -179,6 +160,48 @@ class API_yandexSpec extends Specification with AllExpectations {
       res.head.Phrases.head.AutoBroker must_== ("Yes")
     }
   }
+
+  /*------------- Get SUMMARY STATs ---------------------------------------------------*/
+  "getSummaryStat" should {
+    sequential
+
+    "take wrong data null" in {
+      val data = JsNull
+      getSummaryStat(data) must_== (None)
+    }
+
+    "take WRONG data" in {
+      /* wrong data */
+      val data = """[
+      {"SumSearch": 100.0,
+       "SumContext": "",
+       "ShowsSearch": null}]"""
+
+      getSummaryStat(Json.parse(data)) must_== (None)
+    }
+
+    "take TRUE data" in {
+      val data = """[
+      {"SumSearch": 1.0,
+       "SumContext": 2.0,
+       "ShowsSearch": 10,
+       "ShowsContext": 20,
+       "ClicksSearch": 30,
+       "ClicksContext": 40},
+      {"SumSearch": 1.0,
+       "SumContext": 2.0,
+       "ShowsSearch": 10,
+       "ShowsContext": 20,
+       "ClicksSearch": 30,
+       "ClicksContext": 40}]"""
+
+      val Some(res) = getSummaryStat(Json.parse(data))
+      res.length must_== (2)
+
+      res.head.SumSearch must_== (1.0)
+      res.head.ClicksContext must_== (40)
+    }
+  }  
 }
 
 
