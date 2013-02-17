@@ -131,6 +131,54 @@ class API_yandexSpec extends Specification with AllExpectations {
       res.head.StartDate must_== (new DateTime(date))
     }
   }
+
+  /*------------- Get BANNERS ---------------------------------------------------*/
+  "getBanners" should {
+    sequential
+
+    "take wrong data null" in {
+      val data = JsNull
+      getBanners(data) must_== (None)
+    }
+
+    "take WRONG data" in {
+      /* wrong campaign id type */
+      val data1 = """[
+      {"BannerID": 100,
+        "Text": "text1",
+        "Geo": "geo1",
+        "Phrases":[]
+        }]"""
+
+      getCampaignsList(Json.parse(data1)) must_== (None)
+
+      /* take null, but required Int */
+      val data2 = """[
+      {"BannerID": "100",
+        "Text": "text1",
+        "Geo": "geo1",
+        "Phrases":[]
+        }]"""
+
+      getCampaignsList(Json.parse(data2)) must_== (None)
+    }
+
+    "take TRUE data" in {
+      val file_name = "test/models/bannerList.json"
+      val data = io.Source.fromFile(file_name, "utf-8").getLines.mkString
+
+      val Some(res) = getBanners(Json.parse(data))
+      res.length must_== (2)
+
+      res.head.BannerID must_== (11)
+      res.head.Text must_== ("some")
+      res.head.Geo must_== ("12, 11")
+      res.head.Phrases.length must_== (2)
+      res.head.Phrases.head.PhraseID must_== (22)
+      res.head.Phrases.head.Max must_== (2.0)
+      res.head.Phrases.head.AutoBroker must_== ("Yes")
+    }
+  }
 }
 
 
@@ -152,3 +200,48 @@ class API_yandexSpec extends Specification with AllExpectations {
         "IsActive" -> "yes",
         "ManagerName" -> "manager",
         "AgencyName" -> null)*/
+
+/*"""[
+      {"BannerID": 100,
+        "Text": "text1",
+        "Geo": "geo1",
+        "Phrases":[
+          {"BannerID": 100,
+    	   "PhraseID": 1000,
+    	   "CampaignID": 10,
+    	   "Phrase": "phrase1",
+    	   "Min": 1.0,
+           "Max": 10.9,
+           "PremiumMin": 1.1,
+           "PremiumMax": Double = 0.0,
+  //  val ContextPrice: Double = 0.0, //CPC on sites in the Yandex Advertising Network
+  val AutoBroker: String = "", // Yes / No
+  val Price: Double = 0.0, // Maximum CPC on Yandex search set for the phrase.
+  val CurrentOnSearch: Double = 0.0
+           "SomeField": "somevalue"},
+          {"BannerID": 100,
+    	   "PhraseID": 2000,
+    	   "CampaignID": 10,
+    	   "Phrase": "phrase2",
+    	   "Min": 9.0,
+           "Max": 10.9,
+           "SomeField": "somevalue"}]},
+      {"BannerID": 200,
+        "Text": "text1",
+        "Geo": "geo2",
+        "Phrases":[
+          {"BannerID": 200,
+    	   "PhraseID": 1000,
+    	   "CampaignID": 10,
+    	   "Phrase": "phrase1",
+    	   "Min": 9.0,
+           "Max": 10.9,
+           "SomeField": "somevalue"},
+          {"BannerID": 200,
+    	   "PhraseID": 2000,
+    	   "CampaignID": 10,
+    	   "Phrase": "phrase2",
+    	   "Min": 9.0,
+           "Max": 10.9,
+           "SomeField": "somevalue"}]
+        }]"""*/
