@@ -334,4 +334,22 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \\ "start_date" map (_.as[DateTime]) must_== (List(date, date))
     }
   }
+
+  /*------------- Performance ---------------------------------------------------*/
+  "toJson - Performance" should {
+    sequential
+
+    "take TRUE data" in {
+      import common.Bid.iso_fmt
+      val date = iso_fmt.parseDateTime("2013-01-01T12:00:00.000+04:00")
+
+      val data = Performance(start_date = date, end_date = date, sum_search = 101.1, impress_context = 49)
+
+      val res = toJson[Performance](data)
+
+      (res \ "start_date").as[DateTime] must_== (date)
+      res \ "sum_search" must_== (JsNumber(101.1))
+      res \ "impress_context" must_== (JsNumber(49))
+    }
+  }
 }

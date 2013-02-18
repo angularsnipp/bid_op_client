@@ -37,7 +37,7 @@ object Workspace extends Controller {
         println("!!! SUCCESS getBanners !!!")
 
         // post BannersInfo to BID
-        if (API_bid.postBannerReports(user, net, id, json_banners))
+        if (API_bid.postBannerReports(user, net, id, bannerInfo_List.get))
           println("!!! ActualBids and NetAdvisedBids is POSTED to BID !!!")
         else
           println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")

@@ -96,7 +96,7 @@ object Scheduler {
       println("!!! SUCCESS: getBanners from " + network + "!!!")
 
       /* 2. */
-      if (API_bid.postBannerReports(user, network, campaignID, json_banners)) {
+      if (API_bid.postBannerReports(user, network, campaignID, bannerInfo_List.get)) {
         println("!!! SUCCESS: ActualBids and NetAdvisedBids have POSTED to BID")
 
         /* 3. LIMIT = 100 in the day!!! */

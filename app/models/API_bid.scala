@@ -108,9 +108,9 @@ object API_bid {
     performance: Performance): Option[Performance] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats")
       .withHeaders(("password" -> user.password))
-      .post[JsValue](Json.toJson(performance)(Formats.performance))
+      .post[JsValue](toJson[Performance](performance))
       .map { response =>
-        if (response.status == Http.Status.CREATED) Some(performance) else None
+        if (response.status == Http.Status.CREATED) fromJson[Performance](response.json) else None
       }
 
     Await.result(result, Duration.Inf)
@@ -135,10 +135,10 @@ object API_bid {
     user: User,
     net: String,
     id: String,
-    bannerPhraseReport: JsValue): Boolean = {
+    bannerPhraseReport: List[BannerInfo]): Boolean = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports")
       .withHeaders(("password" -> user.password))
-      .post[JsValue](bannerPhraseReport)
+      .post[JsValue](toJson[List[BannerInfo]](bannerPhraseReport))
       .map { response =>
         if (response.status == Http.Status.CREATED) true else false
       }
@@ -150,17 +150,12 @@ object API_bid {
     user: User,
     net: String,
     id: String,
-    datetime: DateTime = new DateTime): Option[List[models.PhrasePriceInfo]] = {
+    datetime: DateTime = new DateTime): Option[List[PhrasePriceInfo]] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations")
       .withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) {
-          implicit val phrasePriceInfo = Json.format[PhrasePriceInfo]
-          Json.fromJson[List[PhrasePriceInfo]](response.json).map {
-            list => Some(list)
-          }.recoverTotal(err => None)
-        } else None
+        if (response.status == Http.Status.OK) fromJson[List[PhrasePriceInfo]](response.json) else None
       }
 
     Await.result(result, Duration.Inf)

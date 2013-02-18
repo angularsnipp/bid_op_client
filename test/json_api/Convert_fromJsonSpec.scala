@@ -407,13 +407,82 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "_token": "123",
         "network_campaign_id": "100",        
         "daily_budget": 50.0}
-       ]""".format(date.getMillis(), date.plusDays(1).getMillis(),date.getMillis(), date.plusDays(1).getMillis())
+       ]""".format(date.getMillis(), date.plusDays(1).getMillis(), date.getMillis(), date.plusDays(1).getMillis())
 
       val Some(res) = fromJson[List[Campaign]](Json.parse(data))
 
       res.head._login must_== ("krisp0")
       res.head._token must_== ("123")
       res.head.start_date must_== (date)
+    }
+  }
+
+  /*------------- Performance ---------------------------------------------------*/
+  "fromJson - Performance" should {
+    sequential
+
+    "take TRUE data" in {
+      import common.Bid.iso_fmt
+      val date = iso_fmt.parseDateTime("2013-01-01T12:00:00.000+04:00")
+
+      val data = """
+       {"start_date": %d,
+        "end_date": %d,
+        "sum_search": 100.1,
+        "sum_context": 99.9,
+        "impress_search": 51,        
+        "impress_context": 49,
+        "clicks_search": 101,        
+        "clicks_context": 99
+        }""".format(date.getMillis(), date.plusDays(1).getMillis())
+
+      val Some(res) = fromJson[Performance](Json.parse(data))
+
+      res.sum_search must_== (100.1)
+      res.impress_context must_== (49)
+      res.start_date must_== (date)
+    }
+  }
+
+  /*------------- PhrasePriceInfo ---------------------------------------------------*/
+  "fromJson - PhrasePriceInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = """
+       {"PhraseID": 1,
+        "BannerID": 2,
+        "CampaignID": 3,
+        "Price": 4}"""
+
+      val Some(res) = fromJson[PhrasePriceInfo](Json.parse(data))
+      res.PhraseID must_== (1)
+      res.BannerID must_== (2)
+      res.AutoBroker must_== (None)
+    }
+  }
+  /*------------- List[PhrasePriceInfo] ---------------------------------------------------*/
+  "fromJson - List[PhrasePriceInfo]" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = """[
+       {"PhraseID": 1,
+        "BannerID": 2,
+        "CampaignID": 3,
+        "Price": 4},
+       {"PhraseID": 6,
+        "BannerID": 7,
+        "CampaignID": 8,
+        "Price": 9,
+        "AutoBroker": "Yes"}
+        ]"""
+
+      val Some(res) = fromJson[List[PhrasePriceInfo]](Json.parse(data))
+      res.head.PhraseID must_== (1)
+      res.head.Price must_== (4)
+      res.head.AutoBroker must_== (None)
+      res.last.AutoBroker must_== (Some("Yes"))
     }
   }
 }

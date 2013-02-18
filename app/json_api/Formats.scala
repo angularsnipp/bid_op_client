@@ -25,7 +25,7 @@ object Formats {
 
   implicit lazy val performance = Format(Reads.performance, Writes.performance)
 
-  //implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
+  implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
 
 }
 
@@ -47,7 +47,7 @@ object Reads { //-------------------------- fromJson ---------------------------
 
   implicit lazy val performance = Json.reads[Performance]
 
-  //implicit lazy val phrasePriceInfo = Json.reads[PhrasePriceInfo]
+  implicit lazy val phrasePriceInfo = Json.reads[PhrasePriceInfo]
 
 }
 
