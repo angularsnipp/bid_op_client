@@ -61,7 +61,7 @@ object API_yandex {
         login = login,
         token = token,
         method = "GetBanners",
-        param = GetBannersInfo(campaignIDS).toJson))
+        param = toJson[GetBannersInfo](GetBannersInfo(campaignIDS))))
 
     (fromJson[List[BannerInfo]](response.json \ ("data")), response.json)
   }
@@ -79,10 +79,11 @@ object API_yandex {
         login = login,
         token = token,
         method = "GetSummaryStat",
-        param = GetSummaryStatRequest(
-          CampaignIDS = campaignIDS,
-          StartDate = Yandex.date_fmt.format(start_date),
-          EndDate = Yandex.date_fmt.format(end_date)).toJson))
+        param = toJson[GetSummaryStatRequest](
+          GetSummaryStatRequest(
+            CampaignIDS = campaignIDS,
+            StartDate = Yandex.date_fmt.format(start_date),
+            EndDate = Yandex.date_fmt.format(end_date)))))
 
     (fromJson[List[StatItem]](response.json \ ("data")), response.json)
   }

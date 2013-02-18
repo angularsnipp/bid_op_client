@@ -1,6 +1,6 @@
 package json_api
 
-import models._ 
+import models._
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -10,26 +10,26 @@ import play.api.libs.functional.syntax._
 
 object Formats {
 
-  implicit lazy val shortCampaignInfo = Json.format[ShortCampaignInfo]
+  implicit lazy val shortCampaignInfo = Format(Reads.shortCampaignInfo, Writes.shortCampaignInfo)
 
-  implicit lazy val bannerPhraseInfo = Json.format[BannerPhraseInfo]
-  implicit lazy val bannerInfo = Json.format[BannerInfo]
+  implicit lazy val bannerPhraseInfo = Format(Reads.bannerPhraseInfo, Writes.bannerPhraseInfo)
+  implicit lazy val bannerInfo = Format(Reads.bannerInfo, Writes.bannerInfo)
 
-  implicit lazy val statItem = Json.format[StatItem]
+  implicit lazy val statItem = Format(Reads.statItem, Writes.statItem)
 
-  implicit lazy val reportInfo = Json.format[ReportInfo]
+  implicit lazy val reportInfo = Format(Reads.reportInfo, Writes.reportInfo)
 
-  implicit lazy val user = Json.format[User]
+  implicit lazy val user = Format(Reads.user, Writes.user)
 
-  implicit lazy val campaign = Json.format[Campaign]
+  implicit lazy val campaign = Format(Reads.campaign, Writes.campaign)
 
-  implicit lazy val performance = Json.format[Performance]
+  implicit lazy val performance = Format(Reads.performance, Writes.performance)
 
   //implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
 
 }
 
-object Reads {
+object Reads { //-------------------------- fromJson ---------------------------------
   import play.api.libs.json.Reads._
 
   implicit lazy val shortCampaignInfo = Json.reads[ShortCampaignInfo]
@@ -51,10 +51,12 @@ object Reads {
 
 }
 
-object Writes {
+object Writes { //---------------------- toJson -----------------------------------
   import play.api.libs.json.Writes._
 
   implicit lazy val shortCampaignInfo = Json.writes[ShortCampaignInfo]
+
+  implicit lazy val getBannersInfo = Json.writes[GetBannersInfo]
 
   implicit lazy val bannerPhraseInfo = Json.writes[BannerPhraseInfo]
   implicit lazy val bannerInfo = Json.writes[BannerInfo]
@@ -71,4 +73,5 @@ object Writes {
 
   //implicit lazy val phrasePriceInfo = Json.writes[PhrasePriceInfo]
 
+  implicit lazy val getSummaryStatRequest = Json.writes[GetSummaryStatRequest]
 }

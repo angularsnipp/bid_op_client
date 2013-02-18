@@ -97,11 +97,7 @@ case class ShortCampaignInfo(
 case class GetSummaryStatRequest(
   val CampaignIDS: List[Int],
   val StartDate: String, //Date
-  val EndDate: String) {
-
-  @transient implicit val format = Json.format[GetSummaryStatRequest]
-  def toJson = Json.toJson(this)
-}
+  val EndDate: String) 
 
 /* output List[T] */
 case class StatItem(
@@ -146,11 +142,7 @@ case class ReportInfo(
 case class GetBannersInfo(
   val CampaignIDS: List[Int],
   //val FieldsNames: List[String] = List("BannerID", "Text", "Geo", "Phrases"),
-  val GetPhrases: String = "WithPrices") {
-
-  @transient implicit val format = Json.format[GetBannersInfo]
-  def toJson = Json.toJson(this)
-}
+  val GetPhrases: String = "WithPrices") 
 
 /* output */
 case class BannerInfo(

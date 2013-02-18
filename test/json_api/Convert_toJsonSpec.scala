@@ -198,4 +198,37 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \\ "StatusReport" map (_.as[String]) must_== (List("Pending", "Done"))
     }
   }
+
+  /*------------- GetBannersInfo ---------------------------------------------------*/
+  "toJson - GetBannersInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = GetBannersInfo(
+        CampaignIDS = List(1, 2, 3),
+        GetPhrases = "WithPrices")
+
+      val res = toJson[GetBannersInfo](data)
+
+      res \ "CampaignIDS" must_== (Json.arr(1, 2, 3))
+      res \ "GetPhrases" must_== (JsString("WithPrices"))
+    }
+  }
+
+  /*------------- GetSummaryStatRequest ---------------------------------------------------*/
+  "toJson - GetSummaryStatRequest" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = GetSummaryStatRequest(
+        CampaignIDS = List(1, 2, 3),
+        StartDate = "2013-01-01",
+        EndDate = "2013-01-01")
+
+      val res = toJson[GetSummaryStatRequest](data)
+
+      res \ "CampaignIDS" must_== (Json.arr(1, 2, 3))
+      res \ "StartDate" must_== (JsString("2013-01-01"))
+    }
+  }
 }

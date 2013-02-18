@@ -20,7 +20,11 @@ object Convert {
     "List[StatItem]" -> "scala.collection.immutable.List[models.StatItem]",
 
     "ReportInfo" -> "models.ReportInfo",
-    "List[ReportInfo]" -> "scala.collection.immutable.List[models.ReportInfo]")
+    "List[ReportInfo]" -> "scala.collection.immutable.List[models.ReportInfo]",
+
+    "GetBannersInfo" -> "models.GetBannersInfo",
+
+    "GetSummaryStatRequest" -> "models.GetSummaryStatRequest")
 
   /*----- YANDEX -----*/
 
@@ -86,12 +90,22 @@ object Convert {
         case "ReportInfo" => Json.toJson[ReportInfo](data.asInstanceOf[ReportInfo])
         case "List[ReportInfo]" => Json.toJson[List[ReportInfo]](data.asInstanceOf[List[ReportInfo]])
 
+        case "GetBannersInfo" => Json.toJson[GetBannersInfo](data.asInstanceOf[GetBannersInfo])
+
+        case "GetSummaryStatRequest" => Json.toJson[GetSummaryStatRequest](data.asInstanceOf[GetSummaryStatRequest])
+
       }
     } getOrElse (JsNull)
   }
 }
 
 /*
+{
+
+  @transient implicit val format = Json.format[GetBannersInfo]
+  def toJson = Json.toJson(this)
+}
+
 Map(
     "ShortCampaignInfo" -> classOf[ShortCampaignInfo],
     "List[ShortCampaignInfo]" -> classOf[List[ShortCampaignInfo]],
