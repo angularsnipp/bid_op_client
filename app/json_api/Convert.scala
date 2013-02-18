@@ -1,7 +1,7 @@
 package json_api
 
 import models._
-import Reads._
+
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import scala.reflect.runtime._
@@ -24,44 +24,70 @@ object Convert {
 
   /*----- YANDEX -----*/
 
-  def fromJson[T](jsData: JsValue)(implicit mf: Manifest[T]): Option[T] = {
+  def fromJson[T](data: JsValue)(implicit mf: Manifest[T]): Option[T] = {
+    import Reads._
     typeList.filter(_._2.equals(mf.toString)).headOption map {
       _._1 match {
 
         /* ************************************ */
         case "ShortCampaignInfo" => {
-          Json.fromJson[ShortCampaignInfo](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[ShortCampaignInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
         case "List[ShortCampaignInfo]" => {
-          Json.fromJson[List[ShortCampaignInfo]](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[List[ShortCampaignInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
 
         /* ************************************ */
         case "BannerInfo" => {
-          Json.fromJson[BannerInfo](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[BannerInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
         case "List[BannerInfo]" => {
-          Json.fromJson[List[BannerInfo]](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
 
         /* ************************************ */
         case "StatItem" => {
-          Json.fromJson[StatItem](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[StatItem](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
         case "List[StatItem]" => {
-          Json.fromJson[List[StatItem]](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[List[StatItem]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
 
         /* ************************************ */
         case "ReportInfo" => {
-          Json.fromJson[ReportInfo](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[ReportInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
         case "List[ReportInfo]" => {
-          Json.fromJson[List[ReportInfo]](jsData) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[List[ReportInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         }
 
       }
     } getOrElse (None)
+  }
+
+  def toJson[T](data: T)(implicit mf: Manifest[T]): JsValue = {
+    import Writes._
+    typeList.filter(_._2.equals(mf.toString)).headOption map {
+      _._1 match {
+
+        /* ************************************ */
+        case "ShortCampaignInfo" => Json.toJson[ShortCampaignInfo](data.asInstanceOf[ShortCampaignInfo])
+        case "List[ShortCampaignInfo]" => Json.toJson[List[ShortCampaignInfo]](data.asInstanceOf[List[ShortCampaignInfo]])
+
+        /* ************************************ */
+        case "BannerInfo" => Json.toJson[BannerInfo](data.asInstanceOf[BannerInfo])
+        case "List[BannerInfo]" => Json.toJson[List[BannerInfo]](data.asInstanceOf[List[BannerInfo]])
+
+        /* ************************************ */
+        case "StatItem" => Json.toJson[StatItem](data.asInstanceOf[StatItem])
+        case "List[StatItem]" => Json.toJson[List[StatItem]](data.asInstanceOf[List[StatItem]])
+
+        /* ************************************ */
+        case "ReportInfo" => Json.toJson[ReportInfo](data.asInstanceOf[ReportInfo])
+        case "List[ReportInfo]" => Json.toJson[List[ReportInfo]](data.asInstanceOf[List[ReportInfo]])
+
+      }
+    } getOrElse (JsNull)
   }
 }
 
