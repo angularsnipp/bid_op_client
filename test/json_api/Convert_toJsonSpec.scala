@@ -282,4 +282,19 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \\ "AutoBroker" map (_.asOpt[String]) must_== (List(Some("Yes"), Some("Yes")))
     }
   }
+
+  /************************************** BID ************************************************************/
+  /*------------- User ---------------------------------------------------*/
+  "toJson - User" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = User("krisp0", "123")
+
+      val res = toJson[User](data)
+
+      res \ "name" must_== (JsString("krisp0"))
+      res \ "password" must_== (JsString("123"))
+    }
+  }
 }

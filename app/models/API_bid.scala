@@ -1,6 +1,8 @@
 package models
 
 import common.Bid._
+import json_api.Convert._
+
 import play.api.libs.json._
 import json_api.Formats._
 import play.api.libs.ws.WS
@@ -44,16 +46,18 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) Some(user) else None
+        if (response.status == Http.Status.OK)
+          fromJson[User](response.json) else None
       }
     Await.result(result, Duration.Inf)
   }
 
   def postUser(user: User): Option[User] = {
     val result = WS.url(Base_URI + "/user")
-      .post[JsValue](Json.toJson(user)(Formats.user))
+      .post[JsValue](toJson[User](user))
       .map { response =>
-        if (response.status == Http.Status.CREATED) Some(user) else None
+        if (response.status == Http.Status.CREATED)
+          fromJson[User](response.json) else None
       }
     Await.result(result, Duration.Inf)
   }

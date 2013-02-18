@@ -29,47 +29,39 @@ object Convert {
     "NewReportInfo" -> "models.NewReportInfo",
 
     "PhrasePriceInfo" -> "models.PhrasePriceInfo",
-    "List[PhrasePriceInfo]" -> "scala.collection.immutable.List[models.PhrasePriceInfo]")
+    "List[PhrasePriceInfo]" -> "scala.collection.immutable.List[models.PhrasePriceInfo]",
 
-  /*----- YANDEX -----*/
+    "User" -> "models.User")
 
   def fromJson[T](data: JsValue)(implicit mf: Manifest[T]): Option[T] = {
     import Reads._
     typeList.filter(_._2.equals(mf.toString)).headOption map {
       _._1 match {
 
-        /* ************************************ */
-        case "ShortCampaignInfo" => {
+        /* *************** BID ********************* */
+        case "User" =>
+          Json.fromJson[User](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+
+        /* *************** YANDEX ********************* */
+        case "ShortCampaignInfo" =>
           Json.fromJson[ShortCampaignInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
-        case "List[ShortCampaignInfo]" => {
+        case "List[ShortCampaignInfo]" =>
           Json.fromJson[List[ShortCampaignInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
 
-        /* ************************************ */
-        case "BannerInfo" => {
+        case "BannerInfo" =>
           Json.fromJson[BannerInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
-        case "List[BannerInfo]" => {
+        case "List[BannerInfo]" =>
           Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
 
-        /* ************************************ */
-        case "StatItem" => {
+        case "StatItem" =>
           Json.fromJson[StatItem](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
-        case "List[StatItem]" => {
+        case "List[StatItem]" =>
           Json.fromJson[List[StatItem]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
 
-        /* ************************************ */
-        case "ReportInfo" => {
+        case "ReportInfo" =>
           Json.fromJson[ReportInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
-        case "List[ReportInfo]" => {
+        case "List[ReportInfo]" =>
           Json.fromJson[List[ReportInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
-        }
-
       }
     } getOrElse (None)
   }
@@ -79,30 +71,44 @@ object Convert {
     typeList.filter(_._2.equals(mf.toString)).headOption map {
       _._1 match {
 
-        /* ************************************ */
-        case "ShortCampaignInfo" => Json.toJson[ShortCampaignInfo](data.asInstanceOf[ShortCampaignInfo])
-        case "List[ShortCampaignInfo]" => Json.toJson[List[ShortCampaignInfo]](data.asInstanceOf[List[ShortCampaignInfo]])
+        /* *************** BID ********************* */
+        case "User" =>
+          Json.toJson[User](data.asInstanceOf[User])
 
-        /* ************************************ */
-        case "BannerInfo" => Json.toJson[BannerInfo](data.asInstanceOf[BannerInfo])
-        case "List[BannerInfo]" => Json.toJson[List[BannerInfo]](data.asInstanceOf[List[BannerInfo]])
+        /* *************** YANDEX ********************* */
+        case "ShortCampaignInfo" =>
+          Json.toJson[ShortCampaignInfo](data.asInstanceOf[ShortCampaignInfo])
+        case "List[ShortCampaignInfo]" =>
+          Json.toJson[List[ShortCampaignInfo]](data.asInstanceOf[List[ShortCampaignInfo]])
 
-        /* ************************************ */
-        case "StatItem" => Json.toJson[StatItem](data.asInstanceOf[StatItem])
-        case "List[StatItem]" => Json.toJson[List[StatItem]](data.asInstanceOf[List[StatItem]])
+        case "BannerInfo" =>
+          Json.toJson[BannerInfo](data.asInstanceOf[BannerInfo])
+        case "List[BannerInfo]" =>
+          Json.toJson[List[BannerInfo]](data.asInstanceOf[List[BannerInfo]])
 
-        /* ************************************ */
-        case "ReportInfo" => Json.toJson[ReportInfo](data.asInstanceOf[ReportInfo])
-        case "List[ReportInfo]" => Json.toJson[List[ReportInfo]](data.asInstanceOf[List[ReportInfo]])
+        case "StatItem" =>
+          Json.toJson[StatItem](data.asInstanceOf[StatItem])
+        case "List[StatItem]" =>
+          Json.toJson[List[StatItem]](data.asInstanceOf[List[StatItem]])
 
-        case "GetBannersInfo" => Json.toJson[GetBannersInfo](data.asInstanceOf[GetBannersInfo])
+        case "ReportInfo" =>
+          Json.toJson[ReportInfo](data.asInstanceOf[ReportInfo])
+        case "List[ReportInfo]" =>
+          Json.toJson[List[ReportInfo]](data.asInstanceOf[List[ReportInfo]])
 
-        case "GetSummaryStatRequest" => Json.toJson[GetSummaryStatRequest](data.asInstanceOf[GetSummaryStatRequest])
+        case "GetBannersInfo" =>
+          Json.toJson[GetBannersInfo](data.asInstanceOf[GetBannersInfo])
 
-        case "NewReportInfo" => Json.toJson[NewReportInfo](data.asInstanceOf[NewReportInfo])
+        case "GetSummaryStatRequest" =>
+          Json.toJson[GetSummaryStatRequest](data.asInstanceOf[GetSummaryStatRequest])
 
-        case "PhrasePriceInfo" => Json.toJson[PhrasePriceInfo](data.asInstanceOf[PhrasePriceInfo])
-        case "List[PhrasePriceInfo]" => Json.toJson[List[PhrasePriceInfo]](data.asInstanceOf[List[PhrasePriceInfo]])
+        case "NewReportInfo" =>
+          Json.toJson[NewReportInfo](data.asInstanceOf[NewReportInfo])
+
+        case "PhrasePriceInfo" =>
+          Json.toJson[PhrasePriceInfo](data.asInstanceOf[PhrasePriceInfo])
+        case "List[PhrasePriceInfo]" =>
+          Json.toJson[List[PhrasePriceInfo]](data.asInstanceOf[List[PhrasePriceInfo]])
 
       }
     } getOrElse (JsNull)

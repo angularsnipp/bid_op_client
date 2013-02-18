@@ -345,4 +345,21 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
       res.last.StatusReport must_== ("Done")
     }
   }
+
+  /************************************** BID ************************************************************/
+  /*------------- User ---------------------------------------------------*/
+  "fromJson - User" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = """
+       {"name": "krisp0",
+        "password": "123"}"""
+
+      val Some(res) = fromJson[User](Json.parse(data))
+
+      res.name must_== ("krisp0")
+      res.password must_== ("123")
+    }
+  }
 }
