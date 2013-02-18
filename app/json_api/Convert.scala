@@ -31,7 +31,10 @@ object Convert {
     "PhrasePriceInfo" -> "models.PhrasePriceInfo",
     "List[PhrasePriceInfo]" -> "scala.collection.immutable.List[models.PhrasePriceInfo]",
 
-    "User" -> "models.User")
+    "User" -> "models.User",
+
+    "Campaign" -> "models.Campaign",
+    "List[Campaign]" -> "scala.collection.immutable.List[models.Campaign]")
 
   def fromJson[T](data: JsValue)(implicit mf: Manifest[T]): Option[T] = {
     import Reads._
@@ -41,6 +44,11 @@ object Convert {
         /* *************** BID ********************* */
         case "User" =>
           Json.fromJson[User](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+
+        case "Campaign" =>
+          Json.fromJson[Campaign](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+        case "List[Campaign]" =>
+          Json.fromJson[List[Campaign]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
 
         /* *************** YANDEX ********************* */
         case "ShortCampaignInfo" =>
@@ -74,6 +82,11 @@ object Convert {
         /* *************** BID ********************* */
         case "User" =>
           Json.toJson[User](data.asInstanceOf[User])
+
+        case "Campaign" =>
+          Json.toJson[Campaign](data.asInstanceOf[Campaign])
+        case "List[Campaign]" =>
+          Json.toJson[List[Campaign]](data.asInstanceOf[List[Campaign]])
 
         /* *************** YANDEX ********************* */
         case "ShortCampaignInfo" =>
@@ -116,12 +129,6 @@ object Convert {
 }
 
 /*
-{
-
-  @transient implicit val format = Json.format[GetBannersInfo]
-  def toJson = Json.toJson(this)
-}
-
 Map(
     "ShortCampaignInfo" -> classOf[ShortCampaignInfo],
     "List[ShortCampaignInfo]" -> classOf[List[ShortCampaignInfo]],

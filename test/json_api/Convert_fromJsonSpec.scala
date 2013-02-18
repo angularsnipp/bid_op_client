@@ -362,4 +362,58 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
       res.password must_== ("123")
     }
   }
+
+  /*------------- Campaign ---------------------------------------------------*/
+  "fromJson - Campaign" should {
+    sequential
+
+    "take TRUE data" in {
+      import common.Bid.iso_fmt
+      val date = iso_fmt.parseDateTime("2013-01-01T12:00:00.000+04:00")
+
+      val data = """
+       {"start_date": %d,
+        "end_date": %d,
+        "_login": "krisp0",
+        "_token": "123",
+        "network_campaign_id": "100",        
+        "daily_budget": 50.0}""".format(date.getMillis(), date.plusDays(1).getMillis())
+
+      val Some(res) = fromJson[Campaign](Json.parse(data))
+
+      res._login must_== ("krisp0")
+      res._token must_== ("123")
+      res.start_date must_== (date)
+    }
+  }
+  /*------------- List[Campaign] ---------------------------------------------------*/
+  "fromJson - List[Campaign]" should {
+    sequential
+
+    "take TRUE data" in {
+      import common.Bid.iso_fmt
+      val date = iso_fmt.parseDateTime("2013-01-01T12:00:00.000+04:00")
+
+      val data = """[
+       {"start_date": %d,
+        "end_date": %d,
+        "_login": "krisp0",
+        "_token": "123",
+        "network_campaign_id": "100",        
+        "daily_budget": 50.0},
+       {"start_date": %d,
+        "end_date": %d,
+        "_login": "krisp0",
+        "_token": "123",
+        "network_campaign_id": "100",        
+        "daily_budget": 50.0}
+       ]""".format(date.getMillis(), date.plusDays(1).getMillis(),date.getMillis(), date.plusDays(1).getMillis())
+
+      val Some(res) = fromJson[List[Campaign]](Json.parse(data))
+
+      res.head._login must_== ("krisp0")
+      res.head._token must_== ("123")
+      res.head.start_date must_== (date)
+    }
+  }
 }

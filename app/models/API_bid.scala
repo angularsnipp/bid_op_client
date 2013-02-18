@@ -46,8 +46,7 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK)
-          fromJson[User](response.json) else None
+        if (response.status == Http.Status.OK) fromJson[User](response.json) else None
       }
     Await.result(result, Duration.Inf)
   }
@@ -56,8 +55,7 @@ object API_bid {
     val result = WS.url(Base_URI + "/user")
       .post[JsValue](toJson[User](user))
       .map { response =>
-        if (response.status == Http.Status.CREATED)
-          fromJson[User](response.json) else None
+        if (response.status == Http.Status.CREATED) fromJson[User](response.json) else None
       }
     Await.result(result, Duration.Inf)
   }
@@ -69,12 +67,7 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) {
-          val campaigns_List = (response.json \ ("key1")).validate[List[Campaign]].map {
-            list => Some(list)
-          }.recoverTotal(err => None)
-          campaigns_List
-        } else None
+        if (response.status == Http.Status.OK) fromJson[List[Campaign]](response.json) else None
       }
 
     Await.result(result, Duration.Inf)
@@ -88,12 +81,7 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) {
-          val campaigns_List = (response.json \ ("key1")).validate[List[Campaign]].map {
-            list => Some(list)
-          }.recoverTotal(err => None)
-          campaigns_List.get.headOption
-        } else None
+        if (response.status == Http.Status.OK) fromJson[List[Campaign]](response.json).get.headOption else None
       }
 
     Await.result(result, Duration.Inf)
@@ -105,9 +93,9 @@ object API_bid {
     campaign: Campaign): Option[Campaign] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp")
       .withHeaders(("password" -> user.password))
-      .post[JsValue](Json.toJson(campaign)(Formats.campaign))
+      .post[JsValue](toJson[Campaign](campaign))
       .map { response =>
-        if (response.status == Http.Status.CREATED) Some(campaign) else None
+        if (response.status == Http.Status.CREATED) fromJson[Campaign](response.json) else None
       }
 
     Await.result(result, Duration.Inf)
