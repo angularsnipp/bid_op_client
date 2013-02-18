@@ -231,4 +231,22 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \ "StartDate" must_== (JsString("2013-01-01"))
     }
   }
+
+  /*------------- NewReportInfo ---------------------------------------------------*/
+  "toJson - NewReportInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = NewReportInfo(
+        CampaignID = 100,
+        StartDate = "2013-01-01",
+        EndDate = "2013-01-01",
+        GroupByColumns = List("clBanner", "clPhrase"))
+
+      val res = toJson[NewReportInfo](data)
+
+      res \ "CampaignID" must_== (JsNumber(100))
+      res \ "GroupByColumns" must_== (Json.arr("clBanner", "clPhrase"))
+    }
+  }
 }

@@ -102,10 +102,10 @@ object API_yandex {
         login = login,
         token = token,
         method = "CreateNewReport",
-        param = NewReportInfo(
+        param = toJson[NewReportInfo](NewReportInfo(
           CampaignID = campaignID,
           StartDate = Yandex.date_fmt.format(start_date),
-          EndDate = Yandex.date_fmt.format(end_date)).toJson))
+          EndDate = Yandex.date_fmt.format(end_date)))))
 
     (response.json \ ("data")).asOpt[Int]
   }

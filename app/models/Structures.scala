@@ -97,7 +97,7 @@ case class ShortCampaignInfo(
 case class GetSummaryStatRequest(
   val CampaignIDS: List[Int],
   val StartDate: String, //Date
-  val EndDate: String) 
+  val EndDate: String)
 
 /* output List[T] */
 case class StatItem(
@@ -117,10 +117,6 @@ case class NewReportInfo(
   val StartDate: String, //Date
   val EndDate: String, //Date
   val GroupByColumns: List[String] = List("clBanner", "clPhrase")) //, "clPage", "clGeo", "clPositionType"))
-  {
-  @transient implicit val format = Json.format[NewReportInfo]
-  def toJson = Json.toJson(this)
-}
 
 /* output Report ID : Int,  {"data" : 123456} */
 
@@ -142,7 +138,7 @@ case class ReportInfo(
 case class GetBannersInfo(
   val CampaignIDS: List[Int],
   //val FieldsNames: List[String] = List("BannerID", "Text", "Geo", "Phrases"),
-  val GetPhrases: String = "WithPrices") 
+  val GetPhrases: String = "WithPrices")
 
 /* output */
 case class BannerInfo(

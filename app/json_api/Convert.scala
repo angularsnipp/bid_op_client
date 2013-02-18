@@ -24,7 +24,9 @@ object Convert {
 
     "GetBannersInfo" -> "models.GetBannersInfo",
 
-    "GetSummaryStatRequest" -> "models.GetSummaryStatRequest")
+    "GetSummaryStatRequest" -> "models.GetSummaryStatRequest",
+    
+  "NewReportInfo"-> "models.NewReportInfo")
 
   /*----- YANDEX -----*/
 
@@ -94,7 +96,9 @@ object Convert {
 
         case "GetSummaryStatRequest" => Json.toJson[GetSummaryStatRequest](data.asInstanceOf[GetSummaryStatRequest])
 
-      }
+        case "NewReportInfo" => Json.toJson[NewReportInfo](data.asInstanceOf[NewReportInfo])
+
+      } 
     } getOrElse (JsNull)
   }
 }
