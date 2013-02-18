@@ -80,4 +80,46 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
 
     }
   }
+
+  /*------------- BannerInfo ---------------------------------------------------*/
+  "toJson - BannerInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val bphi = BannerPhraseInfo(Phrase = "some_phrase")
+      val data = BannerInfo(
+        BannerID = 100,
+        Text = "some",
+        Geo = "12, 11",
+        Phrases = List(bphi, bphi))
+
+      val res = toJson[BannerInfo](data)
+
+      res \ "BannerID" must_== (JsNumber(100))
+      res \ "Text" must_== (JsString("some"))
+      (res \ "Geo").as[String] must_== ("12, 11")
+      res \ "Phrases" \\ "CampaignID" must_== (List(JsNumber(0), JsNumber(0)))
+      res \ "Phrases" \\ "Phrase" map (_.as[String]) must_== (List("some_phrase", "some_phrase"))
+    }
+  }
+
+  /*------------- List[BannerInfo] ---------------------------------------------------*/
+  "toJson - List[BannerInfo]" should {
+    sequential
+
+    "take TRUE data" in {
+      val bphi = BannerPhraseInfo(Phrase = "some_phrase")
+      val bi = BannerInfo(
+        BannerID = 100,
+        Text = "some",
+        Geo = "12, 11",
+        Phrases = List(bphi, bphi))
+      val data = List(bi, bi)
+
+      val res = toJson[List[BannerInfo]](data)
+
+      res \\ "Text" map (_.as[String]) must_== (List("some", "some"))
+      (res \\ "Phrases").head \\ "Phrase" map (_.as[String]) must_== (List("some_phrase", "some_phrase"))
+    }
+  }
 }
