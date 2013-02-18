@@ -122,4 +122,41 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       (res \\ "Phrases").head \\ "Phrase" map (_.as[String]) must_== (List("some_phrase", "some_phrase"))
     }
   }
+
+  /*------------- StatItem ---------------------------------------------------*/
+  "toJson - StatItem" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = StatItem(
+        SumSearch = 1.0,
+        SumContext = 2.0,
+        ShowsSearch = 10,
+        ClicksContext = 40)
+
+      val res = toJson[StatItem](data)
+      res \ "SumSearch" must_== (JsNumber(1.0))
+      res \ "ClicksContext" must_== (JsNumber(40))
+    }
+  }
+
+  /*------------- List[StatItem] ---------------------------------------------------*/
+  "toJson - List[StatItem]" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = List(
+        StatItem(
+          SumSearch = 1.0,
+          SumContext = 2.0,
+          ShowsSearch = 10,
+          ClicksContext = 40),
+        StatItem())
+
+      val res = toJson[List[StatItem]](data)
+
+      res \\ "SumSearch" must_== (List(JsNumber(1.0), JsNumber(0.0)))
+      res \\ "ClicksContext" map (_.as[Int]) must_== (List(40, 0))
+    }
+  }  
 }
