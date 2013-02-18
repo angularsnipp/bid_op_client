@@ -158,5 +158,44 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \\ "SumSearch" must_== (List(JsNumber(1.0), JsNumber(0.0)))
       res \\ "ClicksContext" map (_.as[Int]) must_== (List(40, 0))
     }
-  }  
+  }
+
+  /*------------- ReportInfo ---------------------------------------------------*/
+  "toJson - ReportInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = ReportInfo(
+        ReportID = 100,
+        StatusReport = "Pending")
+
+      val res = toJson[ReportInfo](data)
+
+      res \ "ReportID" must_== (JsNumber(100))
+      (res \ "Url").asOpt[String] must_== (None)
+      res \ "StatusReport" must_== (JsString("Pending"))
+    }
+  }
+
+  /*------------- List[ReportInfo] ---------------------------------------------------*/
+  "toJson - List[ReportInfo]" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = List(
+        ReportInfo(
+          ReportID = 100,
+          StatusReport = "Pending"),
+        ReportInfo(
+          ReportID = 200,
+          Url = Some("https://some.address"),
+          StatusReport = "Done"))
+
+      val res = toJson[List[ReportInfo]](data)
+
+      res \\ "ReportID" must_== (List(JsNumber(100), JsNumber(200)))
+      res \\ "Url" map (_.asOpt[String]) must_== (List(Some("https://some.address")))
+      res \\ "StatusReport" map (_.as[String]) must_== (List("Pending", "Done"))
+    }
+  }
 }
