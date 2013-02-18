@@ -116,7 +116,7 @@ object Scheduler {
 
               /* 6. */
               implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
-              if (API_yandex.updatePrice(login, token, Json.toJson(ppInfo_List.get))) {
+              if (API_yandex.updatePrice(login, token, ppInfo_List.get)) {
                 println("SUCCESS: Prices is updated!!!")
               } else println("??? FAILED: Prices is NOT updated ???")
             } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???")

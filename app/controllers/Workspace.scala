@@ -196,7 +196,7 @@ object Workspace extends Controller {
         //Update Prices on Yandex
         implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
         val res =
-          if (API_yandex.updatePrice(login, token, Json.toJson(ppInfo_List.get)))
+          if (API_yandex.updatePrice(login, token, ppInfo_List.get))
             println("SUCCESS: Prices is updated!!!")
           else
             println("FAILED: Prices is NOT updated!!!")

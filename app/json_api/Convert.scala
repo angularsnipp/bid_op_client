@@ -25,8 +25,11 @@ object Convert {
     "GetBannersInfo" -> "models.GetBannersInfo",
 
     "GetSummaryStatRequest" -> "models.GetSummaryStatRequest",
-    
-  "NewReportInfo"-> "models.NewReportInfo")
+
+    "NewReportInfo" -> "models.NewReportInfo",
+
+    "PhrasePriceInfo" -> "models.PhrasePriceInfo",
+    "List[PhrasePriceInfo]" -> "scala.collection.immutable.List[models.PhrasePriceInfo]")
 
   /*----- YANDEX -----*/
 
@@ -98,7 +101,10 @@ object Convert {
 
         case "NewReportInfo" => Json.toJson[NewReportInfo](data.asInstanceOf[NewReportInfo])
 
-      } 
+        case "PhrasePriceInfo" => Json.toJson[PhrasePriceInfo](data.asInstanceOf[PhrasePriceInfo])
+        case "List[PhrasePriceInfo]" => Json.toJson[List[PhrasePriceInfo]](data.asInstanceOf[List[PhrasePriceInfo]])
+
+      }
     } getOrElse (JsNull)
   }
 }

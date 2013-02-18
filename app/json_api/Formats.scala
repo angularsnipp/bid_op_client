@@ -68,8 +68,8 @@ object Writes { //---------------------- toJson --------------------------------
   implicit lazy val campaign = Json.writes[Campaign]
 
   implicit lazy val performance = Json.writes[Performance]
-
-  //implicit lazy val phrasePriceInfo = Json.writes[PhrasePriceInfo]
+ 
+  implicit lazy val phrasePriceInfo = Json.writes[PhrasePriceInfo]
 
   implicit lazy val getBannersInfo = Json.writes[GetBannersInfo]
 

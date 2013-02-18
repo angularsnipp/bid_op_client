@@ -249,4 +249,37 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \ "GroupByColumns" must_== (Json.arr("clBanner", "clPhrase"))
     }
   }
+
+  /*------------- PhrasePriceInfo ---------------------------------------------------*/
+  "toJson - PhrasePriceInfo" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = PhrasePriceInfo(
+        PhraseID = 1,
+        BannerID = 2,
+        CampaignID = 3,
+        Price = 1.0)
+
+      val res = toJson[PhrasePriceInfo](data)
+      res \ "PhraseID" must_== (JsNumber(1))
+      res \ "Price" must_== (JsNumber(1.0))
+      (res \ "AutoBroker").asOpt[String] must_== (Some("Yes"))
+    }
+  }
+  /*------------- List[PhrasePriceInfo] ---------------------------------------------------*/
+  "toJson - List[PhrasePriceInfo]" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = List(
+        PhrasePriceInfo(PhraseID = 1, Price = 1.1),
+        PhrasePriceInfo(PhraseID = 2, Price = 2.2))
+
+      val res = toJson[List[PhrasePriceInfo]](data)
+      res \\ "PhraseID" map (_.as[Int]) must_== (List(1, 2))
+      res \\ "Price" must_== (List(JsNumber(1.1), JsNumber(2.2)))
+      res \\ "AutoBroker" map (_.asOpt[String]) must_== (List(Some("Yes"), Some("Yes")))
+    }
+  }
 }

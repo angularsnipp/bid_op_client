@@ -102,10 +102,11 @@ object API_yandex {
         login = login,
         token = token,
         method = "CreateNewReport",
-        param = toJson[NewReportInfo](NewReportInfo(
-          CampaignID = campaignID,
-          StartDate = Yandex.date_fmt.format(start_date),
-          EndDate = Yandex.date_fmt.format(end_date)))))
+        param = toJson[NewReportInfo](
+          NewReportInfo(
+            CampaignID = campaignID,
+            StartDate = Yandex.date_fmt.format(start_date),
+            EndDate = Yandex.date_fmt.format(end_date)))))
 
     (response.json \ ("data")).asOpt[Int]
   }
@@ -143,14 +144,13 @@ object API_yandex {
   }
 
   /* UpdatePrices */
-  //def updatePrice(login: String, token: String, phrasepriceInfo_List: List[PhrasePriceInfo]): Boolean = {
-  def updatePrice(login: String, token: String, phrasepriceInfo_List: JsValue): Boolean = {
+  def updatePrice(login: String, token: String, phrasepriceInfo: List[PhrasePriceInfo]): Boolean = {
     val response = API_yandex.post(
       InputData(
         login = login,
         token = token,
         method = "UpdatePrices",
-        param = phrasepriceInfo_List))
+        param = toJson[List[PhrasePriceInfo]](phrasepriceInfo)))
 
     (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
       case 1 => true
