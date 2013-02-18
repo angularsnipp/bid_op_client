@@ -2,11 +2,10 @@
 
 @import workspace._
          
-@import json_api.Formats
+@import json_api.Convert._
 @import helper._
 
 @import play.api.libs.json._
-@import play.api.libs.functional.syntax._
 
 @import play.api.libs.ws.WS
 
@@ -44,7 +43,7 @@
 								<td class="center">@c.start_date</td>
 								<td class="center">@c.daily_budget</td>								
 								<td class="center">
-									<a class="btn btn-info" href="@routes.Networks.campaignReport(net, Json.stringify(Json.toJson(c)(Formats.campaign)))">
+									<a class="btn btn-info" href="@routes.Networks.campaignReport(net, Json.stringify(toJson[Campaign](c)))">
 										<i class="icon-edit icon-white"></i>  
 										View                                            
 									</a>

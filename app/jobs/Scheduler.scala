@@ -12,9 +12,6 @@ import play.api.Play.current //or use (implicit app: play.api.Application)
 
 import org.joda.time.DateTime
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-
 object Scheduler {
 
   /* The main plan of scheduler
@@ -115,7 +112,6 @@ object Scheduler {
               println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
 
               /* 6. */
-              implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
               if (API_yandex.updatePrice(login, token, ppInfo_List.get)) {
                 println("SUCCESS: Prices is updated!!!")
               } else println("??? FAILED: Prices is NOT updated ???")

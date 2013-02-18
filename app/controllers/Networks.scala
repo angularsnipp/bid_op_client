@@ -6,8 +6,9 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.ws.WS
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
+
+import play.api.libs.json.Json
+import json_api.Convert._
 
 object Networks extends Controller with Secured {
 
@@ -57,8 +58,8 @@ object Networks extends Controller with Secured {
 
   }
 
-  def campaignReport(network: String, campaign: String) = IsAuthenticated { 
-    user => _ => Ok(views.html.workspace.reports.report(user, network, Json.fromJson[Campaign](Json.parse(campaign))(json_api.Formats.campaign).get))
+  def campaignReport(network: String, campaign: String) = IsAuthenticated {
+    user => _ => Ok(views.html.workspace.reports.report(user, network, fromJson[Campaign](Json.parse(campaign)).get))
   }
 
   def externalLogin(network: String, token: String) = IsAuthenticated {

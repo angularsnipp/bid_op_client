@@ -12,8 +12,8 @@ import java.util.{ Date, Locale }
 import java.text._
 import play.api.data.validation.Constraints._
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import json_api.Formats._
+
+import json_api.Convert._
 
 object Workspace extends Controller {
 
@@ -43,7 +43,7 @@ object Workspace extends Controller {
           println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
 
         //return List[BannerInfo] to client browser
-        Ok(Json.toJson(bannerInfo_List.get))
+        Ok(toJson[List[BannerInfo]](bannerInfo_List.get))
       } else println("??? FAILED getBanners ???"); BadRequest
     }
   }
@@ -72,7 +72,7 @@ object Workspace extends Controller {
   def getStats = Action(parse.json) { implicit request =>
     { //During the day!!!
       val data = request.body
-      val c = Json.fromJson[Campaign](data \ ("camp"))(campaign).get
+      val c = fromJson[Campaign](data \ ("camp")).get
 
       val sdf = new SimpleDateFormat("dd MMMMM yyyy - HH:mm", Locale.US)
 
@@ -104,7 +104,7 @@ object Workspace extends Controller {
         else
           println("??? Stats is NOT POSTED to BID ???")
 
-        Ok(Json.toJson(statItem_List.get.head))
+        Ok(toJson[StatItem](statItem_List.get.head))
       } else println("??? FAILED getStats ???"); BadRequest
     }
   }
@@ -112,7 +112,7 @@ object Workspace extends Controller {
   def getReport = Action(parse.json) { implicit request =>
     { //at the END of the day!!!
       val data = request.body
-      val c = Json.fromJson[Campaign](data \ ("camp"))(campaign).get
+      val c = fromJson[Campaign](data \ ("camp")).get
 
       val sdf = new SimpleDateFormat("dd MMMMM yyyy - HH:mm", Locale.US)
 
@@ -193,15 +193,14 @@ object Workspace extends Controller {
 
       if (ppInfo_List.isDefined) {
         println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
-        //Update Prices on Yandex
-        implicit lazy val phrasePriceInfo = Json.format[PhrasePriceInfo]
+        //Update Prices on Yandex        
         val res =
           if (API_yandex.updatePrice(login, token, ppInfo_List.get))
             println("SUCCESS: Prices is updated!!!")
           else
             println("FAILED: Prices is NOT updated!!!")
 
-        Ok(Json.toJson(ppInfo_List.get))
+        Ok(toJson[List[PhrasePriceInfo]](ppInfo_List.get))
       } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???"); BadRequest
     }
   }

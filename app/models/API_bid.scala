@@ -4,15 +4,12 @@ import common.Bid._
 import json_api.Convert._
 
 import play.api.libs.json._
-import json_api.Formats._
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import play.api.libs.concurrent.Execution.Implicits._
 import org.joda.time._
-import scala.collection.immutable.List
 import play.mvc.Http
-import json_api.Formats
 
 object API_bid {
   /* Generate request to Bid Optimizer API as JSON String
