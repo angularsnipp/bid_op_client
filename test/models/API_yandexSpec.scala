@@ -3,6 +3,8 @@ package models
 import common.Yandex
 import models.API_yandex._
 
+import json_api.Convert._
+
 import org.specs2.mutable._
 import org.specs2.specification._
 
@@ -34,7 +36,7 @@ class API_yandexSpec extends Specification with AllExpectations {
 
     "take wrong data null" in {
       val data = JsNull
-      getCampaignsList(data) must_== (None)
+      fromJson[List[ShortCampaignInfo]](data) must_== (None)
     }
 
     "take WRONG data" in {
@@ -43,7 +45,7 @@ class API_yandexSpec extends Specification with AllExpectations {
       {"CampaignID": "100",
         "Login": "krisp0"}]"""
 
-      getCampaignsList(Json.parse(data1)) must_== (None)
+      fromJson[List[ShortCampaignInfo]](Json.parse(data1)) must_== (None)
     }
 
     "take TRUE data" in {
@@ -86,7 +88,7 @@ class API_yandexSpec extends Specification with AllExpectations {
         "AgencyName": null}
         ]"""
 
-      val Some(res) = getCampaignsList(Json.parse(data))
+      val Some(res) = fromJson[List[ShortCampaignInfo]](Json.parse(data))
       res.length must_== (2)
 
       res.head.CampaignID must_== (100)
@@ -98,32 +100,7 @@ class API_yandexSpec extends Specification with AllExpectations {
       res.head.AgencyName must_== (None)
 
     }
-
-    "take POOR and MIXTURE data" in {
-      val date = Yandex.date_fmt.parse("2013-01-01")
-
-      val data = """[
-      {"CampaignID": 100,
-        "Login": "krisp0",
-        "Name": "some_name",
-        "StartDate": "2013-01-01",
-        "Sum": 10.3,
-        "Rest": 20.1,        
-        "Shows": 100,
-        "Clicks": 10,
-        "SomeField": null,
-        "SomeFieldElse": "somevalue"}
-        ]"""
-
-      val Some(res) = getCampaignsList(Json.parse(data))
-      res.length must_== (1)
-
-      res.head.CampaignID must_== (100)
-      res.head.Login must_== ("krisp0")
-      res.head.Sum must_== (10.3)
-      res.head.StartDate must_== (new DateTime(date))
-    }
-  }
+  }  
 
   /*------------- Get BANNERS ---------------------------------------------------*/
   "getBanners" should {
@@ -131,7 +108,7 @@ class API_yandexSpec extends Specification with AllExpectations {
 
     "take wrong data null" in {
       val data = JsNull
-      getBanners(data) must_== (None)
+      fromJson[List[BannerInfo]](data) must_== (None)
     }
 
     "take WRONG data" in {
@@ -141,14 +118,14 @@ class API_yandexSpec extends Specification with AllExpectations {
         "Text": "text1"
         }]"""
 
-      getCampaignsList(Json.parse(data1)) must_== (None)
+      fromJson[List[ShortCampaignInfo]](Json.parse(data1)) must_== (None)
     }
 
     "take TRUE data" in {
       val file_name = "test/models/bannerList.json"
       val data = io.Source.fromFile(file_name, "utf-8").getLines.mkString
 
-      val Some(res) = getBanners(Json.parse(data))
+      val Some(res) = fromJson[List[BannerInfo]](Json.parse(data))
       res.length must_== (2)
 
       res.head.BannerID must_== (11)
@@ -167,7 +144,7 @@ class API_yandexSpec extends Specification with AllExpectations {
 
     "take wrong data null" in {
       val data = JsNull
-      getSummaryStat(data) must_== (None)
+      fromJson[List[StatItem]](data) must_== (None)
     }
 
     "take WRONG data" in {
@@ -177,7 +154,7 @@ class API_yandexSpec extends Specification with AllExpectations {
        "SumContext": "",
        "ShowsSearch": null}]"""
 
-      getSummaryStat(Json.parse(data)) must_== (None)
+      fromJson[List[StatItem]](Json.parse(data)) must_== (None)
     }
 
     "take TRUE data" in {
@@ -195,7 +172,7 @@ class API_yandexSpec extends Specification with AllExpectations {
        "ClicksSearch": 30,
        "ClicksContext": 40}]"""
 
-      val Some(res) = getSummaryStat(Json.parse(data))
+      val Some(res) = fromJson[List[StatItem]](Json.parse(data))
       res.length must_== (2)
 
       res.head.SumSearch must_== (1.0)
@@ -209,7 +186,7 @@ class API_yandexSpec extends Specification with AllExpectations {
 
     "take wrong data null" in {
       val data = JsNull
-      getReportList(data) must_== (None)
+      fromJson[List[ReportInfo]](data) must_== (None)
     }
 
     "take WRONG data" in {
@@ -218,7 +195,7 @@ class API_yandexSpec extends Specification with AllExpectations {
       {"ReportID": "error",
        "StatusReport": null}]"""
 
-      getReportList(Json.parse(data)) must_== (None)
+      fromJson[List[ReportInfo]](Json.parse(data)) must_== (None)
     }
 
     "take TRUE data" in {
@@ -230,7 +207,7 @@ class API_yandexSpec extends Specification with AllExpectations {
        "StatusReport": "Done"}  
       ]"""
 
-      val Some(res) = getReportList(Json.parse(data))
+      val Some(res) = fromJson[List[ReportInfo]](Json.parse(data))
       res.length must_== (2)
 
       res.head.ReportID must_== (100)

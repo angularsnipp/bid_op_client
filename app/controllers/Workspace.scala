@@ -13,7 +13,7 @@ import java.text._
 import play.api.data.validation.Constraints._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import models.Formats._
+import json_api.Formats._
 
 object Workspace extends Controller {
 
@@ -72,7 +72,7 @@ object Workspace extends Controller {
   def getStats = Action(parse.json) { implicit request =>
     { //During the day!!!
       val data = request.body
-      val c = Json.fromJson[Campaign](data \ ("camp"))(Formats.campaign).get
+      val c = Json.fromJson[Campaign](data \ ("camp"))(campaign).get
 
       val sdf = new SimpleDateFormat("dd MMMMM yyyy - HH:mm", Locale.US)
 
@@ -112,7 +112,7 @@ object Workspace extends Controller {
   def getReport = Action(parse.json) { implicit request =>
     { //at the END of the day!!!
       val data = request.body
-      val c = Json.fromJson[Campaign](data \ ("camp"))(Formats.campaign).get
+      val c = Json.fromJson[Campaign](data \ ("camp"))(campaign).get
 
       val sdf = new SimpleDateFormat("dd MMMMM yyyy - HH:mm", Locale.US)
 

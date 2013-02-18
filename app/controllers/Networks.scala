@@ -57,8 +57,8 @@ object Networks extends Controller with Secured {
 
   }
 
-  def campaignReport(network: String, campaign: String) = IsAuthenticated {
-    user => _ => Ok(views.html.workspace.reports.report(user, network, Json.fromJson[Campaign](Json.parse(campaign))(models.Formats.campaign).get))
+  def campaignReport(network: String, campaign: String) = IsAuthenticated { 
+    user => _ => Ok(views.html.workspace.reports.report(user, network, Json.fromJson[Campaign](Json.parse(campaign))(json_api.Formats.campaign).get))
   }
 
   def externalLogin(network: String, token: String) = IsAuthenticated {

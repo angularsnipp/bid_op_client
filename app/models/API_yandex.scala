@@ -8,8 +8,9 @@ import play.api.libs.concurrent.Execution.Implicits._
 import java.util.Date
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import models.Reads._
 
+import json_api.Convert._
+import json_api.Reads._
 
 object API_yandex {
 
@@ -50,14 +51,7 @@ object API_yandex {
         token = token,
         method = "GetCampaignsList"))
 
-    getCampaignsList(response.json \ ("data"))
-  }
-
-  def getCampaignsList(response_data: JsValue): Option[List[ShortCampaignInfo]] = {
-    val campaigns_List = Json.fromJson[List[ShortCampaignInfo]](response_data).map {
-      list => Some(list)
-    }.recoverTotal(err => { println(err); None })
-    campaigns_List
+    fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
   }
 
   /* GetBanners */
@@ -69,14 +63,7 @@ object API_yandex {
         method = "GetBanners",
         param = GetBannersInfo(campaignIDS).toJson))
 
-    (getBanners(response.json \ ("data")), response.json)
-  }
-
-  def getBanners(response_data: JsValue): Option[List[BannerInfo]] = {
-    val bannerInfo_List = Json.fromJson[List[BannerInfo]](response_data).map {
-      list => Some(list)
-    }.recoverTotal(err => None)
-    bannerInfo_List
+    (fromJson[List[BannerInfo]](response.json \ ("data")), response.json)
   }
 
   /* GetSummaryStat */
@@ -97,14 +84,7 @@ object API_yandex {
           StartDate = Yandex.date_fmt.format(start_date),
           EndDate = Yandex.date_fmt.format(end_date)).toJson))
 
-    (getSummaryStat(response.json \ ("data")), response.json)
-  }
-
-  def getSummaryStat(response_data: JsValue): Option[List[StatItem]] = {
-    val statItem_List = Json.fromJson[List[StatItem]](response_data).map {
-      list => Some(list)
-    }.recoverTotal(err => None)
-    statItem_List
+    (fromJson[List[StatItem]](response.json \ ("data")), response.json)
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/
@@ -137,15 +117,7 @@ object API_yandex {
         token = token,
         method = "GetReportList"))
 
-    (getReportList(response.json \ ("data")), response.json)
-  }
-
-  def getReportList(json_reports: JsValue): Option[List[ReportInfo]] = {
-    val report_List = Json.fromJson[List[ReportInfo]](json_reports).map {
-      list => Some(list)
-    }.recoverTotal(err => None)
-
-    report_List
+    (fromJson[List[ReportInfo]](response.json \ ("data")), response.json)
   }
 
   /* Download XML report*/
