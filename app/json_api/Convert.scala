@@ -66,7 +66,7 @@ object Convert {
         case "BannerInfo" =>
           Json.fromJson[BannerInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         case "List[BannerInfo]" =>
-          Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => { println("@@@@@@@@@" + e); None })
+          Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
 
         case "StatItem" =>
           Json.fromJson[StatItem](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
