@@ -95,7 +95,7 @@ object Workspace extends Controller {
         val res_bid = API_bid.postStats(
           user = User.findByName((data \ ("user")).as[String]).get,
           net = (data \ ("net")).as[String],
-          id = c.network_campaign_id, 
+          id = c.network_campaign_id,
           performance = Performance._apply(
             sd = new DateTime(start_date),
             ed = new DateTime(end_date),

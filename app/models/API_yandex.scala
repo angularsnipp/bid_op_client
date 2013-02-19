@@ -123,7 +123,7 @@ object API_yandex {
 
   /* Download XML report*/
   def getXML(reportUrl: String): xml.Elem = {
-    WS.url(reportUrl).get().value.get.get.xml
+    Await.result(WS.url(reportUrl).get(), Duration.Inf).xml
   }
 
   /* DeleteReport */

@@ -190,9 +190,9 @@
 				 	_login : '@c._login',
 					_token : '@c._token',
 					network_campaign_id : '@c.network_campaign_id',
-					start_date : '@c.start_date',
-					end_date : '@c.end_date',
-					daily_budget : '@c.daily_budget'	
+					start_date : @c.start_date.getMillis(),
+					end_date : @c.end_date.getMillis(),
+					daily_budget : parseFloat(@c.daily_budget)	
 				},
 				startDate : $('#dtpReportID_s').val(),
 				endDate : $('#dtpReportID_e').val()
