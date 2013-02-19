@@ -3,10 +3,7 @@ package json_api
 import models._
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import scala.reflect.runtime._
-import scala.reflect.ClassTag
-import scala.collection.immutable.List
+
 object Convert {
 
   val typeList = Map(
@@ -69,7 +66,7 @@ object Convert {
         case "BannerInfo" =>
           Json.fromJson[BannerInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         case "List[BannerInfo]" =>
-          Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+          Json.fromJson[List[BannerInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => { println("@@@@@@@@@" + e); None })
 
         case "StatItem" =>
           Json.fromJson[StatItem](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)

@@ -72,6 +72,7 @@ object Workspace extends Controller {
   def getStats = Action(parse.json) { implicit request =>
     { //During the day!!!
       val data = request.body
+
       val c = fromJson[Campaign](data \ ("camp")).get
 
       val sdf = new SimpleDateFormat("dd MMMMM yyyy - HH:mm", Locale.US)
@@ -94,8 +95,8 @@ object Workspace extends Controller {
         val res_bid = API_bid.postStats(
           user = User.findByName((data \ ("user")).as[String]).get,
           net = (data \ ("net")).as[String],
-          id = c.network_campaign_id,
-          performance = Performance.applyStatItem(
+          id = c.network_campaign_id, 
+          performance = Performance._apply(
             sd = new DateTime(start_date),
             ed = new DateTime(end_date),
             si = statItem_List.get.head))

@@ -102,7 +102,7 @@ object Scheduler {
           println("!!! SUCCESS: getStats !!!")
 
           /* 4. */
-          val performance = API_bid.postStats(user, network, campaignID, Performance.applyStatItem(start_date, end_date, statItem_List.get.head))
+          val performance = API_bid.postStats(user, network, campaignID, Performance._apply(start_date, end_date, statItem_List.get.head))
           if (performance.isDefined) {
             println("!!! SUCCESS: Stats have POSTED to BID")
 

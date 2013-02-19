@@ -4,6 +4,8 @@
          
 @import models._
 @import helper._
+@import json_api.Convert._
+@import play.api.libs.json._ 
 
 @main_workspace(user, nav = net) {
 
@@ -151,9 +153,9 @@
 				 	_login : '@c._login',
 					_token : '@c._token',
 					network_campaign_id : '@c.network_campaign_id',
-					start_date : '@c.start_date',
-					end_date : '@c.end_date',
-					daily_budget : '@c.daily_budget'	
+					start_date : @c.start_date.getMillis(),
+					end_date : @c.end_date.getMillis(),
+					daily_budget : parseFloat(@c.daily_budget)	
 				},
 				startDate : $('#dtpStatsID_s').val(),
 				endDate : $('#dtpStatsID_e').val()
@@ -281,3 +283,13 @@
 @***************************************************************************************************@
 
 } 
+@**
+{
+				 	_login : '@c._login',
+					_token : '@c._token',
+					network_campaign_id : '@c.network_campaign_id',
+					start_date : '@c.start_date.getMillis()',
+					end_date : '@c.end_date.getMillis()',
+					daily_budget : '@c.daily_budget'	
+				}
+**@
