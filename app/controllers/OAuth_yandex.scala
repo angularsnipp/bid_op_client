@@ -11,7 +11,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 
 import play.mvc.Http
 import models.API_yandex
- 
+
 object OAuth_yandex extends Controller {
 
   /**-------------------------------- YANDEX OAuth methods ----------------------------------**/
@@ -38,7 +38,7 @@ object OAuth_yandex extends Controller {
   }
 
   /* Check network is alive and user authorization is successful*/
-  def isSuccess(login: String, token: String): Boolean = API_yandex.pingAPI(login, token)
+  def isSuccess(login: String, token: String): Boolean = API_yandex(login, token).pingAPI
 }
 
 /* try to get Login

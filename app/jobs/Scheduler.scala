@@ -88,7 +88,7 @@ object Scheduler {
     println("user: " + user + "; network: " + network + "; id: " + campaignID)
 
     /* 1. */
-    val (bannerInfo_List, json_banners) = API_yandex.getBanners(login, token, List(campaignID.toInt))
+    val (bannerInfo_List, json_banners) = API_yandex(login, token).getBanners(List(campaignID.toInt))
     if (bannerInfo_List.isDefined) {
       println("!!! SUCCESS: getBanners from " + network + "!!!")
 
@@ -97,7 +97,7 @@ object Scheduler {
         println("!!! SUCCESS: ActualBids and NetAdvisedBids have POSTED to BID")
 
         /* 3. LIMIT = 100 in the day!!! */
-        val (statItem_List, json_stat) = API_yandex.getSummaryStat(login, token, List(campaignID.toInt), start_date.toDate(), end_date.toDate())
+        val (statItem_List, json_stat) = API_yandex(login, token).getSummaryStat(List(campaignID.toInt), start_date.toDate(), end_date.toDate())
         if (statItem_List.isDefined) {
           println("!!! SUCCESS: getStats !!!")
 
@@ -112,7 +112,7 @@ object Scheduler {
               println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
 
               /* 6. */
-              if (API_yandex.updatePrice(login, token, ppInfo_List.get)) {
+              if (API_yandex(login, token).updatePrice(ppInfo_List.get)) {
                 println("SUCCESS: Prices is updated!!!")
               } else println("??? FAILED: Prices is NOT updated ???")
             } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???")

@@ -9,7 +9,7 @@
 @import play.api.libs.ws.WS
 
 @getCampaigns_yandex = @{
-	val cList:Option[List[ShortCampaignInfo]] = API_yandex.getCampaignsList(login,token);
+	val cList:Option[List[ShortCampaignInfo]] = API_yandex(login,token).getCampaignsList;
     cList.get    	
 }
 

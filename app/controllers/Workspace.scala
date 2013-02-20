@@ -31,7 +31,7 @@ object Workspace extends Controller {
       val id = (data \ ("network_campaign_id")).as[String]
 
       // get BannersInfo from Yandex
-      val (bannerInfo_List, json_banners) = API_yandex.getBanners(login, token, List(id.toInt))
+      val (bannerInfo_List, json_banners) = API_yandex(login, token).getBanners(List(id.toInt))
 
       if (bannerInfo_List.isDefined) {
         println("!!! SUCCESS getBanners !!!")
@@ -81,9 +81,7 @@ object Workspace extends Controller {
       val end_date = sdf.parse((data \ ("endDate")).as[String]) //new DateTime()
 
       //Get Statistics from Yandex
-      val (statItem_List, json_stat) = API_yandex.getSummaryStat(
-        login = c._login,
-        token = c._token,
+      val (statItem_List, json_stat) = API_yandex(c._login, c._token).getSummaryStat(
         campaignIDS = List(c.network_campaign_id.toInt),
         start_date = start_date,
         end_date = end_date)
@@ -121,16 +119,14 @@ object Workspace extends Controller {
       val end_date = sdf.parse((data \ ("endDate")).as[String]) //new DateTime()
 
       //create Report on Yandex server
-      val newReportID = API_yandex.createNewReport(
-        login = c._login,
-        token = c._token,
+      val newReportID = API_yandex(c._login, c._token).createNewReport(
         campaignID = c.network_campaign_id.toInt,
         start_date = start_date,
         end_date = end_date)
 
       def getUrl: String = {
         try {
-          val (reportInfo_List, json_reports) = API_yandex.getReportList(c._login, c._token)
+          val (reportInfo_List, json_reports) = API_yandex(c._login, c._token).getReportList
           println(json_reports)
           val reportInfo = reportInfo_List.get.filter(_.ReportID == newReportID.get).head
           reportInfo.StatusReport match {
@@ -156,7 +152,7 @@ object Workspace extends Controller {
       val reportUrl = getUrl
 
       //download XML report from Yandex Url
-      val xml_node = API_yandex.getXML(reportUrl)
+      val xml_node = API_yandex(c._login, c._token).getXML(reportUrl)
       println("!!! XML: " + xml_node)
 
       //post report to BID
@@ -171,7 +167,7 @@ object Workspace extends Controller {
         println("??? Report is NOT POSTED to BID ???")
 
       //remove current report from Yandex Server
-      if (API_yandex.deleteReport(login = c._login, token = c._token, reportID = newReportID.get))
+      if (API_yandex(c._login, c._token).deleteReport(newReportID.get))
         println("!!! Report is DELETED from Yandex!!!")
       else
         println("??? Report is NOT DELETED from Yandex ???")
@@ -196,7 +192,7 @@ object Workspace extends Controller {
         println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
         //Update Prices on Yandex        
         val res =
-          if (API_yandex.updatePrice(login, token, ppInfo_List.get))
+          if (API_yandex(login, token).updatePrice(ppInfo_List.get))
             println("SUCCESS: Prices is updated!!!")
           else
             println("FAILED: Prices is NOT updated!!!")

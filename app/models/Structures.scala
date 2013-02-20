@@ -37,39 +37,6 @@ object InputData {
         "param" -> param))
 }
 
-/*--------- response data ----------*/
-
-/* Parse json string with elements of T type. 
- * the main structure is: "data" -> List(T)
- * */
-/*object responseData {
-  def apply[T](jsValue: JsValue)(implicit m: Manifest[T]): Option[List[T]] = {
-    //val dataMap = Json.parse[Map[String, List[T]]](jsonString)
-    val dataMap = (jsValue \("data")).validate[List[T]]dataMap 
-    val dataOpt = dataMap.get("data")
-    dataOpt match {
-      case None => None
-      case Some(listT) => listT match {
-        case Nil => None
-        case list => Some(list)
-      }
-    }
-  }
-}*/
-
-object responseData {
-  def apply[T](jsData: JsValue)(implicit m: Manifest[T], f: Format[List[T]]): Option[List[T]] = {
-    Json.fromJson[List[T]](jsData).map {
-      listT => Some(listT)
-    }.recoverTotal(err => None)
-
-    /*listT match {
-        case Nil => None
-        case list => Some(list)
-      }*/
-  }
-}
-
 /*----------- METHODS ------------*/
 
 /* respond data for method GetCampaignsList */
@@ -189,22 +156,4 @@ case class PhrasePriceInfo(
  * postBannerReports :- {"data" : List[BannerInfo]} -> header = "Created" or "Bad Request"
  * getRecommendations :- Headers: If-Modified-Since: Date Time -> List[PhrasePriceInfo]
  * */
-
-/* Parse json string of BID API response with elements of T type. 
- * the main structure is: List(T)
- * */
-/*object responseData_bid {
-  def apply[T](jsonString: String)(implicit m: Manifest[T]): Option[List[T]] = {
-    try {
-      Some(Json.parse[List[T]](jsonString))
-    } catch {
-      case t => None
-    }
-  }
-}*/
-
-/*object nullparser {
-  //replace all "null" to "0" in Yandex response
-  def apply(s: String): String = s.replaceAll("null", "0")
-}*/
   
