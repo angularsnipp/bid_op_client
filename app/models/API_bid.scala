@@ -57,9 +57,7 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def getCampaigns(
-    user: User,
-    net: String): Option[List[Campaign]] = {
+  def getCampaigns(user: User, net: String): Option[List[Campaign]] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp")
       .withHeaders(("password" -> user.password))
       .get()
@@ -70,10 +68,7 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def getCampaign(
-    user: User,
-    net: String,
-    id: String): Option[Campaign] = {
+  def getCampaign(user: User, net: String, id: String): Option[Campaign] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id)
       .withHeaders(("password" -> user.password))
       .get()
@@ -84,10 +79,7 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def postCampaign(
-    user: User,
-    net: String,
-    campaign: Campaign): Option[Campaign] = {
+  def postCampaign(user: User, net: String, campaign: Campaign): Option[Campaign] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp")
       .withHeaders(("password" -> user.password))
       .post[JsValue](toJson[Campaign](campaign))
@@ -98,11 +90,8 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def postStats( /*DURING the day*/
-    user: User,
-    net: String,
-    id: String,
-    performance: Performance): Option[Performance] = {
+  /*DURING the day*/
+  def postStats(user: User, net: String, id: String, performance: Performance): Option[Performance] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats")
       .withHeaders(("password" -> user.password))
       .post[JsValue](toJson[Performance](performance))
@@ -113,11 +102,8 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def postReports( /*at the END of the day*/
-    user: User,
-    net: String,
-    id: String,
-    bannerPhrasePerformance: xml.Elem): Option[xml.Elem] = {
+  /*at the END of the day*/
+  def postReports(user: User, net: String, id: String, bannerPhrasePerformance: xml.Elem): Option[xml.Elem] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/reports")
       .withHeaders(("password" -> user.password))
       .post[xml.Elem](bannerPhrasePerformance)
@@ -128,11 +114,8 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def postBannerReports( /*ActualBids and NetAdvisedBids*/
-    user: User,
-    net: String,
-    id: String,
-    bannerPhraseReport: List[BannerInfo]): Boolean = {
+  /*ActualBids and NetAdvisedBids*/
+  def postBannerReports(user: User, net: String, id: String, bannerPhraseReport: List[BannerInfo]): Boolean = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports")
       .withHeaders(("password" -> user.password))
       .post[JsValue](toJson[List[BannerInfo]](bannerPhraseReport))
@@ -143,11 +126,7 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def getRecommendations(
-    user: User,
-    net: String,
-    id: String,
-    datetime: DateTime = new DateTime): Option[List[PhrasePriceInfo]] = {
+  def getRecommendations(user: User, net: String, id: String, datetime: DateTime = new DateTime): Option[List[PhrasePriceInfo]] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations")
       .withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password))
       .get()

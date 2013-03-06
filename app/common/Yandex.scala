@@ -11,8 +11,11 @@ object Yandex {
   val url_sandbox = "https://api-sandbox.direct.yandex.ru/json-api/v4/" //SANDBOX - for testing 
   val url_main = "https://api.direct.yandex.ru/live/v4/json/" //works (recommended)
   //val url_main = "https://soap.direct.yandex.ru/json-api/v4/" //works  
+
+  val url_simulator = "http://localhost:9002/api"
   val url = url_main
   //val url = url_sandbox
+  //val url = url_simulator
 
   /* application information for YANDEX api */
   val app_id = "bee99a08160d4287aa0e468b9be7ed91" //client_id

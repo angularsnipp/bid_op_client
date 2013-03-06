@@ -8,5 +8,5 @@ create table user (
 );
 
 # --- !Downs
-
+ 
 drop table if exists user;

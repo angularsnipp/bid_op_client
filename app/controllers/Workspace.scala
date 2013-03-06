@@ -153,7 +153,7 @@ object Workspace extends Controller {
 
       //download XML report from Yandex Url
       val xml_node = API_yandex(c._login, c._token).getXML(reportUrl)
-      println("!!! XML: " + xml_node)
+      //println("!!! XML: " + xml_node)
 
       //post report to BID
       val postToBid = API_bid.postReports(

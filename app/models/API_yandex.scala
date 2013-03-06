@@ -35,11 +35,7 @@ case class API_yandex(
   /* PingAPI */
   def pingAPI: Boolean = {
     val response = post("PingAPI")
-
-    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
-      case 1 => true
-      case _ => false
-    }
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
   }
 
   /* GetCampaignsList */
@@ -99,19 +95,13 @@ case class API_yandex(
   def deleteReport(reportID: Int): Boolean = {
     val response = post("DeleteReport", Json.toJson(reportID))
 
-    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
-      case 1 => true
-      case _ => false
-    }
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
   }
 
   /* UpdatePrices */
   def updatePrice(phrasepriceInfo: List[PhrasePriceInfo]): Boolean = {
     val response = post("UpdatePrices", toJson[List[PhrasePriceInfo]](phrasepriceInfo))
 
-    (response.json \ ("data")).asOpt[Int].getOrElse(false) match {
-      case 1 => true
-      case _ => false
-    }
+    (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
   }
 }
