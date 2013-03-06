@@ -28,7 +28,9 @@ object User extends Function2[String, String, User] {
    */
   def findAll: Seq[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user").as(User.simple *)
+      SQL("""
+          select * from "user"
+          """).as(User.simple *)
     }
   }
 
@@ -49,7 +51,7 @@ object User extends Function2[String, String, User] {
     DB.withConnection { implicit connection =>
       SQL(
         """
-    		  select * from user where 
+    		  select * from "user" where 
     		  name = {name} and password = {password}
         """).on(
           'name -> user.name,
@@ -69,7 +71,7 @@ object User extends Function2[String, String, User] {
         DB.withConnection { implicit connection =>
           SQL(
             """
-        		  insert into user values (
+        		  insert into "user" values (
         		  {name}, {password} )
           """).on(
               'name -> user.name,
@@ -84,7 +86,7 @@ object User extends Function2[String, String, User] {
   def truncate: Boolean = {
     DB.withConnection(implicit connection =>
       SQL("""
-    		  truncate table user
+    		  truncate table "user"
           """).execute())
   }
 }
@@ -95,5 +97,5 @@ object User extends Function2[String, String, User] {
  */
 /*
  truncate table user;
-    		  truncate table play_evolutions
+ truncate table play_evolutions
  */
