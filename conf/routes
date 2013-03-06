@@ -9,6 +9,10 @@ GET     /about                 					controllers.Application.about
 GET     /contact               					controllers.Application.contact
 GET     /help                  					controllers.Application.help
 
+GET     /admin                           		controllers.Application.admin
+GET 	/startJobs 								controllers.Application.startJobs
+GET 	/stopJobs 								controllers.Application.stopJobs
+
 # Authentication
 GET     /login                      			controllers.Auth.login
 GET     /register                     			controllers.Auth.register
