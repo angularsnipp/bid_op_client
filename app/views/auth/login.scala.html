@@ -36,25 +36,6 @@
             <p align="center">
                 <button type="submit" class="btn btn-large btn-primary" id="loginbutton">Login</button>
             </p>	
-    	}
-        
-		<p align="center" style="color: transparent;">
-            <input type="button" id="cleardb" value="Clear_DB">            
-        </p>
-      
-    </div> 
-		
-	@** javascripts ***********************************************************************************@	
-	<script type="text/javascript">        
-        	$('#cleardb').click(function() {        		
-        		$.ajax({
-        			type: 'GET',
-        			url: "@routes.Workspace.clearDB",
-        			dataType: 'json',
-        			data: {},
-        			success: function() {}
-        		});
-        	})
-    </script>
-	@** javascripts ***********************************************************************************@	
+    	}     
+    </div> 		
 }

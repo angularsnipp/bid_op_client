@@ -16,7 +16,7 @@ import org.quartz._
 import org.quartz.impl.StdSchedulerFactory
 
 object Scheduler {
-  
+
   val scheduler = StdSchedulerFactory.getDefaultScheduler()
 
   val jKey = JobKey.jobKey("job")
@@ -29,9 +29,9 @@ object Scheduler {
     println("================== SHEDULER start ==================")
 
     // define the job and tie it to our executeBlock class
-    val job = JobBuilder.newJob(classOf[executeBlock]).withIdentity(jKey).build()
+    val job = JobBuilder.newJob(classOf[CampaignPerformanceReport]).withIdentity(jKey).build()
 
-    // Trigger the job to run now, and then repeat every 10 seconds
+    // Trigger the job to run AT some time t, and then repeat every k seconds
     val trigger = TriggerBuilder.newTrigger()
       .withIdentity(tKey)
       .startNow()
@@ -60,13 +60,21 @@ object Scheduler {
   def isInStandbyMode: Boolean = scheduler.isInStandbyMode()
 }
 
-class executeBlock extends Job {
+class CampaignPerformanceReport extends Job {
   def execute(jec: JobExecutionContext) {
-    println("------------------ START Job ------------------")
-    println("------------------ END Job ------------------")
+    println("-------- START Job ----- CampaignPerformance ------------------")
+   
+    println("-------- END Job -----  CampaignPerformance ------------------")
   }
-  
 }
+
+class BannerPhrasePerformanceReport extends Job {
+  def execute(jec: JobExecutionContext) {
+    println("-------- START Job ----- BannerPhrasePerformance ------------------")
+    println("-------- END Job ----- BannerPhrasePerformance ------------------")
+  }
+}
+
   /*
 
   /* The main plan of scheduler

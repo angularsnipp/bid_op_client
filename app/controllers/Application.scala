@@ -64,4 +64,24 @@ object Application extends Controller with Secured {
         }
       } getOrElse { Redirect(routes.Application.home) }
   }
+  
+  def clearDB = IsAuthenticated {
+    user =>
+      implicit request => user map { u =>
+        u.name match {
+          case "krisp0" =>
+            if (models.API_bid.clearDB)
+              println("!!! BID DB is CLEAR !!!")
+            else
+              println("??? FAIL ---> BID DB is NOT CLEAR ???")
+
+            if (models.User.truncate)
+              println("!!! CLIENT DB is CLEAR !!!")
+            else
+              println("??? FAIL ---> CLIENT DB is NOT CLEAR ???")
+            Ok
+          case _ => Redirect(routes.Application.home)
+        }
+      } getOrElse { Redirect(routes.Application.home) }
+  }
 }

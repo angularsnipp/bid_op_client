@@ -201,18 +201,4 @@ object Workspace extends Controller {
       } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???"); BadRequest
     }
   }
-
-  def clearDB = Action {
-    if (API_bid.clearDB)
-      println("!!! BID DB is CLEAR !!!")
-    else
-      println("??? FAIL ---> BID DB is NOT CLEAR ???")
-
-    if (User.truncate)
-      println("!!! CLIENT DB is CLEAR !!!")
-    else
-      println("??? FAIL ---> CLIENT DB is NOT CLEAR ???")
-    Ok
-  }
-
 }
