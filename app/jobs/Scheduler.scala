@@ -19,8 +19,10 @@ object Scheduler {
 
   val scheduler = StdSchedulerFactory.getDefaultScheduler()
 
-  val jKey = JobKey.jobKey("job")
-  val tKey = TriggerKey.triggerKey("trigger")
+  val jKeyCP = JobKey.jobKey("jobCP")
+  val tKeyCP = TriggerKey.triggerKey("triggerCP")
+  val jKeyBPP = JobKey.jobKey("jobBPP")
+  val tKeyBPP = TriggerKey.triggerKey("triggerBPP")
 
   def start = {
     scheduler.clear() //remove all jobs and triggers
@@ -28,21 +30,39 @@ object Scheduler {
 
     println("================== SHEDULER start ==================")
 
-    // define the job and tie it to our executeBlock class
-    val job = JobBuilder.newJob(classOf[CampaignPerformanceReport]).withIdentity(jKey).build()
+    /** CampaignPerformance **/
+    // define the job and tie it to our CampaignPerformanceReport class
+    val jobCP = JobBuilder.newJob(classOf[CampaignPerformanceReport]).withIdentity(jKeyCP).build()
 
     // Trigger the job to run AT some time t, and then repeat every k seconds
-    val trigger = TriggerBuilder.newTrigger()
-      .withIdentity(tKey)
+    val triggerCP = TriggerBuilder.newTrigger()
+      .withIdentity(tKeyCP)
       .startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
-          .withIntervalInSeconds(30)
+          .withIntervalInMinutes(15)
           .repeatForever())
       .build()
 
     // Tell quartz to schedule the job using our trigger
-    println(scheduler.scheduleJob(job, trigger))
+    println(scheduler.scheduleJob(jobCP, triggerCP))
+
+    /** BannerPhrasePerformance **/
+    // define the job and tie it to our executeBlock class
+    val jobBPP = JobBuilder.newJob(classOf[BannerPhrasePerformanceReport]).withIdentity(jKeyBPP).build()
+
+    // Trigger the job to run AT some time t, and then repeat every k seconds
+    val triggerBPP = TriggerBuilder.newTrigger()
+      .withIdentity(tKeyBPP)
+      .startNow()
+      .withSchedule(
+        SimpleScheduleBuilder.simpleSchedule()
+          .withIntervalInHours(24)
+          .repeatForever())
+      .build()
+
+    // Tell quartz to schedule the job using our trigger
+    println(scheduler.scheduleJob(jobBPP, triggerBPP))
 
   }
 
@@ -69,16 +89,16 @@ class CampaignPerformanceReport extends Job {
     val cl = API_bid.getCampaigns(u, n).get
 
     val res = cl map { c =>
-      if (get_post_Stats(u, n, c, jec.getFireTime()))
-        println("!!! SUCCESS - CampaignPerformance for " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
+      if (get_post_CP(u, n, c, jec.getFireTime()))
+        println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
       else
-        println("??? FAILED... - CampaignPerformance for " + c.network_campaign_id + ", " + jec.getFireTime() + " ???")
+        println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " ???")
     }
 
     println("-------- END Job -----  CampaignPerformance ------------------")
   }
 
-  def get_post_Stats(u: User, n: String, c: Campaign, d: Date) = {
+  def get_post_CP(u: User, n: String, c: Campaign, d: Date) = {
     val login = c._login
     val token = c._token
     val cID = c.network_campaign_id
@@ -96,8 +116,72 @@ class CampaignPerformanceReport extends Job {
 class BannerPhrasePerformanceReport extends Job {
   def execute(jec: JobExecutionContext) {
     println("-------- START Job ----- BannerPhrasePerformance ------------------")
+
+    val u = User.findByName("krisp0").get
+    val n = "Yandex"
+    val cl = API_bid.getCampaigns(u, n).get
+
+    cl map { c =>
+      get_post_BPP(u, n, c, jec.getFireTime())
+      println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
+    }
+
     println("-------- END Job ----- BannerPhrasePerformance ------------------")
   }
+
+  def get_post_BPP(u: User, n: String, c: Campaign, d: Date) = {
+    val login = c._login
+    val token = c._token
+    val cID = c.network_campaign_id
+
+    //create Report on Yandex server
+    val newReportID = API_yandex(login, token).createNewReport(
+      campaignID = cID.toInt,
+      start_date = d,
+      end_date = d)
+
+    newReportID map { id =>
+
+      def getUrl: Option[String] = {
+        val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
+        reportInfo_List map { ril =>
+          val reportInfo = ril.filter(_.ReportID == id).head
+          reportInfo.StatusReport match {
+            case "Pending" => {
+              Thread.sleep(1000)
+              println("!!!!!! PENDING !!!!!");
+              getUrl
+            }
+            case "Done" => {
+              println("!!!!!! DONE !!!!!")
+              reportInfo.Url
+            }
+          }
+        } getOrElse (None)
+      }
+
+      //Get current report Url 
+      getUrl map { reportUrl =>
+        //download XML report from Yandex Url
+        val xml_node = API_yandex(login, token).getXML(reportUrl)
+        println(xml_node)
+        //post report to BID
+        val postToBid = API_bid.postReports(u, n, cID, xml_node)
+
+        if (postToBid.isDefined)
+          println("!!! Report is POSTED to BID !!!")
+        else
+          println("??? Report is NOT POSTED to BID ???")
+
+        //remove current report from Yandex Server
+        if (API_yandex(login, token).deleteReport(newReportID.get))
+          println("!!! Report is DELETED from Yandex!!!")
+        else
+          println("??? Report is NOT DELETED from Yandex ???")
+      } getOrElse println("??? FAILED... getting report url ???")
+    }
+  } getOrElse println("??? FAILED... report is NOT created ???")
+
 }
 
   /*
