@@ -37,7 +37,7 @@ object Scheduler {
       .startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
-          .withIntervalInSeconds(1)
+          .withIntervalInSeconds(30)
           .repeatForever())
       .build()
 
@@ -63,8 +63,33 @@ object Scheduler {
 class CampaignPerformanceReport extends Job {
   def execute(jec: JobExecutionContext) {
     println("-------- START Job ----- CampaignPerformance ------------------")
-   
+
+    val u = User.findByName("krisp0").get
+    val n = "Yandex"
+    val cl = API_bid.getCampaigns(u, n).get
+
+    val res = cl map { c =>
+      if (get_post_Stats(u, n, c, jec.getFireTime()))
+        println("!!! SUCCESS - CampaignPerformance for " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
+      else
+        println("??? FAILED... - CampaignPerformance for " + c.network_campaign_id + ", " + jec.getFireTime() + " ???")
+    }
+
     println("-------- END Job -----  CampaignPerformance ------------------")
+  }
+
+  def get_post_Stats(u: User, n: String, c: Campaign, d: Date) = {
+    val login = c._login
+    val token = c._token
+    val cID = c.network_campaign_id
+
+    /* LIMIT = 100 in the day!!! */
+    val (statItem_List, json_stat) = API_yandex(login, token).getSummaryStat(List(cID.toInt), d, d)
+    if (statItem_List.isDefined) {
+      val dt = new DateTime(d)
+      val performance = API_bid.postStats(u, n, cID, Performance._apply(dt.minusSeconds(dt.getSecondOfDay()), dt, statItem_List.get))
+      if (performance.isDefined) true else false
+    } else false
   }
 }
 
