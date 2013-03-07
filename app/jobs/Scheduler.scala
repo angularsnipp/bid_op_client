@@ -17,6 +17,8 @@ import org.quartz.impl.StdSchedulerFactory
 
 object Scheduler {
 
+  val nMinutes = 15
+
   val scheduler = StdSchedulerFactory.getDefaultScheduler()
 
   val jKeyCP = JobKey.jobKey("jobCP")
@@ -28,8 +30,18 @@ object Scheduler {
     scheduler.clear() //remove all jobs and triggers
     scheduler.start()
 
-    println("================== SHEDULER start ==================")
+    val now = new DateTime()
+    val startCP = now
+      .minusMillis(now.getMillisOfDay())
+      .plusMinutes(nMinutes * (now.getMinuteOfDay() / nMinutes + 1) - 1) //multiple to "nMinutes" minutes
 
+    val startBPP = now
+      .minusMillis(now.getMillisOfDay())
+      .plusDays(1) //next day in 00:00
+
+    println("================== SHEDULER start ==================")
+    println(startCP)
+    println(startBPP)
     /** CampaignPerformance **/
     // define the job and tie it to our CampaignPerformanceReport class
     val jobCP = JobBuilder.newJob(classOf[CampaignPerformanceReport]).withIdentity(jKeyCP).build()
@@ -37,10 +49,10 @@ object Scheduler {
     // Trigger the job to run AT some time t, and then repeat every k seconds
     val triggerCP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyCP)
-      .startNow()
+      .startAt(startCP.toDate())
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
-          .withIntervalInMinutes(15)
+          .withIntervalInMinutes(nMinutes)
           .repeatForever())
       .build()
 
@@ -54,7 +66,7 @@ object Scheduler {
     // Trigger the job to run AT some time t, and then repeat every k seconds
     val triggerBPP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyBPP)
-      .startNow()
+      .startAt(startBPP.toDate())
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInHours(24)
@@ -88,11 +100,13 @@ class CampaignPerformanceReport extends Job {
     val n = "Yandex"
     val cl = API_bid.getCampaigns(u, n).get
 
+    val now = jec.getFireTime()
+
     val res = cl map { c =>
-      if (get_post_CP(u, n, c, jec.getFireTime()))
-        println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
+      if (get_post_CP(u, n, c, now))
+        println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
       else
-        println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " ???")
+        println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " ???")
     }
 
     println("-------- END Job -----  CampaignPerformance ------------------")
@@ -107,7 +121,7 @@ class CampaignPerformanceReport extends Job {
     val (statItem_List, json_stat) = API_yandex(login, token).getSummaryStat(List(cID.toInt), d, d)
     if (statItem_List.isDefined) {
       val dt = new DateTime(d)
-      val performance = API_bid.postStats(u, n, cID, Performance._apply(dt.minusSeconds(dt.getSecondOfDay()), dt, statItem_List.get))
+      val performance = API_bid.postStats(u, n, cID, Performance._apply(dt.minusMillis(dt.getMillisOfDay()), dt, statItem_List.get))
       if (performance.isDefined) true else false
     } else false
   }
@@ -121,9 +135,11 @@ class BannerPhrasePerformanceReport extends Job {
     val n = "Yandex"
     val cl = API_bid.getCampaigns(u, n).get
 
+    val now = new DateTime(jec.getFireTime()).minusDays(1).toDate()
+
     cl map { c =>
-      get_post_BPP(u, n, c, jec.getFireTime())
-      println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + jec.getFireTime() + " !!!")
+      get_post_BPP(u, n, c, now)
+      println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
     }
 
     println("-------- END Job ----- BannerPhrasePerformance ------------------")
