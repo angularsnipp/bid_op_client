@@ -12,7 +12,11 @@
 	}
 </div>
 
-<p align="center">
-	<a href="/clearDB" class="btn btn-small" style="margin-top: 30em;">Clear_DB</a>
+<p align="center" style="margin-top: 20em;">
+	<a href="/getUsers" class="btn btn-large">getUSERS</a>
+	
+	@if(!isStarted){
+		<a href="/clearDB" class="btn btn-small">Clear_DB</a>
+	}
 </p>	
 }

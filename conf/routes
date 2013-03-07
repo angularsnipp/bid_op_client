@@ -12,6 +12,7 @@ GET     /help                  					controllers.Application.help
 GET     /admin                           		controllers.Application.admin
 GET 	/startJobs 								controllers.Application.startJobs
 GET 	/stopJobs 								controllers.Application.stopJobs
+GET 	/getUsers 								controllers.Application.getUsers
 GET 	/clearDB 								controllers.Application.clearDB
 
 # Authentication
