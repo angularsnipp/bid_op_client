@@ -63,6 +63,7 @@ case class API_yandex(
           EndDate = Yandex.date_fmt.format(end_date))))
 
     (fromJson[List[StatItem]](response.json \ ("data")), response.json)
+
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/

@@ -97,7 +97,7 @@ object Workspace extends Controller {
           performance = Performance._apply(
             sd = new DateTime(start_date),
             ed = new DateTime(end_date),
-            si = statItem_List.get.head))
+            si = statItem_List.get))
         if (res_bid.isDefined)
           println("!!! Stats is POSTED to BID !!!")
         else

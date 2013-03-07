@@ -85,9 +85,9 @@ object User extends Function2[String, String, User] {
   //Clear User table
   def truncate: Boolean = {
     DB.withConnection(implicit connection =>
-      SQL("""
+      !SQL("""
     		  truncate table "user"
-          """).execute())
+          """).execute())    
   }
 }
 
