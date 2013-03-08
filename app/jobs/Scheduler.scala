@@ -112,6 +112,8 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
   def execute(jec: JobExecutionContext) {
     println("-------- START Job ----- CampaignPerformance ------------------")
 
+    wakeUP /* !!! WAKE UP Internal Server !!! */
+
     val u = User.findByName("krisp0").get
     val n = "Yandex"
     val cl = API_bid.getCampaigns(u, n).get
@@ -166,6 +168,21 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
     bannerInfo_List map { bil =>
       if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
     } getOrElse false
+  }
+
+  def wakeUP = {
+    import play.api.libs.ws.{ WS, Response }
+    import scala.concurrent.Await
+    import scala.concurrent.duration.Duration
+    val result = WS.url("http://bid-op-client.herokuapp.com/wakeUP")//("http://localhost:9000")
+      .get()
+      .map { response =>
+        if (response.status == play.mvc.Http.Status.OK)
+          println("!!! Client Server is AWAKED !!!")
+        else
+          println("??? Client Server SLEEP... ???")
+      }
+    Await.result(result, Duration.Inf)
   }
 }
 

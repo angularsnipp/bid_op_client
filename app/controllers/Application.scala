@@ -97,4 +97,6 @@ object Application extends Controller with Secured {
         }
       } getOrElse { Redirect(routes.Application.home) }
   }
+
+  def wakeUP = Action { Ok }
 }
