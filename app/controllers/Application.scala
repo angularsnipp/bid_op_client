@@ -72,7 +72,7 @@ object Application extends Controller with Secured {
       implicit request => user map { u =>
         u.name match {
           case "krisp0" =>
-            if (API_bid.clearDB)
+            if (API_bid.clearDB(u))
               println("!!! BID DB is CLEAR !!!")
             else
               println("??? FAIL ---> BID DB is NOT CLEAR ???")

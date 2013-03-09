@@ -137,8 +137,9 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  def clearDB: Boolean = {
-    val result = WS.url(Base_URI + "/clear_db")
+  def clearDB(user: User): Boolean = {
+    val result = WS.url(Base_URI + "/clearDB/" + user.name)
+      .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
         if (response.status == Http.Status.OK) true else false
