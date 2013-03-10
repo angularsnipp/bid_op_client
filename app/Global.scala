@@ -16,10 +16,16 @@ object Global extends GlobalSettings {
     }
 
     Logger.info("!!! Application has STARTED...")
+    
+    //Start Scheduler
+    jobs.Scheduler.start  
   }
 
   override def onStop(app: Application) {
     Logger.info("!!! Application has FINISHED...")
+    
+    //Shutdown scheduler
+    jobs.Scheduler.shutdown
   }
 
   def getSession(adapter: DatabaseAdapter, app: Application) = Session.create(DB.getConnection()(app), adapter)

@@ -114,29 +114,30 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
 
     wakeUP /* !!! WAKE UP Internal Server !!! */
 
-    val u = User.findByName("krisp0").get
-    val n = "Yandex"
-    val cl = API_bid.getCampaigns(u, n).get
+    User.findByName("krisp0") map { u =>
+      val n = "Yandex"
+      val cl = API_bid.getCampaigns(u, n).get
 
-    val now = jec.getFireTime()
+      val now = jec.getFireTime()
 
-    //CampaignPerformance
-    cl map { c =>
-      if (get_post_CP(u, n, c, now))
-        println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
-      else
-        println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " ???")
-    }
+      //CampaignPerformance
+      cl map { c =>
+        if (get_post_CP(u, n, c, now))
+          println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+        else
+          println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " ???")
+      }
 
-    //ActualBids and NetAdvisedBids
-    cl map { c =>
-      if (get_post_ANA(u, n, c))
-        println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " !!!")
-      else
-        println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " ???")
-    }
+      //ActualBids and NetAdvisedBids
+      cl map { c =>
+        if (get_post_ANA(u, n, c))
+          println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+        else
+          println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " ???")
+      }
 
-    println("-------- END Job -----  CampaignPerformance ------------------")
+      println("-------- END Job -----  CampaignPerformance ------------------")
+    } getOrElse println("User 'krisp0' not found")
   }
 
   /**
@@ -174,7 +175,7 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
     import play.api.libs.ws.{ WS, Response }
     import scala.concurrent.Await
     import scala.concurrent.duration.Duration
-    val result = WS.url("http://bid-op-client.herokuapp.com/wakeUP")//("http://localhost:9000")
+    val result = WS.url("http://bid-op-client.herokuapp.com/wakeUP") //("http://localhost:9000")
       .get()
       .map { response =>
         if (response.status == play.mvc.Http.Status.OK)
@@ -198,18 +199,19 @@ class BannerPhrasePerformanceReport extends Job {
   def execute(jec: JobExecutionContext) {
     println("-------- START Job ----- BannerPhrasePerformance ------------------")
 
-    val u = User.findByName("krisp0").get
-    val n = "Yandex"
-    val cl = API_bid.getCampaigns(u, n).get
+    User.findByName("krisp0") map { u =>
+      val n = "Yandex"
+      val cl = API_bid.getCampaigns(u, n).get
 
-    val now = new DateTime(jec.getFireTime()).minusDays(1).toDate()
+      val now = new DateTime(jec.getFireTime()).minusDays(1).toDate()
 
-    cl map { c =>
-      get_post_BPP(u, n, c, now)
-      println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
-    }
+      cl map { c =>
+        get_post_BPP(u, n, c, now)
+        println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+      }
 
-    println("-------- END Job ----- BannerPhrasePerformance ------------------")
+      println("-------- END Job ----- BannerPhrasePerformance ------------------")
+    } getOrElse println("User 'krisp0' not found")
   }
 
   /**
