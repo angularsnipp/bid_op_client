@@ -90,7 +90,7 @@ object Workspace extends Controller {
         println("!!! SUCCESS getStats !!!")
 
         //Post Statistics to BID
-        val res_bid = API_bid.postStats(
+        val res_bid = API_bid.postCampaignStats(
           user = User.findByName((data \ ("user")).as[String]).get,
           net = (data \ ("net")).as[String],
           id = c.network_campaign_id,

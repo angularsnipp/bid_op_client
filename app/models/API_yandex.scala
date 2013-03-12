@@ -66,6 +66,20 @@ case class API_yandex(
 
   }
 
+  /*-- detailed BannerPhrases report (DURING the day)--*/
+  /* GetBannersStat */
+  def getBannersStat(campaignID: Int, start_date: Date, end_date: Date): (Option[GetBannersStatResponse], JsValue) = {
+    val response = post(
+      "GetBannersStat",
+      toJson[NewReportInfo](
+        NewReportInfo(
+          CampaignID = campaignID,
+          StartDate = Yandex.date_fmt.format(start_date),
+          EndDate = Yandex.date_fmt.format(end_date))))
+
+    (fromJson[GetBannersStatResponse](response.json \ ("data")), response.json)
+  }
+
   /*-- detailed BannerPhrases report (at the END of the day)--*/
   /* CreateNewReport */
   def createNewReport(campaignID: Int, start_date: Date, end_date: Date): Option[Int] = {

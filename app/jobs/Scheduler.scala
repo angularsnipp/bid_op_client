@@ -153,7 +153,7 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
 
     // post StatItem list to BID
     statItem_List map { sil =>
-      val performance = API_bid.postStats(u, n, c.network_campaign_id, Performance._apply(dt.minusMinutes(1), dt, sil))
+      val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(dt.minusMinutes(1), dt, sil))
       if (performance.isDefined) true else false
     } getOrElse false
   }

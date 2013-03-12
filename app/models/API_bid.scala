@@ -90,13 +90,25 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
-  /*DURING the day*/
-  def postStats(user: User, net: String, id: String, performance: Performance): Option[Performance] = {
+  /*DURING the day - Campaigns Stats*/
+  def postCampaignStats(user: User, net: String, id: String, performance: Performance): Option[Performance] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats")
       .withHeaders(("password" -> user.password))
       .post[JsValue](toJson[Performance](performance))
       .map { response =>
         if (response.status == Http.Status.CREATED) fromJson[Performance](response.json) else None
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+  
+  /*DURING the day - BannerPhrase Stats*/
+  def postBannersStats(user: User, net: String, id: String, getBannersStatResponse: GetBannersStatResponse): Option[GetBannersStatResponse] = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannersstats")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](toJson[GetBannersStatResponse](getBannersStatResponse))
+      .map { response =>
+        if (response.status == Http.Status.CREATED) fromJson[GetBannersStatResponse](response.json) else None
       }
 
     Await.result(result, Duration.Inf)
