@@ -485,4 +485,36 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
       res.last.AutoBroker must_== (Some("Yes"))
     }
   }
+
+  /*------------- GetBannersStatResponse ---------------------------------------------------*/
+  "fromJson - GetBannersStatResponse" should {
+    sequential
+
+    "take wrong data null" in {
+      val data = JsNull
+      fromJson[GetBannersStatResponse](data) must_== (None)
+    }
+
+    "take TRUE data" in {
+
+      val date = Yandex.date_fmt.parse("2013-01-01")
+
+      val file_name = "test/json_api/getBannersStatResponse.json"
+      val data = io.Source.fromFile(file_name, "utf-8").getLines.mkString
+
+      val Some(res) = fromJson[GetBannersStatResponse](Json.parse(data))
+
+      res.CampaignID must_== (10)
+      res.StartDate must_== ("2013-01-01")
+      res.EndDate must_== ("2013-01-01")
+      res.Stat.length must_== (3)
+      res.Stat.head.BannerID must_== (11)
+      res.Stat.head.Phrase must_== ("some")
+      res.Stat.head.PhraseID must_== (1)
+      res.Stat.head.Clicks must_== (50)
+      res.Stat.head.Shows must_== (550)
+      res.Stat.head.Sum must_== (12.3)
+      res.Stat.head.StatDate must_== (new DateTime(date))
+    }
+  }
 }
