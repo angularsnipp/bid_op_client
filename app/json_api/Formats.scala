@@ -19,6 +19,9 @@ object Reads { //-------------------------- fromJson ---------------------------
   implicit lazy val campaign = Json.reads[Campaign]
   implicit lazy val performance = Json.reads[Performance]
   implicit lazy val phrasePriceInfo = Json.reads[PhrasePriceInfo]
+  
+  implicit lazy val bannersStatItem = Json.reads[BannersStatItem]
+  implicit lazy val getBannersStatResponse = Json.reads[GetBannersStatResponse]
 }
 
 object Writes { //---------------------- toJson -----------------------------------
@@ -36,6 +39,9 @@ object Writes { //---------------------- toJson --------------------------------
   implicit lazy val getBannersInfo = Json.writes[GetBannersInfo]
   implicit lazy val getSummaryStatRequest = Json.writes[GetSummaryStatRequest]
   implicit lazy val newReportInfo = Json.writes[NewReportInfo]
+  
+  implicit lazy val bannersStatItem = Json.writes[BannersStatItem]
+  implicit lazy val getBannersStatResponse = Json.writes[GetBannersStatResponse]
 }
 
 /*object Formats {

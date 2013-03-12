@@ -33,7 +33,9 @@ object Convert {
     "Campaign" -> "models.Campaign",
     "List[Campaign]" -> "scala.collection.immutable.List[models.Campaign]",
 
-    "Performance" -> "models.Performance")
+    "Performance" -> "models.Performance",
+
+    "GetBannersStatResponse" -> "models.GetBannersStatResponse")
 
   def fromJson[T](data: JsValue)(implicit mf: Manifest[T]): Option[T] = {
     import Reads._
@@ -77,6 +79,10 @@ object Convert {
           Json.fromJson[ReportInfo](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
         case "List[ReportInfo]" =>
           Json.fromJson[List[ReportInfo]](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+
+        case "GetBannersStatResponse" => //BannerPhrases Performance during the day (alternative to XMLreport)
+          Json.fromJson[GetBannersStatResponse](data) map (s => Some(s.asInstanceOf[T])) recoverTotal (e => None)
+
       }
     } getOrElse (None)
   }
@@ -133,6 +139,8 @@ object Convert {
         case "List[PhrasePriceInfo]" =>
           Json.toJson[List[PhrasePriceInfo]](data.asInstanceOf[List[PhrasePriceInfo]])
 
+        case "GetBannersStatResponse" => //BannerPhrases Performance during the day (alternative to XMLreport)
+          Json.toJson[GetBannersStatResponse](data.asInstanceOf[GetBannersStatResponse])
       }
     } getOrElse (JsNull)
   }
