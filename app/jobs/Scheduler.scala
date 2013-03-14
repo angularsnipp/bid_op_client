@@ -127,19 +127,22 @@ class ShortScheduler extends Job {
         cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
 
       cl map { c =>
-
         //CampaignPerformance
         if (get_post_CP(u, n, c, cur_ft, prev_ft))
           println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
         else
           println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+      }
 
+      cl map { c =>
         //BannersPerformance
         if (get_post_BP(u, n, c, cur_ft, prev_ft))
           println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
         else
           println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+      }
 
+      cl map { c =>
         //ActualBids and NetAdvisedBids
         if (get_post_ANA(u, n, c))
           println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
