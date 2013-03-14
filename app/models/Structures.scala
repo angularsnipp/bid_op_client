@@ -155,10 +155,10 @@ case class GetBannersStatResponse(
   val Stat: List[BannersStatItem])
 
 case class BannersStatItem(
-  val StatDate: DateTime = new DateTime,
+  //val StatDate: DateTime = new DateTime,
   val BannerID: Int = 0,
-  val PhraseID: Int = 0,
-  val RubricID: Int = 0,
+  val PhraseID: Option[Int] = Some(0),
+  //val RubricID: Int = 0,
   val Phrase: String = "",
   val Sum: Double = 0,
   val SumSearch: Double = 0,

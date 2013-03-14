@@ -361,9 +361,8 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       val date = Yandex.date_fmt.parse("2013-01-01")
 
       val bsi = BannersStatItem(
-        StatDate = new DateTime(date),
         BannerID = 11,
-        PhraseID = 1,
+        PhraseID = Some(1),
         Phrase = "some",
         Sum = 12.3,
         Clicks = 50,
@@ -380,7 +379,7 @@ class Convert_toJsonSpec extends Specification with AllExpectations {
       res \ "CampaignID" must_== (JsNumber(10))
       res \ "StartDate" must_== (JsString("2013-01-01"))
       res \ "Stat" \\ "BannerID" must_== (List(JsNumber(11), JsNumber(11)))
-      res \ "Stat" \\ "PhraseID" must_== (List(JsNumber(1), JsNumber(1)))
+      //res \ "Stat" \\ "PhraseID" must_== (List(JsNumber(1), JsNumber(1)))
       res \ "Stat" \\ "Phrase" must_== (List(JsString("some"), JsString("some")))
       res \ "Stat" \\ "Sum" must_== (List(JsNumber(12.3), JsNumber(12.3)))
     }

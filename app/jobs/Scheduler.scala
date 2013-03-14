@@ -38,26 +38,26 @@ object Scheduler {
     scheduler.start()
 
     val now = new DateTime()
-    val startCP = now
+    val startSS = now //ShortScheduler
       .minusMillis(now.getMillisOfDay())
       .plusMinutes(nMinutes * (now.getMinuteOfDay() / nMinutes + 1)) //multiple to "nMinutes" minutes
 
-    val startBPP = now
+    val startLS = now //LongScheduler
       .minusMillis(now.getMillisOfDay())
       .plusDays(1) //next day in 00:00
 
     println("================== SHEDULER start ==================")
-    println(startCP)
-    println(startBPP)
+    println(startSS)
+    println(startLS)
 
     /** CampaignPerformance **/
     // define the job and tie it to our CampaignPerformanceReport class
-    val jobCP = JobBuilder.newJob(classOf[CampaignPerformanceReport_and_ActualNetAdvisedBids]).withIdentity(jKeyCP).build()
+    val jobCP = JobBuilder.newJob(classOf[ShortScheduler]).withIdentity(jKeyCP).build()
 
     // Trigger the job to run at some time "startCP", and then repeat every "nMinutes" minutes
     val triggerCP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyCP)
-      .startAt(startCP.toDate())
+      .startAt(startSS.toDate())
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInMinutes(nMinutes)
@@ -69,12 +69,12 @@ object Scheduler {
 
     /** BannerPhrasePerformance **/
     // define the job and tie it to our BannerPhrasePerformanceReport class
-    val jobBPP = JobBuilder.newJob(classOf[BannerPhrasePerformanceReport]).withIdentity(jKeyBPP).build()
+    val jobBPP = JobBuilder.newJob(classOf[LongScheduler]).withIdentity(jKeyBPP).build()
 
     // Trigger the job to run at some time "startBPP", and then repeat every 24 hours
     val triggerBPP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyBPP)
-      .startAt(startBPP.toDate())
+      .startAt(startLS.toDate())
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInHours(24)
@@ -101,10 +101,12 @@ object Scheduler {
 }
 
 /**
- * ----------------------------------------------------------------------------------------------
- * CampaignPerformanceReport_and_ActualNetAdvisedBids class
+ * --------------------------------------- SHORT Scheduler-------------------------------------------------------
+ * CampaignPerformanceReport
+ * BannersPerformanceReport
+ * ActualNetAdvisedBids
  */
-class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
+class ShortScheduler extends Job {
 
   /**
    * Jobs execution
@@ -118,22 +120,31 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
       val n = "Yandex"
       val cl = API_bid.getCampaigns(u, n).get
 
-      val now = jec.getFireTime()
+      val prev_ft = new DateTime(jec.getPreviousFireTime())
+      var cur_ft = new DateTime(jec.getFireTime())
 
-      //CampaignPerformance
+      if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
+        cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
+
       cl map { c =>
-        if (get_post_CP(u, n, c, now))
-          println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+
+        //CampaignPerformance
+        if (get_post_CP(u, n, c, cur_ft, prev_ft))
+          println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
         else
-          println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + now + " ???")
-      }
+          println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
 
-      //ActualBids and NetAdvisedBids
-      cl map { c =>
+        //BannersPerformance
+        if (get_post_BP(u, n, c, cur_ft, prev_ft))
+          println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+        else
+          println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+
+        //ActualBids and NetAdvisedBids
         if (get_post_ANA(u, n, c))
-          println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+          println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
         else
-          println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + now + " ???")
+          println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
       }
 
       println("-------- END Job -----  CampaignPerformance ------------------")
@@ -143,17 +154,32 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
   /**
    * CampaignPerformance
    */
-  def get_post_CP(u: User, n: String, c: Campaign, d: Date) = {
-    val dt = new DateTime(d)
+  def get_post_CP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime) = {
 
     /* LIMIT = 100 in the day!!! */
     // get StatItem list from Yandex
     val (statItem_List, json_stat) = API_yandex(c._login, c._token)
-      .getSummaryStat(List(c.network_campaign_id.toInt), dt.minusMinutes(1).toDate(), dt.toDate())
+      .getSummaryStat(List(c.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate())
 
     // post StatItem list to BID
     statItem_List map { sil =>
-      val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(dt.minusMinutes(1), dt, sil))
+      val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil))
+      if (performance.isDefined) true else false
+    } getOrElse false
+  }
+
+  /**
+   * BannersPerformance
+   */
+  def get_post_BP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime) = {
+
+    // get BannersStat from Yandex
+    val (bannersStat, json_stat) = API_yandex(c._login, c._token)
+      .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate())
+
+    // post StatItem list to BID
+    bannersStat map { bs =>
+      val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
       if (performance.isDefined) true else false
     } getOrElse false
   }
@@ -188,10 +214,10 @@ class CampaignPerformanceReport_and_ActualNetAdvisedBids extends Job {
 }
 
 /**
- * ----------------------------------------------------------------------------------------------
+ * ----------------------------------------- LONG Scheduler-----------------------------------------------------
  * BannerPhrasePerformanceReport
  */
-class BannerPhrasePerformanceReport extends Job {
+class LongScheduler extends Job {
 
   /**
    * Jobs execution
@@ -203,11 +229,12 @@ class BannerPhrasePerformanceReport extends Job {
       val n = "Yandex"
       val cl = API_bid.getCampaigns(u, n).get
 
-      val now = new DateTime(jec.getFireTime()).minusDays(1).toDate()
+      var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
+      cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
 
       cl map { c =>
-        get_post_BPP(u, n, c, now)
-        println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + now + " !!!")
+        get_post_BPP(u, n, c, cur_ft)
+        println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
       }
 
       println("-------- END Job ----- BannerPhrasePerformance ------------------")
@@ -217,13 +244,13 @@ class BannerPhrasePerformanceReport extends Job {
   /**
    * BannerPhrasePerformance
    */
-  def get_post_BPP(u: User, n: String, c: Campaign, d: Date) = {
+  def get_post_BPP(u: User, n: String, c: Campaign, cur_ft: DateTime) = {
     val login = c._login
     val token = c._token
     val cID = c.network_campaign_id
 
     //create Report on Yandex server
-    val newReportID = API_yandex(login, token).createNewReport(cID.toInt, d, d)
+    val newReportID = API_yandex(login, token).createNewReport(cID.toInt, cur_ft.toDate(), cur_ft.toDate())
 
     newReportID map { id =>
 
@@ -233,7 +260,7 @@ class BannerPhrasePerformanceReport extends Job {
           val reportInfo = ril.filter(_.ReportID == id).head
           reportInfo.StatusReport match {
             case "Pending" => {
-              Thread.sleep(1000)
+              Thread.sleep(5000)
               println("!!!!!! PENDING !!!!!");
               getUrl
             }

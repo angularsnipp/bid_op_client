@@ -101,14 +101,14 @@ object API_bid {
 
     Await.result(result, Duration.Inf)
   }
-  
+
   /*DURING the day - BannerPhrase Stats*/
-  def postBannersStats(user: User, net: String, id: String, getBannersStatResponse: GetBannersStatResponse): Option[GetBannersStatResponse] = {
+  def postBannersStats(user: User, net: String, id: String, getBannersStatResponse: GetBannersStatResponse, cur_dt: DateTime): Option[GetBannersStatResponse] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannersstats")
-      .withHeaders(("password" -> user.password))
+      .withHeaders(("password" -> user.password), ("current_datetime" -> iso_fmt.print(cur_dt)))
       .post[JsValue](toJson[GetBannersStatResponse](getBannersStatResponse))
       .map { response =>
-        if (response.status == Http.Status.CREATED) fromJson[GetBannersStatResponse](response.json) else None
+        if (response.status == Http.Status.CREATED) Some(getBannersStatResponse) else None
       }
 
     Await.result(result, Duration.Inf)
