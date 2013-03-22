@@ -46,10 +46,10 @@
 								<td class="center">@ci.Status.getOrElse("undefined")</td>								
 								<td class="center">
 									<a class="btn btn-info" id="@ci.CampaignID" 
-									onclick="addCampaign(@ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
+										onclick="addCampaign(@ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
 										<i class="icon-plus icon-white"></i>  
 										Add                                            
-									</a>
+									</a>									
 								</td>
 							</tr>												
 						}
@@ -65,7 +65,9 @@
 			
 			
 @** javascripts ***************************************************************@	
-	<script type="text/javascript">        
+
+	<script type="text/javascript">    
+				
         	function addCampaign(id,sd,db) {  
         		$.ajax({
         			type: 'POST',
@@ -81,10 +83,18 @@
         			}),
         			contentType:'application/json; charset=utf-8',
         			dataType : 'json',
-        			success: function() {}
-        		});        		
+        			success: function() {}       			
+        		});
+        		
+        		$('#'+id).addClass("disabled");
         	}
     </script>
 @** javascripts ***************************************************************@	
 			
 }
+
+@** $(document).ready(function() {
+				@{if(API_bid.getCampaign(user.get, net, ci.CampaignID.toString).isDefined)
+					$('#'+id).addClass("disabled");
+				}
+			} *@

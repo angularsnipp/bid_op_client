@@ -116,42 +116,48 @@ class ShortScheduler extends Job {
 
     wakeUP /* !!! WAKE UP Internal Server !!! */
 
-    User.findByName("krisp0") map { u =>
-      val n = "Yandex"
-      val cl = API_bid.getCampaigns(u, n).get
+    User.findAll match {
+      case Nil => println("Users not found")
+      case ul => ul map { u =>
+        
+        println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
+        
+        val n = "Yandex"
+        val cl = API_bid.getCampaigns(u, n).get
 
-      val prev_ft = new DateTime(jec.getPreviousFireTime())
-      var cur_ft = new DateTime(jec.getFireTime())
+        val prev_ft = new DateTime(jec.getPreviousFireTime())
+        var cur_ft = new DateTime(jec.getFireTime())
 
-      if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
-        cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
+        if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
+          cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
 
-      cl map { c =>
-        //CampaignPerformance
-        if (get_post_CP(u, n, c, cur_ft, prev_ft))
-          println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-        else
-          println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+        cl map { c =>
+          //CampaignPerformance
+          if (get_post_CP(u, n, c, cur_ft, prev_ft))
+            println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+          else
+            println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+        }
+
+        cl map { c =>
+          //BannersPerformance
+          if (get_post_BP(u, n, c, cur_ft, prev_ft))
+            println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+          else
+            println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+        }
+
+        cl map { c =>
+          //ActualBids and NetAdvisedBids
+          if (get_post_ANA(u, n, c))
+            println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+          else
+            println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+        }
+
+        println("-------- END Job -----  CampaignPerformance ------------------")
       }
-
-      cl map { c =>
-        //BannersPerformance
-        if (get_post_BP(u, n, c, cur_ft, prev_ft))
-          println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-        else
-          println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
-      }
-
-      cl map { c =>
-        //ActualBids and NetAdvisedBids
-        if (get_post_ANA(u, n, c))
-          println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-        else
-          println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
-      }
-
-      println("-------- END Job -----  CampaignPerformance ------------------")
-    } getOrElse println("User 'krisp0' not found")
+    }
   }
 
   /**
@@ -228,20 +234,26 @@ class LongScheduler extends Job {
   def execute(jec: JobExecutionContext) {
     println("-------- START Job ----- BannerPhrasePerformance ------------------")
 
-    User.findByName("krisp0") map { u =>
-      val n = "Yandex"
-      val cl = API_bid.getCampaigns(u, n).get
+    User.findAll match {
+      case Nil => println("User 'krisp0' not found")
+      case ul => ul map { u =>
+        
+        println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
+        
+        val n = "Yandex"
+        val cl = API_bid.getCampaigns(u, n).get
 
-      var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
-      cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
+        var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
+        cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
 
-      cl map { c =>
-        get_post_BPP(u, n, c, cur_ft)
-        println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+        cl map { c =>
+          get_post_BPP(u, n, c, cur_ft)
+          println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+        }
+
+        println("-------- END Job ----- BannerPhrasePerformance ------------------")
       }
-
-      println("-------- END Job ----- BannerPhrasePerformance ------------------")
-    } getOrElse println("User 'krisp0' not found")
+    }
   }
 
   /**

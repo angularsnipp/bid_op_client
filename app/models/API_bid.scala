@@ -73,7 +73,10 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) fromJson[List[Campaign]](response.json).get.headOption else None
+        if (response.status == Http.Status.OK)
+          fromJson[List[Campaign]](response.json).map(cl => cl.headOption).getOrElse(None)
+        else
+          None
       }
 
     Await.result(result, Duration.Inf)

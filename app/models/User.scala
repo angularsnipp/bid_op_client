@@ -26,7 +26,7 @@ object User extends Function2[String, String, User] {
   /**
    * Retrieve all users.
    */
-  def findAll: Seq[User] = {
+  def findAll: List[User] = {
     DB.withConnection { implicit connection =>
       SQL("""
           select * from "user"
