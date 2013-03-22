@@ -30,9 +30,9 @@
 							  <tr>
 								  <th>ID</th>
 								  <th>Login</th>
-								  <th>Token</th>
 								  <th>Date registered</th>
-								  <th>Rest</th>								  
+								  <th>Balance</th>
+								  <th>Status</th>								  
 								  <th>Actions</th>
 							  </tr>
 						  </thead>   
@@ -41,13 +41,13 @@
 							<tr>
 								<td>@ci.CampaignID</td>
 								<td class="center">@login</td>
-								<td class="center">@token</td>
 								<td class="center">@ci.StartDate</td>
-								<td class="center">@ci.Rest</td>								
+								<td class="center">@ci.Rest</td>
+								<td class="center">@ci.Status.getOrElse("undefined")</td>								
 								<td class="center">
 									<a class="btn btn-info" id="@ci.CampaignID" 
 									onclick="addCampaign(@ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
-										<i class="icon-edit icon-white"></i>  
+										<i class="icon-plus icon-white"></i>  
 										Add                                            
 									</a>
 								</td>
