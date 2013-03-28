@@ -5,12 +5,14 @@
 @import models._
 @import helper._
 @import org.joda.time.{DateTime, DateTimeUtils}
+@import scala.concurrent.{ Future, Await }
+@import scala.concurrent.duration.Duration
 
 @import play.api.libs.ws.WS
 
 @getCampaigns_yandex = @{
-	val cList:Option[List[ShortCampaignInfo]] = API_yandex(login,token).getCampaignsList;
-    cList.get    	
+	val cList:Future[Option[List[ShortCampaignInfo]]] = API_yandex(login,token).getCampaignsList;
+    Await.result(cList, Duration.Inf).get   	
 }
 
 @main_workspace(user, nav = net) {

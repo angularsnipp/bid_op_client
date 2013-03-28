@@ -4,6 +4,8 @@ import models._
 import common.Bid
 import play.api._
 import play.api.mvc._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.mvc.BodyParsers.parse
 import play.api.data.Forms._
 import play.api.libs.ws.WS
@@ -22,7 +24,7 @@ object Workspace extends Controller {
   /* ------------------ Actions ------------------ */
 
   def getBanners = Action(parse.json) { implicit request =>
-    {
+    Async {
       val data = request.body
       val user = User.findByName((data \ ("user")).as[String]).get
       val net = (data \ ("net")).as[String]
@@ -31,20 +33,23 @@ object Workspace extends Controller {
       val id = (data \ ("network_campaign_id")).as[String]
 
       // get BannersInfo from Yandex
-      val (bannerInfo_List, json_banners) = API_yandex(login, token).getBanners(List(id.toInt))
+      API_yandex(login, token)
+        .getBanners(List(id.toInt))
+        .map {
+          case (bannerInfo_List, json_banners) =>
+            if (bannerInfo_List.isDefined) {
+              println("!!! SUCCESS getBanners !!!")
 
-      if (bannerInfo_List.isDefined) {
-        println("!!! SUCCESS getBanners !!!")
+              // post BannersInfo to BID
+              if (API_bid.postBannerReports(user, net, id, bannerInfo_List.get))
+                println("!!! ActualBids and NetAdvisedBids is POSTED to BID !!!")
+              else
+                println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
 
-        // post BannersInfo to BID
-        if (API_bid.postBannerReports(user, net, id, bannerInfo_List.get))
-          println("!!! ActualBids and NetAdvisedBids is POSTED to BID !!!")
-        else
-          println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
-
-        //return List[BannerInfo] to client browser
-        Ok(toJson[List[BannerInfo]](bannerInfo_List.get))
-      } else println("??? FAILED getBanners ???"); BadRequest
+              //return List[BannerInfo] to client browser
+              Ok(toJson[List[BannerInfo]](bannerInfo_List.get))
+            } else println("??? FAILED getBanners ???"); BadRequest
+        }
     }
   }
 
@@ -70,7 +75,7 @@ object Workspace extends Controller {
   }
 
   def getStats = Action(parse.json) { implicit request =>
-    { //During the day!!!
+    Async { //During the day!!!
       val data = request.body
 
       val c = fromJson[Campaign](data \ ("camp")).get
@@ -81,35 +86,39 @@ object Workspace extends Controller {
       val end_date = sdf.parse((data \ ("endDate")).as[String]) //new DateTime()
 
       //Get Statistics from Yandex
-      val (statItem_List, json_stat) = API_yandex(c._login, c._token).getSummaryStat(
-        campaignIDS = List(c.network_campaign_id.toInt),
-        start_date = start_date,
-        end_date = end_date)
+      API_yandex(c._login, c._token)
+        .getSummaryStat(
+          campaignIDS = List(c.network_campaign_id.toInt),
+          start_date = start_date,
+          end_date = end_date)
+        .map {
+          case (statItem_List, json_stat) =>
+            if (statItem_List.isDefined) {
+              println("!!! SUCCESS getStats !!!")
 
-      if (statItem_List.isDefined) {
-        println("!!! SUCCESS getStats !!!")
+              //Post Statistics to BID
+              val res_bid = API_bid.postCampaignStats(
+                user = User.findByName((data \ ("user")).as[String]).get,
+                net = (data \ ("net")).as[String],
+                id = c.network_campaign_id,
+                performance = Performance._apply(
+                  sd = new DateTime(start_date),
+                  ed = new DateTime(end_date),
+                  si = statItem_List.get))
+              if (res_bid.isDefined)
+                println("!!! Stats is POSTED to BID !!!")
+              else
+                println("??? Stats is NOT POSTED to BID ???")
 
-        //Post Statistics to BID
-        val res_bid = API_bid.postCampaignStats(
-          user = User.findByName((data \ ("user")).as[String]).get,
-          net = (data \ ("net")).as[String],
-          id = c.network_campaign_id,
-          performance = Performance._apply(
-            sd = new DateTime(start_date),
-            ed = new DateTime(end_date),
-            si = statItem_List.get))
-        if (res_bid.isDefined)
-          println("!!! Stats is POSTED to BID !!!")
-        else
-          println("??? Stats is NOT POSTED to BID ???")
-
-        Ok(toJson[StatItem](statItem_List.get.head))
-      } else println("??? FAILED getStats ???"); BadRequest
+              Ok(toJson[StatItem](statItem_List.get.head))
+            } else println("??? FAILED getStats ???"); BadRequest
+        }
     }
   }
 
+  //at the END of the day!!!
   def getReport = Action(parse.json) { implicit request =>
-    { //at the END of the day!!!
+    Async { //for createNewReport method
       val data = request.body
       val c = fromJson[Campaign](data \ ("camp")).get
 
@@ -119,61 +128,64 @@ object Workspace extends Controller {
       val end_date = sdf.parse((data \ ("endDate")).as[String]) //new DateTime()
 
       //create Report on Yandex server
-      val newReportID = API_yandex(c._login, c._token).createNewReport(
-        campaignID = c.network_campaign_id.toInt,
-        start_date = start_date,
-        end_date = end_date)
+      API_yandex(c._login, c._token)
+        .createNewReport(
+          campaignID = c.network_campaign_id.toInt,
+          start_date = start_date,
+          end_date = end_date)
+        .map { newReportID =>
 
-      def getUrl: String = {
-        try {
-          val (reportInfo_List, json_reports) = API_yandex(c._login, c._token).getReportList
-          println(json_reports)
-          val reportInfo = reportInfo_List.get.filter(_.ReportID == newReportID.get).head
-          reportInfo.StatusReport match {
-            case "Pending" => {
-              Thread.sleep(1000)
-              println("!!!!!! PENDING !!!!!");
-              getUrl
-            }
-            case "Done" => {
-              println("!!!!!! DONE !!!!!")
-              reportInfo.Url.get
-            }
-          }
-        } catch {
-          case t: Throwable => {
-            println("!!! EMPTY !!!")
-            "EMPTY data"
+          Async { //for getXML method
+            newReportID map { id =>
+              //Get current report Url 
+              getUrl(id, c._login, c._token) map { reportUrl =>
+                //download XML report from Yandex Url
+                API_yandex(c._login, c._token)
+                  .getXML(reportUrl)
+                  .map { xml_node =>
+
+                    //post report to BID
+                    val postToBid = API_bid.postReports(
+                      user = User.findByName((data \ ("user")).as[String]).get,
+                      net = (data \ ("net")).as[String],
+                      id = c.network_campaign_id,
+                      bannerPhrasePerformance = xml_node)
+                    if (postToBid.isDefined)
+                      println("!!! Report is POSTED to BID !!!")
+                    else
+                      println("??? Report is NOT POSTED to BID ???")
+
+                    //remove current report from Yandex Server
+                    if (API_yandex(c._login, c._token).deleteReport(newReportID.get))
+                      println("!!! Report is DELETED from Yandex!!!")
+                    else
+                      println("??? Report is NOT DELETED from Yandex ???")
+
+                    Ok(xml_node) as XML
+                  }
+              } getOrElse (Future { BadRequest })
+            } getOrElse (Future { BadRequest })
           }
         }
-      }
-
-      //Get current report Url 
-      val reportUrl = getUrl
-
-      //download XML report from Yandex Url
-      val xml_node = API_yandex(c._login, c._token).getXML(reportUrl)
-      //println("!!! XML: " + xml_node)
-
-      //post report to BID
-      val postToBid = API_bid.postReports(
-        user = User.findByName((data \ ("user")).as[String]).get,
-        net = (data \ ("net")).as[String],
-        id = c.network_campaign_id,
-        bannerPhrasePerformance = xml_node)
-      if (postToBid.isDefined)
-        println("!!! Report is POSTED to BID !!!")
-      else
-        println("??? Report is NOT POSTED to BID ???")
-
-      //remove current report from Yandex Server
-      if (API_yandex(c._login, c._token).deleteReport(newReportID.get))
-        println("!!! Report is DELETED from Yandex!!!")
-      else
-        println("??? Report is NOT DELETED from Yandex ???")
-
-      Ok(xml_node) as XML
     }
+  }
+
+  def getUrl(id: Int, login: String, token: String): Option[String] = {
+    val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
+    reportInfo_List map { ril =>
+      val reportInfo = ril.filter(_.ReportID == id).head
+      reportInfo.StatusReport match {
+        case "Pending" => {
+          Thread.sleep(5000)
+          println("!!!!!! PENDING !!!!!");
+          getUrl(id, login, token)
+        }
+        case "Done" => {
+          println("!!!!!! DONE !!!!!")
+          reportInfo.Url
+        }
+      }
+    } getOrElse (None)
   }
 
   def getRecommendations = Action(parse.json) { implicit request =>

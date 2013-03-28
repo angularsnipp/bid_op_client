@@ -1,5 +1,6 @@
 package jobs
 
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.concurrent.Akka
@@ -119,91 +120,105 @@ class ShortScheduler extends Job {
     User.findAll match {
       case Nil => println("Users not found")
       case ul => ul map { u =>
-        
-        println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
-        
-        val n = "Yandex"
-        val cl = API_bid.getCampaigns(u, n).get
+        Future {
+          val n = "Yandex"
+          val cl = API_bid.getCampaigns(u, n).get
 
-        val prev_ft = new DateTime(jec.getPreviousFireTime())
-        var cur_ft = new DateTime(jec.getFireTime())
+          val prev_ft = new DateTime(jec.getPreviousFireTime())
+          var cur_ft = new DateTime(jec.getFireTime())
 
-        if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
-          cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
+          if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
+            cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
 
-        cl map { c =>
-          //CampaignPerformance
-          if (get_post_CP(u, n, c, cur_ft, prev_ft))
-            println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-          else
-            println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
+          Future { //for make requests in parallel way
+            cl map { c =>
+              //CampaignPerformance
+              get_post_CP(u, n, c, cur_ft, prev_ft).onSuccess {
+                case true => println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+                case false => println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
+              }
+            }
+          }
+
+          Future { //for make requests in parallel way
+            cl map { c =>
+              //BannersPerformance
+              get_post_BP(u, n, c, cur_ft, prev_ft).onSuccess {
+                case true => println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+                case false => println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
+              }
+            }
+          }
+
+          Future { //for make requests in parallel way
+            cl map { c =>
+              //ActualBids and NetAdvisedBids
+              get_post_ANA(u, n, c).onSuccess {
+                case true => println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+                case false => println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
+              }
+            }
+          }
+
+        } onSuccess {
+          case _ => println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
         }
-
-        cl map { c =>
-          //BannersPerformance
-          if (get_post_BP(u, n, c, cur_ft, prev_ft))
-            println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-          else
-            println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
-        }
-
-        cl map { c =>
-          //ActualBids and NetAdvisedBids
-          if (get_post_ANA(u, n, c))
-            println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
-          else
-            println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", " + cur_ft + " ???")
-        }
-
-        println("-------- END Job -----  CampaignPerformance ------------------")
       }
     }
+    println("-------- END Job -----  CampaignPerformance ------------------")
   }
 
   /**
    * CampaignPerformance
    */
-  def get_post_CP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime) = {
+  def get_post_CP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
 
     /* LIMIT = 100 in the day!!! */
     // get StatItem list from Yandex
-    val (statItem_List, json_stat) = API_yandex(c._login, c._token)
+    API_yandex(c._login, c._token)
       .getSummaryStat(List(c.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate())
-
-    // post StatItem list to BID
-    statItem_List map { sil =>
-      val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil))
-      if (performance.isDefined) true else false
-    } getOrElse false
+      .map {
+        case (statItem_List, json_stat) =>
+          // post StatItem list to BID
+          statItem_List map { sil =>
+            val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil))
+            if (performance.isDefined) true else false
+          } getOrElse false
+      }
   }
 
   /**
    * BannersPerformance
    */
-  def get_post_BP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime) = {
+  def get_post_BP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
 
     // get BannersStat from Yandex
-    val (bannersStat, json_stat) = API_yandex(c._login, c._token)
+    API_yandex(c._login, c._token)
       .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate())
-
-    // post StatItem list to BID
-    bannersStat map { bs =>
-      val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
-      if (performance.isDefined) true else false
-    } getOrElse false
+      .map {
+        case (bannersStat, json_stat) =>
+          // post StatItem list to BID
+          bannersStat map { bs =>
+            val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
+            if (performance.isDefined) true else false
+          } getOrElse false
+      }
   }
 
   /**
    * ActualBids and NetAdvisedBids
    */
-  def get_post_ANA(u: User, n: String, c: Campaign) = {
+  def get_post_ANA(u: User, n: String, c: Campaign): Future[Boolean] = {
     // get BannersInfo list from Yandex
-    val (bannerInfo_List, json_banners) = API_yandex(c._login, c._token).getBanners(List(c.network_campaign_id.toInt))
-
-    // post BannersInfo list to BID
-    bannerInfo_List map { bil =>
-      if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
-    } getOrElse false
+    API_yandex(c._login, c._token)
+      .getBanners(List(c.network_campaign_id.toInt))
+      .map {
+        case (bannerInfo_List, json_banners) =>
+          // post BannersInfo list to BID
+          bannerInfo_List map { bil =>
+            if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
+          } getOrElse false
+      }
   }
 
   def wakeUP = {
@@ -235,25 +250,27 @@ class LongScheduler extends Job {
     println("-------- START Job ----- BannerPhrasePerformance ------------------")
 
     User.findAll match {
-      case Nil => println("User 'krisp0' not found")
+      case Nil => println("Users are NOT found...")
       case ul => ul map { u =>
-        
-        println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
-        
-        val n = "Yandex"
-        val cl = API_bid.getCampaigns(u, n).get
+        Future {
+          val n = "Yandex"
+          val cl = API_bid.getCampaigns(u, n).get
 
-        var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
-        cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
+          var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
+          cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
 
-        cl map { c =>
-          get_post_BPP(u, n, c, cur_ft)
-          println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", " + cur_ft + " !!!")
+          cl map { c =>
+            get_post_BPP(u, n, c, cur_ft).onSuccess {
+              case _ => println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+            }
+          }
+        } onSuccess {
+          case _ => println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
         }
-
-        println("-------- END Job ----- BannerPhrasePerformance ------------------")
       }
     }
+
+    println("-------- END Job ----- BannerPhrasePerformance ------------------")
   }
 
   /**
@@ -265,49 +282,53 @@ class LongScheduler extends Job {
     val cID = c.network_campaign_id
 
     //create Report on Yandex server
-    val newReportID = API_yandex(login, token).createNewReport(cID.toInt, cur_ft.toDate(), cur_ft.toDate())
+    API_yandex(login, token)
+      .createNewReport(cID.toInt, cur_ft.toDate(), cur_ft.toDate())
+      .map { newReportID =>
+        newReportID map { id =>
 
-    newReportID map { id =>
-
-      def getUrl: Option[String] = {
-        val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
-        reportInfo_List map { ril =>
-          val reportInfo = ril.filter(_.ReportID == id).head
-          reportInfo.StatusReport match {
-            case "Pending" => {
-              Thread.sleep(5000)
-              println("!!!!!! PENDING !!!!!");
-              getUrl
-            }
-            case "Done" => {
-              println("!!!!!! DONE !!!!!")
-              reportInfo.Url
-            }
+          def getUrl: Option[String] = {
+            val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
+            reportInfo_List map { ril =>
+              val reportInfo = ril.filter(_.ReportID == id).head
+              reportInfo.StatusReport match {
+                case "Pending" => {
+                  Thread.sleep(5000)
+                  println("!!!!!! PENDING !!!!!");
+                  getUrl
+                }
+                case "Done" => {
+                  println("!!!!!! DONE !!!!!")
+                  reportInfo.Url
+                }
+              }
+            } getOrElse (None)
           }
-        } getOrElse (None)
+
+          //Get current report Url 
+          getUrl map { reportUrl =>
+            //download XML report from Yandex Url
+            API_yandex(login, token)
+              .getXML(reportUrl)
+              .map { xml_node =>
+                //post report to BID
+                val postToBid = API_bid.postReports(u, n, cID, xml_node)
+
+                if (postToBid.isDefined)
+                  println("!!! Report is POSTED to BID !!!")
+                else
+                  println("??? Report is NOT POSTED to BID ???")
+
+                //remove current report from Yandex Server
+                if (API_yandex(login, token).deleteReport(newReportID.get))
+                  println("!!! Report is DELETED from Yandex!!!")
+                else
+                  println("??? Report is NOT DELETED from Yandex ???")
+              }
+          } getOrElse println("??? FAILED... getting report url ???")
+        } getOrElse println("??? FAILED... report is NOT created ???")
       }
-
-      //Get current report Url 
-      getUrl map { reportUrl =>
-        //download XML report from Yandex Url
-        val xml_node = API_yandex(login, token).getXML(reportUrl)
-        //post report to BID
-        val postToBid = API_bid.postReports(u, n, cID, xml_node)
-
-        if (postToBid.isDefined)
-          println("!!! Report is POSTED to BID !!!")
-        else
-          println("??? Report is NOT POSTED to BID ???")
-
-        //remove current report from Yandex Server
-        if (API_yandex(login, token).deleteReport(newReportID.get))
-          println("!!! Report is DELETED from Yandex!!!")
-        else
-          println("??? Report is NOT DELETED from Yandex ???")
-      } getOrElse println("??? FAILED... getting report url ???")
-    }
-  } getOrElse println("??? FAILED... report is NOT created ???")
-
+  }
 }
 
   /*
