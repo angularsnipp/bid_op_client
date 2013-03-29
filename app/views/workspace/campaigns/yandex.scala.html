@@ -9,7 +9,7 @@
 
 @import play.api.libs.ws.WS
 
-@getCampaigns = @API_bid.getCampaigns(user.get, net)
+@getCampaigns = @{API_bid.getCampaigns(user.get, net)}
 
 @main_workspace(user, nav = net) {
 
@@ -44,7 +44,7 @@
 								<td class="center">@c.start_date</td>
 								<td class="center">@c.daily_budget</td>	
 								<td class="center">
-									<a class="btn btn-info" href="@API_bid.getCharts(user.get, net, c.network_campaign_id)">									
+									<a class="btn btn-info" href="@routes.Networks.getCharts(net, c.network_campaign_id)">									
 										<i class="icon-eye-open icon-white"></i>  
 										Plot                                            
 									</a>

@@ -58,6 +58,21 @@ object Networks extends Controller with Secured {
 
   }
 
+  def getCharts(network: String, campaignID: String) = IsAuthenticated {
+    user =>
+      _ => {
+        user map { u =>
+          u.name match {
+            case "krisp0" =>
+              val url = common.Bid.Base_URI + "/user/" + u.name + "/net/" + network + "/camp/" + campaignID + "/charts/" + u.password
+              Redirect(url)
+            case _ => NotFound
+          }
+          //Redirect(url).withHeaders(("password" -> u.password))          
+        } getOrElse (NotFound)
+      }
+  }
+
   def campaignReport(network: String, campaign: String) = IsAuthenticated {
     user => _ => Ok(views.html.workspace.reports.report(user, network, fromJson[Campaign](Json.parse(campaign)).get))
   }
