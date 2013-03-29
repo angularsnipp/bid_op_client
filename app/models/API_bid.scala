@@ -152,6 +152,17 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
+  def getCharts(user: User, net: String, id: String): Boolean = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/charts")
+      .withHeaders(("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) true else false
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
   def clearDB(user: User): Boolean = {
     val result = WS.url(Base_URI + "/clearDB/" + user.name)
       .withHeaders(("password" -> user.password))
