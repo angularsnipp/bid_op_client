@@ -61,15 +61,33 @@ object Networks extends Controller with Secured {
   def getCharts(network: String, campaignID: String) = IsAuthenticated {
     user =>
       _ => {
-        user map { u =>
-          u.name match {
-            case "krisp0" =>
-              val url = common.Bid.Base_URI + "/user/" + u.name + "/net/" + network + "/camp/" + campaignID + "/charts/" + u.password
-              Redirect(url)
-            case _ => NotFound
+        import scala.concurrent.Future
+        import scala.concurrent.ExecutionContext.Implicits.global
+        import java.util.concurrent.TimeUnit
+        val futureResult = Future {
+          user map { u =>
+            u.name match {
+              case "krisp0" =>
+                val url = common.Bid.Base_URI + "/user/" + u.name + "/net/" + network + "/camp/" + campaignID + "/charts/" + u.password
+                Redirect(url)
+              case _ => NotFound
+            }
+            //Redirect(url).withHeaders(("password" -> u.password))          
+          } getOrElse (NotFound)
+        }
+
+        // if service handles request too slow => return Timeout response
+        val timeoutFuture = play.api.libs.concurrent.Promise.timeout(
+          message = "Oops, TIMEOUT while calling BID server...",
+          duration = 2,
+          unit = TimeUnit.MINUTES)
+
+        Async {
+          Future.firstCompletedOf(Seq(futureResult, timeoutFuture)).map {
+            case f: Result => f
+            case t: String => InternalServerError(t)
           }
-          //Redirect(url).withHeaders(("password" -> u.password))          
-        } getOrElse (NotFound)
+        }
       }
   }
 
