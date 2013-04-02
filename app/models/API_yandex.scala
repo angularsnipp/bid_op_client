@@ -44,7 +44,6 @@ case class API_yandex(
   def getClientInfo(logins: List[String]): Option[List[ClientInfo]] = {
     val fres = post("GetClientInfo", Json.toJson(logins))
       .map { response =>
-        println("##### ClientInfo List #####" + response.json)
         fromJson[List[ClientInfo]](response.json \ ("data"))
       }
     Await.result(fres, Duration.Inf)
@@ -55,7 +54,6 @@ case class API_yandex(
   def getClientsList: Option[List[ClientInfo]] = {
     val fres = post("GetClientsList")
       .map { response =>
-        println("##### ClientInfo List for Agency #####" + response.json)
         fromJson[List[ClientInfo]](response.json \ ("data"))
       }
     Await.result(fres, Duration.Inf)

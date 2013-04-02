@@ -49,7 +49,7 @@
 								<td class="center">@ci.Status.getOrElse("undefined")</td>								
 								<td class="center">
 									<a class="btn btn-info" id="@ci.CampaignID" 
-										onclick="addCampaign(@ci.Login, @ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
+										onclick="addCampaign('@ci.Login', @ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
 										<i class="icon-plus icon-white"></i>  
 										Add                                            
 									</a>									
@@ -71,7 +71,7 @@
 
 	<script type="text/javascript">    
 				
-        	function addCampaign(login,id,sd,db) {  
+        	function addCampaign(login,id,sd,db) { 
         		$.ajax({
         			type: 'POST',
         			url: "@routes.Workspace.postCampaign",        			
