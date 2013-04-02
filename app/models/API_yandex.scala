@@ -67,26 +67,40 @@ case class API_yandex(
     val param = getClientInfo(List(login)).map { cil =>
       cil.filter(_.Login == login).headOption map { ci =>
         ci.Role match {
-          case "Client" => JsNull
+          case "Client" => Nil
           case "Agency" => {
-            getClientsList map { cl =>
-              val clist = cl map (_.Login)
-              println("********************" + clist)
-              println(Json.toJson(clist))
-              Json.toJson(clist)
-            } getOrElse { println("???????????????????cl is empty"); JsNull }
+            getClientsList map { cl => cl map (_.Login)
+            } getOrElse (Nil)
           }
         }
-      } getOrElse (JsNull)
-    } getOrElse (JsNull)
+      } getOrElse (Nil)
+    } getOrElse (Nil)
 
-    println("$$$$$$$$$$$$ PARAM: " + param)
-    val fres = post("GetCampaignsList", param)
-      .map { response =>
-        println("@@@@ Campaigns List @@@@" + response.json)
-        fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
+    param match {
+      case Nil =>
+        post("GetCampaignsList")
+          .map { response =>
+            fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
+          }
+      case par => {
+        def cl(p: List[String]): List[ShortCampaignInfo] =
+          if (p.length > 100) { //100 is a max value for Yandex
+            val cl100 = post("GetCampaignsList", Json.toJson(p.take(100)))
+              .map { response =>
+                fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
+              }
+            Await.result(cl100, Duration.Inf).getOrElse(Nil) ::: cl(p.drop(100))
+          } else {
+            val cl100 = post("GetCampaignsList", Json.toJson(p))
+              .map { response =>
+                fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
+              }
+            Await.result(cl100, Duration.Inf).getOrElse(Nil)
+          }
+
+        Future { Some(cl(par)) }
       }
-    fres
+    }
   }
 
   /* GetBanners */
