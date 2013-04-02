@@ -70,15 +70,17 @@ case class API_yandex(
           case "Client" => JsNull
           case "Agency" => {
             getClientsList map { cl =>
-              println(cl map (_.Login))
-              println(Json.toJson(cl map (_.Login)))
-              Json.toJson(cl map (_.Login))
+              val clist = cl map (_.Login)
+              println("********************" + clist)
+              println(Json.toJson(clist))
+              Json.toJson(clist)
             } getOrElse { println("???????????????????cl is empty"); JsNull }
           }
         }
-      } getOrElse JsNull
-    } getOrElse JsNull
+      } getOrElse (JsNull)
+    } getOrElse (JsNull)
 
+    println("$$$$$$$$$$$$ PARAM: " + param)
     val fres = post("GetCampaignsList", param)
       .map { response =>
         println("@@@@ Campaigns List @@@@" + response.json)
