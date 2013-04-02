@@ -70,8 +70,10 @@ case class API_yandex(
           case "Client" => JsNull
           case "Agency" => {
             getClientsList map { cl =>
-              Json.toJson(cl map (_.Login)) 
-            } getOrElse JsNull
+              println(cl map (_.Login))
+              println(Json.toJson(cl map (_.Login)))
+              Json.toJson(cl map (_.Login))
+            } getOrElse { println("???????????????????cl is empty"); JsNull }
           }
         }
       } getOrElse JsNull

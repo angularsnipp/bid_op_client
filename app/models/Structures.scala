@@ -43,7 +43,7 @@ object InputData {
 case class ClientInfo(
   val Login: String,
   //val DateCreate: DateTime,
-  val Phone: String = "",
+  //val Phone: Option[String] = None,
   val FIO: String = "",
   val Email: String = "",
   val Role: String)
