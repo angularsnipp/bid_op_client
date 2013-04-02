@@ -40,11 +40,46 @@ case class API_yandex(
     Await.result(fres, Duration.Inf)
   }
 
+  /* GetClientInfo */
+  def getClientInfo(logins: List[String]): Option[List[ClientInfo]] = {
+    val fres = post("GetClientInfo", Json.toJson(logins))
+      .map { response =>
+        println("##### ClientInfo List #####" + response.json)
+        fromJson[List[ClientInfo]](response.json \ ("data"))
+      }
+    Await.result(fres, Duration.Inf)
+  }
+  /* GetClientsList 
+   * this method is available only for Agency
+   * */
+  def getClientsList: Option[List[ClientInfo]] = {
+    val fres = post("GetClientsList")
+      .map { response =>
+        println("##### ClientInfo List for Agency #####" + response.json)
+        fromJson[List[ClientInfo]](response.json \ ("data"))
+      }
+    Await.result(fres, Duration.Inf)
+  }
+
   /* GetCampaignsList */
   def getCampaignsList: Future[Option[List[ShortCampaignInfo]]] = {
-    val fres = post("GetCampaignsList")
+    //check if this user is Agency or Client
+    val param = getClientInfo(List(login)).map { cil =>
+      cil.filter(_.Login == login).headOption map { ci =>
+        ci.Role match {
+          case "Client" => JsNull
+          case "Agency" => {
+            getClientsList map { cl =>
+              Json.toJson(cl map (_.Login)) 
+            } getOrElse JsNull
+          }
+        }
+      } getOrElse JsNull
+    } getOrElse JsNull
+
+    val fres = post("GetCampaignsList", param)
       .map { response =>
-        println(response.json)
+        println("@@@@ Campaigns List @@@@" + response.json)
         fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
       }
     fres

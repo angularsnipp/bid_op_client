@@ -12,7 +12,7 @@
 
 @getCampaigns_yandex = @{
 	val cList:Future[Option[List[ShortCampaignInfo]]] = API_yandex(login,token).getCampaignsList;
-    Await.result(cList, Duration.Inf).get   	
+    Await.result(cList, Duration.Inf)   	
 }
 
 @main_workspace(user, nav = net) {
@@ -39,22 +39,23 @@
 							  </tr>
 						  </thead>   
 						  <tbody>						
-						@getCampaigns_yandex.map{ case ci => 							
+						@getCampaigns_yandex.map{ cil => 
+						@cil.map{case ci =>							
 							<tr>
 								<td>@ci.CampaignID</td>
-								<td class="center">@login</td>
+								<td class="center">@ci.Login</td>
 								<td class="center">@ci.StartDate</td>
 								<td class="center">@ci.Rest</td>
 								<td class="center">@ci.Status.getOrElse("undefined")</td>								
 								<td class="center">
 									<a class="btn btn-info" id="@ci.CampaignID" 
-										onclick="addCampaign(@ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
+										onclick="addCampaign(@ci.Login, @ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
 										<i class="icon-plus icon-white"></i>  
 										Add                                            
 									</a>									
 								</td>
 							</tr>												
-						}
+						}}.getOrElse{}
 						  
 						  </tbody>						  
 					  </table> 					  
@@ -70,14 +71,14 @@
 
 	<script type="text/javascript">    
 				
-        	function addCampaign(id,sd,db) {  
+        	function addCampaign(login,id,sd,db) {  
         		$.ajax({
         			type: 'POST',
         			url: "@routes.Workspace.postCampaign",        			
         			data: JSON.stringify({
         					user: '@user.get.name',
         					net: '@net',
-        				 	_login: '@login',
+        				 	_login: login,
         					_token: '@token',
         					network_campaign_id: id,
         					start_date: new Date(sd),        					

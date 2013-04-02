@@ -39,6 +39,15 @@ object InputData {
 
 /*----------- METHODS ------------*/
 
+/* ClientInfo */
+case class ClientInfo(
+  val Login: String,
+  //val DateCreate: DateTime,
+  val Phone: String = "",
+  val FIO: String = "",
+  val Email: String = "",
+  val Role: String)
+
 /* respond data for method GetCampaignsList */
 case class ShortCampaignInfo(
   val CampaignID: Int = 0,

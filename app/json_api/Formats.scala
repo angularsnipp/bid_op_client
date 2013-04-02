@@ -22,6 +22,8 @@ object Reads { //-------------------------- fromJson ---------------------------
   
   implicit lazy val bannersStatItem = Json.reads[BannersStatItem]
   implicit lazy val getBannersStatResponse = Json.reads[GetBannersStatResponse]
+   
+  implicit lazy val clientInfo = Json.reads[ClientInfo]
 }
 
 object Writes { //---------------------- toJson -----------------------------------
