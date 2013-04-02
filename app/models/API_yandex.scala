@@ -44,6 +44,7 @@ case class API_yandex(
   def getCampaignsList: Future[Option[List[ShortCampaignInfo]]] = {
     val fres = post("GetCampaignsList")
       .map { response =>
+        println(response.json)
         fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
       }
     fres
