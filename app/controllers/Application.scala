@@ -112,7 +112,7 @@ object Application extends Controller with Secured {
 
   lazy val str: Enumerator[String] = {
     Enumerator.generateM {
-      Promise.timeout(Some("Keep alive the channel!!!"), 20 seconds)
+      Promise.timeout(Some("Keep alive the channel!!!"), 10 seconds)
     }
   }
 
