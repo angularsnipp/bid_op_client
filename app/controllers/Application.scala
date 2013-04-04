@@ -99,4 +99,24 @@ object Application extends Controller with Secured {
   }
 
   def wakeUP = Action { Ok }
+
+  /**
+   * get CampaignInfo List from the external network
+   * just keep alive the channel (to avoid Heroku Request timeout 30s)
+   */
+  import play.api.libs.{ Comet }
+  import play.api.libs.iteratee._
+  import play.api.libs.concurrent._
+  import scala.concurrent.duration._
+  import play.api.libs.concurrent.Execution.Implicits._
+
+  lazy val str: Enumerator[String] = {
+    Enumerator.generateM {
+      Promise.timeout(Some("Keep alive the channel!!!"), 20 seconds)
+    }
+  }
+
+  def keepAlive = Action {
+    Ok.stream(str &> Comet(callback = "console.log"))
+  }
 }

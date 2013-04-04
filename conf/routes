@@ -15,6 +15,7 @@ GET 	/stopJobs 								controllers.Application.stopJobs
 GET 	/getUsers 								controllers.Application.getUsers
 GET 	/clearDB 								controllers.Application.clearDB
 GET 	/wakeUP 								controllers.Application.wakeUP
+GET 	/keepAlive								controllers.Application.keepAlive
 
 # Authentication
 GET     /login                      			controllers.Auth.login
