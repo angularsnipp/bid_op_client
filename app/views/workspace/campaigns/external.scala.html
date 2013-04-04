@@ -1,19 +1,14 @@
-@(user: Option[models.User], net: String, login:String, token:String)
+@(	user: 	Option[models.User], 
+	net: 	String, 
+	login:	String, 
+	token:	String,
+	cList: 	Option[List[models.ShortCampaignInfo]])
 
 @import workspace._
          
 @import models._
 @import helper._
 @import org.joda.time.{DateTime, DateTimeUtils}
-@import scala.concurrent.{ Future, Await }
-@import scala.concurrent.duration.Duration
-
-@import play.api.libs.ws.WS
-
-@getCampaigns_yandex = @{
-	val cList:Future[Option[List[ShortCampaignInfo]]] = API_yandex(login,token).getCampaignsList;
-    Await.result(cList, Duration.Inf)   	
-}
 
 @main_workspace(user, nav = net) {
 
@@ -39,7 +34,7 @@
 							  </tr>
 						  </thead>   
 						  <tbody>						
-						@getCampaigns_yandex.map{ cil => 
+						@cList.map{ cil => 
 						@cil.map{case ci =>							
 							<tr>
 								<td>@ci.CampaignID</td>
@@ -100,4 +95,11 @@
 				@{if(API_bid.getCampaign(user.get, net, ci.CampaignID.toString).isDefined)
 					$('#'+id).addClass("disabled");
 				}
-			} *@
+			} 		
+			
+			
+@getCampaigns_yandex = @{
+	val cList:Future[Option[List[ShortCampaignInfo]]] = API_yandex(login,token).getCampaignsList;
+    Await.result(cList, Duration.Inf)   	
+}
+*@

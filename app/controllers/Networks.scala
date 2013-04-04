@@ -6,6 +6,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.ws.WS
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.api.libs.json.Json
 import json_api.Convert._
@@ -105,7 +106,12 @@ object Networks extends Controller with Secured {
         getLoginForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.workspace.campaigns.external_login(user, network, token, formWithErrors)),
           request => request match {
-            case (login, token, network) => Ok(views.html.workspace.campaigns.external(user, network, login, token))
+            case (login, token, network) =>
+              Async { 
+                API_yandex(login, token).getCampaignsList map { cList =>
+                  Ok(views.html.workspace.campaigns.external(user, network, login, token, cList))
+                }
+              }
           })
 
       }
