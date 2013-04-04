@@ -7,7 +7,6 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.ws.WS
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import play.api.libs.json.Json
 import json_api.Convert._
 
@@ -105,13 +104,27 @@ object Networks extends Controller with Secured {
       implicit request => {
         getLoginForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.workspace.campaigns.external_login(user, network, token, formWithErrors)),
-          request => request match {
-            case (login, token, network) =>
-              Async { 
+          req => req match {
+            case (login, token, network) => {
+              import play.api.libs.concurrent.Akka
+              import scala.concurrent.duration._
+              import play.api.Play.current
+
+              val keepAlive = Akka.system.scheduler.schedule(10 seconds, 10 seconds) {
+                //send head request to the client to keep alive
+                WS.url(request.headers.get("Referer").get).head().onSuccess {
+                  case _ => println("!!! wake up client !!!" + request.headers.get("Referer").get)
+                }
+              }
+
+              Async {
                 API_yandex(login, token).getCampaignsList map { cList =>
+                  keepAlive.cancel //stop schedule keepAlive - the result is ready!
+
                   Ok(views.html.workspace.campaigns.external(user, network, login, token, cList))
                 }
               }
+            }
           })
 
       }
