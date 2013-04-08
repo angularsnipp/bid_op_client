@@ -41,12 +41,13 @@ case class API_yandex(
   }
 
   /* GetClientInfo */
-  def getClientInfo(logins: List[String]): Option[List[ClientInfo]] = {
+  def getClientInfo(logins: List[String]): Future[Option[List[ClientInfo]]] = {
     val fres = post("GetClientInfo", Json.toJson(logins))
       .map { response =>
         fromJson[List[ClientInfo]](response.json \ ("data"))
       }
-    Await.result(fres, Duration.Inf)
+    fres
+    //Await.result(fres, Duration.Inf)
   }
   /* GetClientsList 
    * this method is available only for Agency
@@ -56,49 +57,21 @@ case class API_yandex(
       .map { response =>
         fromJson[List[ClientInfo]](response.json \ ("data"))
       }
+    //fres
     Await.result(fres, Duration.Inf)
   }
 
   /* GetCampaignsList */
-  def getCampaignsList: Future[Option[List[ShortCampaignInfo]]] = {
-    //check if this user is Agency or Client
-    val param = getClientInfo(List(login)).map { cil =>
-      cil.filter(_.Login == login).headOption map { ci =>
-        ci.Role match {
-          case "Client" => Nil
-          case "Agency" => {
-            getClientsList map { cl => cl map (_.Login)
-            } getOrElse (Nil)
-          }
-        }
-      } getOrElse (Nil)
-    } getOrElse (Nil)
-
-    param match {
-      case Nil =>
-        post("GetCampaignsList")
-          .map { response =>
-            fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
-          }
-      case par => {
-        def cl(p: List[String]): List[ShortCampaignInfo] =
-          if (p.length > 100) { //100 is a max value for Yandex
-            val cl100 = post("GetCampaignsList", Json.toJson(p.take(100)))
-              .map { response =>
-                fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
-              }
-            Await.result(cl100, Duration.Inf).getOrElse(Nil) ::: cl(p.drop(100))
-          } else {
-            val cl100 = post("GetCampaignsList", Json.toJson(p))
-              .map { response =>
-                fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
-              }
-            Await.result(cl100, Duration.Inf).getOrElse(Nil)
-          }
-
-        Future { Some(cl(par)) }
-      }
+  def getCampaignsList(param: List[String] /* List of client Logins */ ): Future[Option[List[ShortCampaignInfo]]] = {
+    val jparam = param match {
+      case List("") => JsNull //for simple user
+      case par => Json.toJson(param) //for Agency
     }
+    val fres = post("GetCampaignsList", jparam)
+      .map { response =>
+        fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
+      }
+    fres
   }
 
   /* GetBanners */

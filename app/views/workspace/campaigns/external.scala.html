@@ -2,7 +2,7 @@
 	net: 	String, 
 	login:	String, 
 	token:	String,
-	cList: 	Option[List[models.ShortCampaignInfo]])
+	clList:	List[String])
 
 @import workspace._
          
@@ -33,25 +33,7 @@
 								  <th>Actions</th>
 							  </tr>
 						  </thead>   
-						  <tbody>						
-						@cList.map{ cil => 
-						@cil.map{case ci =>							
-							<tr>
-								<td>@ci.CampaignID</td>
-								<td class="center">@ci.Login</td>
-								<td class="center">@ci.StartDate</td>
-								<td class="center">@ci.Rest</td>
-								<td class="center">@ci.Status.getOrElse("undefined")</td>								
-								<td class="center">
-									<a class="btn btn-info" id="@ci.CampaignID" 
-										onclick="addCampaign('@ci.Login', @ci.CampaignID, @DateTimeUtils.getInstantMillis(ci.StartDate), @ci.Rest)">										
-										<i class="icon-plus icon-white"></i>  
-										Add                                            
-									</a>									
-								</td>
-							</tr>												
-						}}.getOrElse{}
-						  
+						  <tbody id="table_body">							
 						  </tbody>						  
 					  </table> 					  
 					</div>									
@@ -59,34 +41,77 @@
 				<a href="@routes.Networks.index(net)">
 					<button class="btn btn-large btn-success pull-right" >Return</button>
 				</a>
-			</div> 
-			
+			</div> 		
 			
 @** javascripts ***************************************************************@	
 
-	<script type="text/javascript">    
-				
-        	function addCampaign(login,id,sd,db) { 
-        		$.ajax({
-        			type: 'POST',
-        			url: "@routes.Workspace.postCampaign",        			
-        			data: JSON.stringify({
-        					user: '@user.get.name',
-        					net: '@net',
-        				 	_login: login,
-        					_token: '@token',
-        					network_campaign_id: id,
-        					start_date: new Date(sd),        					
-        					daily_budget: db	      			 				      				
-        			}),
-        			contentType:'application/json; charset=utf-8',
-        			dataType : 'json',
-        			success: function() {}       			
-        		});
+<script type="text/javascript">    
+
+//get ShortCampaignInfo for all clients (if we deal with Agency) or just for current user 
+//clList - list of client Logins	
+
+@if(clList.isEmpty) {
+	// simple user
+	getCampaignsList('');
+} else {
+	// Agency
+	@for(cl <- clList){
+		getCampaignsList('@cl');		
+	} 
+}	
+
+function getCampaignsList(cl) {
+	$.ajax({
+		type: 'GET',
+		url: '/workspace/campaignsList',
+		data: 'login=@login&token=@token&clLogin=' + cl,			
+		success: function(scil) {
+			for (var i=0; i<scil.length; i++){
+	 			$('#table_body').append(
+	 				'<tr>' +
+						'<td>' + scil[i].CampaignID + '</td>' +
+						'<td class="center">' + scil[i].Login + '</td>' +
+						'<td class="center">' + new Date(scil[i].StartDate) + '</td>' +
+						'<td class="center">' + scil[i].Rest + '</td>' +
+						'<td class="center">' + scil[i].Status + '</td>' +								
+						'<td class="center">' +
+							'<a class="btn btn-info" id="' + scil[i].CampaignID + '" ' + 
+								'onclick="addCampaign(\'' + scil[i].Login + '\',' + scil[i].CampaignID + ',' + scil[i].StartDate + ',' + scil[i].Rest + ')">' +										
+								'<i class="icon-plus icon-white"></i>' +  
+								'Add' +                                            
+							'</a>' +									
+						'</td>' +
+					'</tr>'				
+	 			)
+			}//for
+		} //success
+	});//ajax
+}
+
+// add campaign to Bid
+function addCampaign(login,id,sd,db) { 
+	$.ajax({
+		type: 'POST',
+		url: "@routes.Workspace.postCampaign",        			
+		data: JSON.stringify({
+    		user: '@user.get.name',
+    		net: '@net',
+    	 	_login: login,
+        	_token: '@token',
+        	network_campaign_id: id,
+        	start_date: new Date(sd),        					
+        	daily_budget: db	      			 				      				
+        }),
+        contentType:'application/json; charset=utf-8',
+		dataType : 'json',
+		success: function() {}       			
+	});
         		
-        		$('#'+id).addClass("disabled");
-        	}
-    </script>
+	$('#'+id).addClass("disabled");
+}
+
+</script>
+
 @** javascripts ***************************************************************@	
 
 }
@@ -102,4 +127,5 @@
 	val cList:Future[Option[List[ShortCampaignInfo]]] = API_yandex(login,token).getCampaignsList;
     Await.result(cList, Duration.Inf)   	
 }
-*@
+
+**@

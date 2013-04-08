@@ -33,6 +33,7 @@ GET     /workspace/campaign_report				controllers.Networks.campaignReport(networ
 GET     /workspace/external_login				controllers.Networks.externalLogin(network: String, token:String)
 GET     /workspace/external_campaigns			controllers.Networks.externalCampaigns(network: String, token:String)
 GET     /workspace/charts						controllers.Networks.getCharts(network: String, campaignID: String)
+GET 	/workspace/campaignsList				controllers.Networks.getCampaignsList(login: String, token: String, clLogin: String ?= "")
 
 ## Interactive work with Campaigns
 POST 	/workspace/postCampaign 				controllers.Workspace.postCampaign

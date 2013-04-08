@@ -105,29 +105,36 @@ object Networks extends Controller with Secured {
         getLoginForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.workspace.campaigns.external_login(user, network, token, formWithErrors)),
           req => req match {
-            case (login, token, network) => {
-              import play.api.libs.concurrent.Akka
-              import scala.concurrent.duration._
-              import play.api.Play.current
-
-              val keepAlive = Akka.system.scheduler.schedule(10 seconds, 10 seconds) {
-                //send head request to the client to keep alive
-                WS.url(request.headers.get("Referer").get).head().onSuccess {
-                  case _ => println("!!! wake up client !!!" + request.headers.get("Referer").get)
-                }
-              }
-
+            case (login, token, network) =>
               Async {
-                API_yandex(login, token).getCampaignsList map { cList =>
-                  keepAlive.cancel //stop schedule keepAlive - the result is ready!
+                //check if this user is Agency or Client and retrieve the list of client Logins
+                API_yandex(login, token).getClientInfo(List(login)).map { cilo =>
 
-                  Ok(views.html.workspace.campaigns.external(user, network, login, token, cList))
+                  val loginList = cilo map { cil =>
+                    cil.filter(_.Login == login).headOption map { ci =>
+                      println("login: " + login + ", role - " + ci.Role)
+                      ci.Role match {
+                        case "Client" => Nil
+                        case "Agency" =>
+                          API_yandex(login, token).getClientsList map { cl =>
+                            cl map (_.Login)
+                          } getOrElse (Nil)
+                      }
+                    } getOrElse (Nil)
+                  } getOrElse (Nil)
+                  println("!!! List of logins for Agency: " + loginList)
+                  Ok(views.html.workspace.campaigns.external(user, network, login, token, loginList))
                 }
               }
-            }
           })
-
       }
   }
 
+  def getCampaignsList(login: String, token: String, clLogin: String) = Action {
+    Async {
+      API_yandex(login, token).getCampaignsList(List(clLogin)) map { scilo =>
+        Ok(toJson(scilo.getOrElse(Nil)))
+      }
+    }
+  }
 }
