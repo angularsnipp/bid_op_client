@@ -183,7 +183,10 @@ class ShortScheduler extends Job {
           statItem_List map { sil =>
             val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil))
             if (performance.isDefined) true else false
-          } getOrElse false
+          } getOrElse {
+            println("<< failed CP: " + u.name + ", " + c.network_campaign_id + ": " + json_stat + " >>")
+            false
+          }
       }
   }
 
@@ -201,7 +204,10 @@ class ShortScheduler extends Job {
           bannersStat map { bs =>
             val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
             if (performance.isDefined) true else false
-          } getOrElse false
+          } getOrElse {
+            println("<< failed BP: " + u.name + ", " + c.network_campaign_id + ": " + json_stat + " >>")
+            false
+          }
       }
   }
 
@@ -217,7 +223,10 @@ class ShortScheduler extends Job {
           // post BannersInfo list to BID
           bannerInfo_List map { bil =>
             if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
-          } getOrElse false
+          } getOrElse {
+            println("<< failed ANA: " + u.name + ", " + c.network_campaign_id + ": " + json_banners + " >>")
+            false
+          }
       }
   }
 
