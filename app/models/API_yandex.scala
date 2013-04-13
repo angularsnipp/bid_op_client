@@ -25,7 +25,11 @@ case class API_yandex(
   /* send request repeatedly */
   def withRetry[T](n: Int, dl: Deadline)(f: => Future[T]): Future[T] = {
     f.recoverWith { //if failed
-      case t: Throwable if (n > 0) & (!dl.hasTimeLeft) => withRetry(n - 1, dl)(f)
+      case t: Throwable =>
+        if ((n > 0) & (!dl.hasTimeLeft))
+          withRetry(n - 1, dl)(f)
+        else
+          f
     }
   }
 
