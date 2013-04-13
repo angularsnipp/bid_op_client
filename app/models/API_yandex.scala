@@ -3,12 +3,11 @@ package models
 import common.Yandex
 import play.api.libs.ws.{ WS, Response }
 import scala.concurrent.{ Future, Await }
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
 import java.util.Date
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-
 import json_api.Convert._
 
 case class API_yandex(
@@ -23,11 +22,27 @@ case class API_yandex(
 
   /****************************** POST request *****************************************/
 
+  /* send request repeatedly */
+  def withRetry[T](n: Int, dl: Deadline)(f: => Future[T]): Future[T] = {
+    f.recoverWith { //if failed
+      case t: Throwable if (n > 0) & (!dl.hasTimeLeft) => withRetry(n - 1, dl)(f)
+    }
+  }
+
+  /* check if failed */
+  def isFailed(response: Response): Boolean = {
+    (response.json \ ("error_code")).asOpt[Int] isDefined //if an error is defined
+  }
+
   def post(method: String, param: JsValue = JsNull): Future[Response] = {
     val jsData = InputData(login, token, method, param)
-    val result = WS.url(url).post[JsValue](jsData)
-    result
-    //Await.result(result, Duration.Inf) //this blocks threads, and it's not cool
+
+    def wsCall = WS.url(url).post[JsValue](jsData) map { response =>
+      require(!isFailed(response)) //success is required
+      response
+    }
+
+    withRetry(n = 5, 5.minutes.fromNow)(wsCall) //try to repeat WS calling up to 5 times until success
   }
 
   /****************************** Methods implementation *******************************/
