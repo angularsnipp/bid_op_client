@@ -240,30 +240,39 @@ class ShortScheduler extends Job {
     val login = ucl.head._login
     val token = ucl.head._token
 
-    // get BannersInfo list from Yandex
-    API_yandex(login, token)
-      .getBanners(ucl.map(_.network_campaign_id.toInt))
-      .map {
-        case (bannerInfo_List, json_banners) =>
-          // post BannersInfo list to BID
-          bannerInfo_List map { bil =>
-
-            val bl = ucl map { c =>
-              val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bil.filter(_.CampaignID == c.network_campaign_id.toLong))
-              if (res)
-                println("!!! SUCCESS - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
-              else
-                println("??? FAILED... - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
-              res
+    def getBanners(cl: List[Campaign]) =
+      // get BannersInfo list from Yandex
+      API_yandex(login, token)
+        .getBanners(cl.map(_.network_campaign_id.toInt))
+        .map {
+          case (bannerInfo_List, json_banners) =>
+            // post BannersInfo list to BID
+            bannerInfo_List map { bil =>
+              cl map { c =>
+                val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bil.filter(_.CampaignID == c.network_campaign_id.toLong))
+                if (res)
+                  println("!!! SUCCESS - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
+                else
+                  println("??? FAILED... - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
+                res
+              }
+              //if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
+            } getOrElse {
+              println("<< failed ANA: " + u.name + ", " + login + ": " + json_banners + " >>")
+              List(false)
             }
-            bl.find(!_).isEmpty //true if ANAs for all campaigns have been added successful
+        }
 
-            //if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
-          } getOrElse {
-            println("<< failed ANA: " + u.name + ", " + login + ": " + json_banners + " >>")
-            false
-          }
+    def cl10(cl: List[Campaign]): List[Boolean] =
+      if (cl.length > 10) { //10 is a max value for Yandex
+        val bl = getBanners(cl.take(10))
+        Await.result(bl, 30 seconds) ::: cl10(cl.drop(10))
+      } else {
+        val bl = getBanners(cl)
+        Await.result(bl, 30 seconds)
       }
+
+    Future { cl10(ucl).find(!_).isEmpty } //true if ANAs for all campaigns have been added successful
   }
 
   def wakeUP = {
