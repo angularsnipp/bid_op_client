@@ -26,10 +26,12 @@ case class API_yandex(
   def withRetry[T](n: Int, dl: Deadline)(f: => Future[T]): Future[T] = {
     f.recoverWith { //if failed
       case t: Throwable =>
-        if ((n > 0) & (!dl.hasTimeLeft))
+        if ((n > 0) & (dl.hasTimeLeft))
           withRetry(n - 1, dl)(f)
-        else
+        else {
+          println("=== 5 attempts have made === ")
           f
+        }
     }
   }
 
