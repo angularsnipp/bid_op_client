@@ -9,6 +9,7 @@ import java.util.Date
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import json_api.Convert._
+import org.joda.time.DateTime
 
 case class API_yandex(
   val login: String,
@@ -26,9 +27,9 @@ case class API_yandex(
   def withRetry[T](n: Int, dl: Deadline)(f: => Future[T]): Future[T] = {
     f.recoverWith { //if failed
       case t: Throwable =>
-        if ((n > 0) & (dl.hasTimeLeft))
+        if ((n > 0) & (dl.hasTimeLeft)) {
           withRetry(n - 1, dl)(f)
-        else {
+        } else {
           println("=== 5 attempts have made === ")
           f
         }
@@ -37,18 +38,17 @@ case class API_yandex(
 
   /* check if failed */
   def isFailed(response: Response): Boolean = {
-    val oerr = (response.json \ ("error_code")).asOpt[Int] //isDefined //if an error is defined
-    if (oerr.isDefined) println("<<< " + response.json + " >>>")
-    oerr.isDefined
+    (response.json \ ("error_code")).asOpt[Int].isDefined //if an error is defined
   }
 
   def post(method: String, param: JsValue = JsNull): Future[Response] = {
     val jsData = InputData(login, token, method, param)
 
-    def wsCall = WS.url(url).post[JsValue](jsData) map { response =>
-      require(!isFailed(response)) //success is required
-      response
-    }
+    def wsCall = WS.url(url).post[JsValue](jsData)
+    /*.map { response =>
+        require(!isFailed(response)) //success is required
+        response
+      }*/
 
     withRetry(n = 5, 5.minutes.fromNow)(wsCall) //try to repeat WS calling up to 5 times until success
   }

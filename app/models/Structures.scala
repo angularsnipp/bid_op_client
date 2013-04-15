@@ -78,6 +78,7 @@ case class GetSummaryStatRequest(
 /* output List[T] */
 case class StatItem(
   // other parameters are not useful yet  
+  val CampaignID: Int = 0,
   val SumSearch: Double = 0.0,
   val SumContext: Double = 0.0,
   val ShowsSearch: Int = 0,
@@ -118,6 +119,7 @@ case class GetBannersInfo(
 
 /* output */
 case class BannerInfo(
+  val CampaignID: Long,
   val BannerID: Long,
   val Text: String,
   val Geo: String,

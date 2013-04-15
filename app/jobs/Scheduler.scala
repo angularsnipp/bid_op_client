@@ -1,6 +1,6 @@
 package jobs
 
-import scala.concurrent.Future
+import scala.concurrent.{ Future, Await }
 import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.concurrent.Akka
@@ -120,46 +120,47 @@ class ShortScheduler extends Job {
     User.findAll match {
       case Nil => println("Users not found")
       case ul => ul map { u =>
-        Future {
+        Future { //send requests concurrently for all users
           val n = "Yandex"
           val cl = API_bid.getCampaigns(u, n).get
 
-          val prev_ft = new DateTime(jec.getPreviousFireTime())
-          var cur_ft = new DateTime(jec.getFireTime())
+          val uniqueLogins = cl.map(_._login).distinct //get unique logins, for each we can send up to 5 concurrent requests to Yandex.Direct API
 
-          if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
-            cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
+          uniqueLogins map { l =>
+            Future { //send requests concurrently for all unique logins for the specific user
+              val prev_ft = new DateTime(jec.getPreviousFireTime())
+              var cur_ft = new DateTime(jec.getFireTime())
 
-          Future { //for make requests in parallel way
-            cl map { c =>
-              //CampaignPerformance
-              get_post_CP(u, n, c, cur_ft, prev_ft).onSuccess {
-                case true => println("!!! SUCCESS - CampaignPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
-                case false => println("??? FAILED... - CampaignPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
+              if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
+                cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //change cur_ft to 23:59:59
+
+              val ucl = cl.filter(_._login == l) //list of campaigns for unique login - l
+
+              Future { //send request for all campaigns belonging to the specific login
+                //CampaignPerformance
+                get_post_CP(u, n, ucl, cur_ft, prev_ft).onSuccess {
+                  case true => println("!!! SUCCESS FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
+                  case false => println("??? FAILED... FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
+                }
+              }
+
+              Future { //send request succesively for all campaigns belonging to the specific login
+                //BannersPerformance
+                if (get_post_BP(u, n, ucl, cur_ft, prev_ft))
+                  println("!!! SUCCESS FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
+                else
+                  println("??? FAILED... FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
+              }
+
+              Future { //for make requests in parallel way
+                //ActualBids and NetAdvisedBids
+                get_post_ANA(u, n, ucl).onSuccess {
+                  case true => println("!!! SUCCESS FINISH - ANA for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
+                  case false => println("??? FAILED... FINISH - ANA for: " + u.name + ", " + l + ", " + cur_ft + " ???")
+                }
               }
             }
           }
-
-          Future { //for make requests in parallel way
-            cl map { c =>
-              //BannersPerformance
-              get_post_BP(u, n, c, cur_ft, prev_ft).onSuccess {
-                case true => println("!!! SUCCESS - BannersPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
-                case false => println("??? FAILED... - BannersPerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
-              }
-            }
-          }
-
-          Future { //for make requests in parallel way
-            cl map { c =>
-              //ActualBids and NetAdvisedBids
-              get_post_ANA(u, n, c).onSuccess {
-                case true => println("!!! SUCCESS - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
-                case false => println("??? FAILED... - ActualBids and NetAdvisedBids for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " ???")
-              }
-            }
-          }
-
         } onSuccess {
           case _ => println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
         }
@@ -171,20 +172,30 @@ class ShortScheduler extends Job {
   /**
    * CampaignPerformance
    */
-  def get_post_CP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
-
+  def get_post_CP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
     /* LIMIT = 100 in the day!!! */
+
+    val login = ucl.head._login
+    val token = ucl.head._token
+
     // get StatItem list from Yandex
-    API_yandex(c._login, c._token)
-      .getSummaryStat(List(c.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate())
+    API_yandex(login, token)
+      .getSummaryStat(ucl.map(_.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate())
       .map {
         case (statItem_List, json_stat) =>
           // post StatItem list to BID
           statItem_List map { sil =>
-            val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil))
-            if (performance.isDefined) true else false
+            val bl = ucl map { c =>
+              val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil.filter(_.CampaignID == c.network_campaign_id.toInt)))
+              if (performance.isDefined)
+                println("!!! SUCCESS - CP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
+              else
+                println("??? FAILED... - CP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
+              performance.isDefined
+            }
+            bl.find(!_).isEmpty //true if CPs for all campaigns have been added successful
           } getOrElse {
-            println("<< failed CP: " + u.name + ", " + c.network_campaign_id + ": " + json_stat + " >>")
+            println("<< failed CP: " + u.name + ", " + login + ": " + json_stat + " >>")
             false
           }
       }
@@ -193,38 +204,63 @@ class ShortScheduler extends Job {
   /**
    * BannersPerformance
    */
-  def get_post_BP(u: User, n: String, c: Campaign, cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
+  def get_post_BP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime): Boolean = {
 
-    // get BannersStat from Yandex
-    API_yandex(c._login, c._token)
-      .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate())
-      .map {
-        case (bannersStat, json_stat) =>
-          // post StatItem list to BID
-          bannersStat map { bs =>
-            val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
-            if (performance.isDefined) true else false
-          } getOrElse {
-            println("<< failed BP: " + u.name + ", " + c.network_campaign_id + ": " + json_stat + " >>")
-            false
-          }
-      }
+    val login = ucl.head._login
+    val token = ucl.head._token
+
+    ucl map { c =>
+      // get BannersStat from Yandex
+      val fb = API_yandex(login, token)
+        .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate())
+        .map {
+          case (bannersStat, json_stat) =>
+            // post StatItem list to BID
+            bannersStat map { bs =>
+              val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
+              if (performance.isDefined)
+                println("!!! SUCCESS - BP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
+              else
+                println("??? FAILED... - BP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
+              performance.isDefined
+            } getOrElse {
+              println("<< failed BP: " + u.name + ", " + login + ", " + c.network_campaign_id + ": " + json_stat + " >>")
+              false
+            }
+        }
+      Await.result(fb, 30 seconds) //await up to 30s for getting response for each campaign
+    } find (!_) isEmpty
   }
 
   /**
    * ActualBids and NetAdvisedBids
    */
-  def get_post_ANA(u: User, n: String, c: Campaign): Future[Boolean] = {
+  def get_post_ANA(u: User, n: String, ucl: List[Campaign]): Future[Boolean] = {
+
+    val login = ucl.head._login
+    val token = ucl.head._token
+
     // get BannersInfo list from Yandex
-    API_yandex(c._login, c._token)
-      .getBanners(List(c.network_campaign_id.toInt))
+    API_yandex(login, token)
+      .getBanners(ucl.map(_.network_campaign_id.toInt))
       .map {
         case (bannerInfo_List, json_banners) =>
           // post BannersInfo list to BID
           bannerInfo_List map { bil =>
-            if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
+
+            val bl = ucl map { c =>
+              val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bil.filter(_.CampaignID == c.network_campaign_id.toLong))
+              if (res)
+                println("!!! SUCCESS - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
+              else
+                println("??? FAILED... - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
+              res
+            }
+            bl.find(!_).isEmpty //true if ANAs for all campaigns have been added successful
+
+            //if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
           } getOrElse {
-            println("<< failed ANA: " + u.name + ", " + c.network_campaign_id + ": " + json_banners + " >>")
+            println("<< failed ANA: " + u.name + ", " + login + ": " + json_banners + " >>")
             false
           }
       }
@@ -242,7 +278,9 @@ class ShortScheduler extends Job {
         else
           println("??? Client Server SLEEP... ???")
       }
-    Await.result(result, Duration.Inf)
+    result.onFailure {
+      case _ => println("??? Failed request to Client Server... ???")
+    }
   }
 }
 
@@ -265,12 +303,23 @@ class LongScheduler extends Job {
           val n = "Yandex"
           val cl = API_bid.getCampaigns(u, n).get
 
-          var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
-          cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
+          val uniqueLogins = cl.map(_._login).distinct //get unique logins, for each we can send up to 5 concurrent requests to Yandex.Direct API
 
-          cl map { c =>
-            get_post_BPP(u, n, c, cur_ft).onSuccess {
-              case _ => println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+          uniqueLogins map { l =>
+            Future { //send requests concurrently for all unique logins for the specific user
+
+              var cur_ft = new DateTime(jec.getFireTime()) //after 00:00:00
+              cur_ft = cur_ft.minusMillis(cur_ft.getMillisOfDay() + 1) //set to 23:59:59 of previous day
+
+              val ucl = cl.filter(_._login == l) //list of campaigns for unique login - l
+
+              ucl map { c =>
+                Await.result(get_post_BPP(u, n, c, cur_ft), 1 minutes)
+                println("!!! FINISH - BPP for: " + u.name + ", " + l + ", " + c.network_campaign_id + " - " + cur_ft + " !!!")
+                /*get_post_BPP(u, n, c, cur_ft).onSuccess {
+                  case _ => println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
+                }*/
+              }
             }
           }
         } onSuccess {
@@ -278,7 +327,6 @@ class LongScheduler extends Job {
         }
       }
     }
-
     println("-------- END Job ----- BannerPhrasePerformance ------------------")
   }
 

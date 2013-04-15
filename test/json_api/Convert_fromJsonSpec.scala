@@ -223,7 +223,8 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
 
     "take TRUE data" in {
       val data = """
-      {"SumSearch": 1.0,
+      {"CampaignID": 100,
+       "SumSearch": 1.0,
        "SumContext": 2.0,
        "ShowsSearch": 10,
        "ShowsContext": 20,
@@ -257,13 +258,15 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
 
     "take TRUE data" in {
       val data = """[
-      {"SumSearch": 1.0,
+      {"CampaignID": 100,
+       "SumSearch": 1.0,
        "SumContext": 2.0,
        "ShowsSearch": 10,
        "ShowsContext": 20,
        "ClicksSearch": 30,
        "ClicksContext": 40},
-      {"SumSearch": 1.0,
+      {"CampaignID": 100,
+       "SumSearch": 1.0,
        "SumContext": 2.0,
        "ShowsSearch": 10,
        "ShowsContext": 20,
