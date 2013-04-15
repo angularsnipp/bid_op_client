@@ -37,7 +37,9 @@ case class API_yandex(
 
   /* check if failed */
   def isFailed(response: Response): Boolean = {
-    (response.json \ ("error_code")).asOpt[Int] isDefined //if an error is defined
+    val oerr = (response.json \ ("error_code")).asOpt[Int] //isDefined //if an error is defined
+    if (oerr.isDefined) println("<<< " + response.json + " >>>")
+    oerr.isDefined
   }
 
   def post(method: String, param: JsValue = JsNull): Future[Response] = {
