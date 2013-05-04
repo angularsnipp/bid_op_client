@@ -54,6 +54,8 @@ case class ShortCampaignInfo(
   val Login: String = "",
   val Name: String = "",
   val StartDate: DateTime = new DateTime,
+  val StrategyName: Option[String] = None,
+  val ContextStrategyName: Option[String] = None,
   val Sum: Double = 0.0,
   val Rest: Double = 0.0,
   val Shows: Int = 0,

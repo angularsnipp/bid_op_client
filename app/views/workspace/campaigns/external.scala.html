@@ -29,6 +29,8 @@
 								  <th>Login</th>
 								  <th>Date registered</th>
 								  <th>Balance</th>
+								  <th>Strategy</th>
+								  <th>ContextStrategy</th>
 								  <th>Status</th>								  
 								  <th>Actions</th>
 							  </tr>
@@ -73,6 +75,8 @@ function getCampaignsList(cl) {
 						'<td class="center">' + scil[i].Login + '</td>' +
 						'<td class="center">' + new Date(scil[i].StartDate) + '</td>' +
 						'<td class="center">' + scil[i].Rest + '</td>' +
+						'<td class="center">' + scil[i].StrategyName + '</td>' +
+						'<td class="center">' + scil[i].ContextStrategyName + '</td>' +
 						'<td class="center">' + scil[i].Status + '</td>' +								
 						'<td class="center">' +
 							'<a class="btn btn-info" id="' + scil[i].CampaignID + '" ' + 

@@ -248,6 +248,7 @@ class ShortScheduler extends Job {
           case (bannerInfo_List, json_banners) =>
             // post BannersInfo list to BID
             bannerInfo_List map { bil =>
+              println(bil)
               cl map { c =>
                 val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bil.filter(_.CampaignID == c.network_campaign_id.toLong))
                 if (res)
