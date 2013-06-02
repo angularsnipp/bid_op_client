@@ -80,7 +80,7 @@ object Workspace extends Controller {
         Future {
           (new jobs.LongScheduler).get_post_BPP(user, net, camp.get, new DateTime(), Some(start_date))
         } onSuccess {
-          case _ => println("!!! FINISH - First BPP for: " + user.name + ", " + camp.get.network_campaign_id + " !!!")
+          case _ => println("!!! START - First BPP for: " + user.name + ", " + camp.get.network_campaign_id + " !!!")
         }
 
         Created

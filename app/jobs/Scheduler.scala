@@ -132,7 +132,7 @@ class ShortScheduler extends Job {
 
           uniqueLogins map { l =>
             Future { //send requests concurrently for all unique logins for the specific user
-              val prev_ft = new DateTime(jec.getPreviousFireTime()).minusMonths(3)
+              val prev_ft = new DateTime(jec.getPreviousFireTime())
               var cur_ft = new DateTime(jec.getFireTime())
 
               if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
@@ -145,11 +145,11 @@ class ShortScheduler extends Job {
                */
               val m = API_metrika(l, ucl.head._token)
               val counterList = m.counters
-              val ssml = m.summary(counterList, cur_ft.minusMonths(3), cur_ft)
+              val ssml = m.summary(counterList, cur_ft, cur_ft)
               val cgl = ssml.map { v =>
                 v._1 -> v._2.goals
               }
-              val ssmgl = m.summaryGoals(cgl, cur_ft.minusMonths(3), cur_ft)
+              val ssmgl = m.summaryGoals(cgl, cur_ft, cur_ft)
 
               val cMetrikaPerformance: List[PerformanceMetrika] = m.cSummary(ssml, ssmgl)
               val bpMetrikaPerformance: List[PerformanceMetrika] = m.bpSummary(ssml, ssmgl)
