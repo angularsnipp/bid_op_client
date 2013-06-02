@@ -1,0 +1,433 @@
+{
+    "goal_id" : 1867900,
+    "date2" : "20130524",
+    "min" : {
+        "visits" : 39,
+        "depth" : 1.641,
+        "visit_time" : 302,
+        "goal_reaches" : 43,
+        "visits_all" : 232,
+        "conversion" : 0.1681
+    },
+    "max" : {
+        "visits" : 39,
+        "depth" : 1.641,
+        "visit_time" : 302,
+        "goal_reaches" : 43,
+        "visits_all" : 232,
+        "conversion" : 0.1681
+    },
+    "data" : [
+        {
+            "visits" : 39,
+            "name" : "buzzbox.ru\/freeseminar",
+            "depth" : 1.641,
+            "visit_time" : 302,
+            "direct_id" : "N-5862077",
+            "goal_reaches" : 43,
+            "chld" : [
+                {
+                    "visits" : 14,
+                    "name" : "Директ-маркетинг от А до Я!",
+                    "depth" : 1.6429,
+                    "visit_time" : 391,
+                    "direct_id" : "M-135501682",
+                    "goal_reaches" : 14,
+                    "chld" : [
+                        {
+                            "visits" : 13,
+                            "name" : "директ маркетинг -купить -книгу -фёгеле -пример -технологии -виды -реферат",
+                            "depth" : 1.6923,
+                            "visit_time" : 417,
+                            "goal_reaches" : 13,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "name" : "тов директ маркетинг сервис",
+                                    "depth" : 1,
+                                    "visit_time" : 43,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 2,
+                                    "phrase_id" : 204569894,
+                                    "id" : "c1986652-b97469099-p204569894-s16232447070595143368",
+                                    "type" : "search_phrase",
+                                    "conversion" : 0.5
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "директ маркетинг дни украина",
+                                    "depth" : 1,
+                                    "visit_time" : 35,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s17731222735520152637",
+                                    "conversion" : 1
+                                },
+                                {
+                                    "visits" : 11,
+                                    "name" : "Прочие",
+                                    "depth" : 1.8182,
+                                    "visit_time" : 486,
+                                    "goal_reaches" : 11,
+                                    "visits_all" : 56,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469099-p204569894_1",
+                                    "conversion" : 0.1964
+                                }
+                            ],
+                            "visits_all" : 59,
+                            "phrase_id" : 204569894,
+                            "id" : "c1986652-b97469099-p204569894",
+                            "type" : "phrase",
+                            "conversion" : 0.2203
+                        },
+                        {
+                            "visits" : 1,
+                            "name" : "программа для рассылки писем -массовый",
+                            "depth" : 1,
+                            "visit_time" : 58,
+                            "goal_reaches" : 1,
+                            "visits_all" : 1,
+                            "phrase_id" : 22330706,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p22330706",
+                            "conversion" : 1
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру директ-маркетинга. Участие бесплатное!",
+                    "visits_all" : 79,
+                    "id" : "c1986652-b97469099",
+                    "type" : "banner",
+                    "conversion" : 0.1772
+                },
+                {
+                    "visits" : 14,
+                    "name" : "Семинар по вирусному маркетингу!",
+                    "depth" : 1.7143,
+                    "visit_time" : 262,
+                    "direct_id" : "M-135501677",
+                    "goal_reaches" : 14,
+                    "chld" : [
+                        {
+                            "visits" : 8,
+                            "name" : "интернет маркетинг -услуга -эффективный -через -обучение -реклама -семинар -магазин -сайт -инструмент -сетевой -скачать -книги -использование -курсы -продвижение -курсовая -сети -методы -реферат -россии -эффективность -компании -развитие -особенности -работа -100 -рынок -практически -технологии -агентство -практика -вирин -журнал -успенский -виды -блог -специалист -учебник -задачи -понятие -диплом -отдел -характерной -чертой -является -тестирование -новости -литература -конверсия -средство -вакансии -система -ооо -история -функции -основные -направления -менеджер -термины -аудиокнига -определение -ресурсы -википедия -директор -структура",
+                            "depth" : 2.25,
+                            "visit_time" : 368,
+                            "goal_reaches" : 8,
+                            "chld" : [
+                                {
+                                    "visits" : 2,
+                                    "name" : "интернет маркетинг",
+                                    "depth" : 1.5,
+                                    "visit_time" : 167,
+                                    "goal_reaches" : 2,
+                                    "visits_all" : 7,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s42272363524954352",
+                                    "conversion" : 0.2857
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "«интернет-маркетинг за 55 минут»",
+                                    "depth" : 2,
+                                    "visit_time" : 397,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s9191828054610239548",
+                                    "conversion" : 1
+                                },
+                                {
+                                    "visits" : 5,
+                                    "name" : "Прочие",
+                                    "depth" : 2.6,
+                                    "visit_time" : 442,
+                                    "goal_reaches" : 5,
+                                    "visits_all" : 31,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469100-p204569898_1",
+                                    "conversion" : 0.1613
+                                }
+                            ],
+                            "visits_all" : 39,
+                            "phrase_id" : 204569898,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p204569898",
+                            "conversion" : 0.2051
+                        },
+                        {
+                            "visits" : 3,
+                            "name" : "эффективный маркетинг в интернете",
+                            "depth" : 1,
+                            "visit_time" : 176,
+                            "goal_reaches" : 3,
+                            "visits_all" : 7,
+                            "phrase_id" : 31795876,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p31795876",
+                            "conversion" : 0.4286
+                        },
+                        {
+                            "visits" : 1,
+                            "name" : "интернет маркетинг обучение",
+                            "depth" : 1,
+                            "visit_time" : 75,
+                            "goal_reaches" : 1,
+                            "visits_all" : 8,
+                            "phrase_id" : 1656949,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p1656949",
+                            "conversion" : 0.125
+                        },
+                        {
+                            "visits" : 1,
+                            "name" : "Дополнительные релевантные фразы",
+                            "depth" : 1,
+                            "visit_time" : 106,
+                            "goal_reaches" : 1,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "name" : "настроить контекстную рекламу",
+                                    "depth" : 1,
+                                    "visit_time" : 106,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s9324309246968786619",
+                                    "conversion" : 1
+                                }
+                            ],
+                            "visits_all" : 5,
+                            "phrase_id" : 1,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p1",
+                            "conversion" : 0.2
+                        },
+                        {
+                            "visits" : 1,
+                            "name" : "семинар интернет маркетинг",
+                            "depth" : 1,
+                            "visit_time" : 23,
+                            "goal_reaches" : 1,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "name" : "семинар по интернет маркетингу спивак",
+                                    "depth" : 1,
+                                    "visit_time" : 23,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 845005,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p845005-s17278666106765642863",
+                                    "conversion" : 1
+                                }
+                            ],
+                            "visits_all" : 2,
+                            "phrase_id" : 845005,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p845005",
+                            "conversion" : 0.5
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру интернет-маркетинга. Участие бесплатное!",
+                    "visits_all" : 68,
+                    "id" : "c1986652-b97469100",
+                    "type" : "banner",
+                    "conversion" : 0.2059
+                },
+                {
+                    "visits" : 7,
+                    "name" : "#Вирусный маркетинг# от А до Я!",
+                    "depth" : 1.5714,
+                    "visit_time" : 261,
+                    "direct_id" : "M-135501680",
+                    "goal_reaches" : 9,
+                    "chld" : [
+                        {
+                            "visits" : 6,
+                            "name" : "Вирусный маркетинг -примеры -книга -курсовая -реферат",
+                            "depth" : 1.5,
+                            "visit_time" : 276,
+                            "goal_reaches" : 8,
+                            "chld" : [
+                                {
+                                    "visits" : 2,
+                                    "name" : "вирусный маркетинг",
+                                    "depth" : 1.5,
+                                    "visit_time" : 309,
+                                    "goal_reaches" : 4,
+                                    "visits_all" : 20,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s17250781127500197697",
+                                    "conversion" : 0.1
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "вирусном маркетинге",
+                                    "depth" : 3,
+                                    "visit_time" : 807,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s13921475337737005643",
+                                    "conversion" : 1
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "скрипт вирусного маркетинга",
+                                    "depth" : 1,
+                                    "visit_time" : 30,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s9639509270192848211",
+                                    "conversion" : 1
+                                },
+                                {
+                                    "visits" : 2,
+                                    "name" : "Прочие",
+                                    "depth" : 1,
+                                    "visit_time" : 99,
+                                    "goal_reaches" : 2,
+                                    "visits_all" : 21,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469101-p204569907_1",
+                                    "conversion" : 0.0952
+                                }
+                            ],
+                            "visits_all" : 43,
+                            "phrase_id" : 204569907,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469101-p204569907",
+                            "conversion" : 0.1395
+                        },
+                        {
+                            "visits" : 1,
+                            "name" : "Вирусная реклама -примеры -социальная -видео -вконтакте -лучшая -курсовая -фото -агентство -реферат",
+                            "depth" : 2,
+                            "visit_time" : 171,
+                            "goal_reaches" : 1,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "name" : "вирусной рекламы цены",
+                                    "depth" : 2,
+                                    "visit_time" : 171,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204569877,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569877-s7286330772750098164",
+                                    "conversion" : 1
+                                }
+                            ],
+                            "visits_all" : 9,
+                            "phrase_id" : 204569877,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469101-p204569877",
+                            "conversion" : 0.1111
+                        }
+                    ],
+                    "body" : "Бесплатный онлайн-семинар «Вирусный маркетинг». 31 января. Записывайтесь!",
+                    "visits_all" : 53,
+                    "id" : "c1986652-b97469101",
+                    "type" : "banner",
+                    "conversion" : 0.1321
+                },
+                {
+                    "visits" : 4,
+                    "name" : "Вирусный маркетинг от А до Я!",
+                    "depth" : 1.5,
+                    "visit_time" : 199,
+                    "direct_id" : "M-135501678",
+                    "goal_reaches" : 6,
+                    "chld" : [
+                        {
+                            "visits" : 4,
+                            "name" : "бизнес молодость -скачать -торрент -шаблон -осипов -петр -лохотрон -начало -смотреть -секта -тнт -книга -купить -torrent -инициация -онлайн -триггеры -яндекс -директ -фильм -ютуб -развод -музыка -вконтакте -декларация -обман -александр -волчек -светодиоды -правда -негативные -отзывы -вакансии -пусть -говорят",
+                            "depth" : 1.5,
+                            "visit_time" : 199,
+                            "goal_reaches" : 6,
+                            "chld" : [
+                                {
+                                    "visits" : 2,
+                                    "name" : "бизнес молодость",
+                                    "depth" : 1,
+                                    "visit_time" : 48,
+                                    "goal_reaches" : 4,
+                                    "visits_all" : 15,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s17814270745597190182",
+                                    "conversion" : 0.1333
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "бизнес молодость в киеве",
+                                    "depth" : 2,
+                                    "visit_time" : 445,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s15720679806507212345",
+                                    "conversion" : 1
+                                },
+                                {
+                                    "visits" : 1,
+                                    "name" : "бизнес молодость база знаний",
+                                    "depth" : 2,
+                                    "visit_time" : 254,
+                                    "goal_reaches" : 1,
+                                    "visits_all" : 1,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s5352339569251125774",
+                                    "conversion" : 1
+                                }
+                            ],
+                            "visits_all" : 24,
+                            "phrase_id" : 204533441,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97457592-p204533441",
+                            "conversion" : 0.1667
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру интернет-маркетинга. Участие бесплатное!",
+                    "visits_all" : 28,
+                    "id" : "c1986652-b97457592",
+                    "type" : "banner",
+                    "conversion" : 0.1429
+                }
+            ],
+            "visits_all" : 232,
+            "type" : "campaign",
+            "id" : "c1986652",
+            "conversion" : 0.1681
+        }
+    ],
+    "rows" : 1,
+    "date1" : "20130224",
+    "id" : "19740241",
+    "goals" : [
+        1867900
+    ],
+    "totals" : {
+        "visits" : 39,
+        "depth" : 1.641,
+        "visit_time" : 302,
+        "goal_reaches" : 43,
+        "visits_all" : 232,
+        "conversion" : 0.1681
+    }
+}

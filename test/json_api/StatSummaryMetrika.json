@@ -1,0 +1,1259 @@
+{
+    "date2" : "20130524",
+    "min" : {
+        "visits" : 232,
+        "denial" : 0.2155,
+        "page_views" : 279,
+        "depth" : 1.2026,
+        "visit_time" : 87
+    },
+    "max" : {
+        "visits" : 232,
+        "denial" : 0.2155,
+        "page_views" : 279,
+        "depth" : 1.2026,
+        "visit_time" : 87
+    },
+    "data" : [
+        {
+            "visits" : 232,
+            "denial" : 0.2155,
+            "page_views" : 279,
+            "name" : "buzzbox.ru\/freeseminar",
+            "depth" : 1.2026,
+            "visit_time" : 87,
+            "direct_id" : "N-5862077",
+            "chld" : [
+                {
+                    "visits" : 79,
+                    "denial" : 0.2785,
+                    "page_views" : 94,
+                    "name" : "Директ-маркетинг от А до Я!",
+                    "depth" : 1.1899,
+                    "visit_time" : 113,
+                    "direct_id" : "M-135501682",
+                    "chld" : [
+                        {
+                            "visits" : 59,
+                            "denial" : 0.2881,
+                            "page_views" : 73,
+                            "name" : "директ маркетинг -купить -книгу -фёгеле -пример -технологии -виды -реферат",
+                            "depth" : 1.2373,
+                            "visit_time" : 129,
+                            "chld" : [
+                                {
+                                    "visits" : 8,
+                                    "denial" : 0.625,
+                                    "page_views" : 9,
+                                    "name" : "директ маркетинг",
+                                    "depth" : 1.125,
+                                    "visit_time" : 23,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s2342251018368257053"
+                                },
+                                {
+                                    "visits" : 2,
+                                    "denial" : 0,
+                                    "page_views" : 3,
+                                    "name" : "тов директ маркетинг сервис",
+                                    "depth" : 1.5,
+                                    "visit_time" : 86,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s16232447070595143368"
+                                },
+                                {
+                                    "visits" : 2,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "директ-маркетинг",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s3907449169420090432"
+                                },
+                                {
+                                    "visits" : 2,
+                                    "denial" : 0.5,
+                                    "page_views" : 2,
+                                    "name" : "директ маркетинг это",
+                                    "depth" : 1,
+                                    "visit_time" : 8,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s6900958283666341045"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "ооо\"директ маркетинг сервис\"",
+                                    "depth" : 2,
+                                    "visit_time" : 79,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s6690692268852419999"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "директ маркетинг дни украина",
+                                    "depth" : 1,
+                                    "visit_time" : 35,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s17731222735520152637"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "директ-маркетинг что это",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s403869845333858981"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "услуги в сфере директ маркетинга).",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s6907007409595964012"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "директ-маркетинге",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s8059525740544089130"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "что такое директ-маркетинг",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s8567864838998598604"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "почтовая рассылка директ маркетинг",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s9011105606735447303"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "ооо«директ маркетинг сервис»",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s9373854921689182661"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "лучшие программы для директ маркетинга",
+                                    "depth" : 1,
+                                    "visit_time" : 14,
+                                    "phrase_id" : 204569894,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569894-s9413963750479837354"
+                                },
+                                {
+                                    "visits" : 36,
+                                    "denial" : 0.1944,
+                                    "page_views" : 47,
+                                    "name" : "Прочие",
+                                    "depth" : 1.3056,
+                                    "visit_time" : 196,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469099-p204569894_1"
+                                }
+                            ],
+                            "phrase_id" : 204569894,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p204569894"
+                        },
+                        {
+                            "visits" : 9,
+                            "denial" : 0.1111,
+                            "page_views" : 10,
+                            "name" : "клиентская база",
+                            "depth" : 1.1111,
+                            "visit_time" : 125,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "работа с клиентской базой",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 25330,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p25330-s16048943727193818937"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "создание клиенской базы торгового представителя",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 25330,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p25330-s2715580539815226601"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "создание клиентской базы",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 25330,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p25330-s3118136699260697312"
+                                },
+                                {
+                                    "visits" : 6,
+                                    "denial" : 0.1667,
+                                    "page_views" : 7,
+                                    "name" : "Прочие",
+                                    "depth" : 1.1667,
+                                    "visit_time" : 180,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469099-p25330_1"
+                                }
+                            ],
+                            "phrase_id" : 25330,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p25330"
+                        },
+                        {
+                            "visits" : 4,
+                            "denial" : 0.75,
+                            "page_views" : 4,
+                            "name" : "Дополнительные релевантные фразы",
+                            "depth" : 1,
+                            "visit_time" : 4,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "майл директ",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p1-s13473679506898674848"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "требования к агентствам директ",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p1-s6964336965761524783"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "api управления рекламными кампаниями на яндекс директ бегун и google adwords",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p1-s821571544145921176"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "Прочие",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469099-p1_1"
+                                }
+                            ],
+                            "phrase_id" : 1,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p1"
+                        },
+                        {
+                            "visits" : 3,
+                            "denial" : 0.3333,
+                            "page_views" : 3,
+                            "name" : "Инфобизнес -скачать -парабеллум -торрент -форум -лохотрон -фото -ставрополь -википедия",
+                            "depth" : 1,
+                            "visit_time" : 10,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "секрет инфобизнеса",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569892,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569892-s12006666548860088076"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "курс продажи инфобизнес",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569892,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569892-s8152117632154859957"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "инфобизнес",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569892,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569892-s8531839589123202341"
+                                }
+                            ],
+                            "phrase_id" : 204569892,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p204569892"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "лендинг пейдж",
+                            "depth" : 1,
+                            "visit_time" : 15,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "лендинг пейдж",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 112244619,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p112244619-s5143103606484020439"
+                                }
+                            ],
+                            "phrase_id" : 112244619,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p112244619"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "landing page",
+                            "depth" : 1,
+                            "visit_time" : 17,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "landing page",
+                                    "depth" : 1,
+                                    "visit_time" : 17,
+                                    "phrase_id" : 18487223,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p18487223-s3090621499540578030"
+                                }
+                            ],
+                            "phrase_id" : 18487223,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p18487223"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "email рассылка -делать -сервис -бесплатно -массовый -программа -шаблон",
+                            "depth" : 1,
+                            "visit_time" : 15,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "купить рассылку email",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569903,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469099-p204569903-s10896045263088416311"
+                                }
+                            ],
+                            "phrase_id" : 204569903,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p204569903"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "программа для рассылки писем -массовый",
+                            "depth" : 1,
+                            "visit_time" : 58,
+                            "phrase_id" : 22330706,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469099-p22330706"
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру директ-маркетинга. Участие бесплатное!",
+                    "id" : "c1986652-b97469099",
+                    "type" : "banner"
+                },
+                {
+                    "visits" : 68,
+                    "denial" : 0.1765,
+                    "page_views" : 86,
+                    "name" : "Семинар по вирусному маркетингу!",
+                    "depth" : 1.2647,
+                    "visit_time" : 87,
+                    "direct_id" : "M-135501677",
+                    "chld" : [
+                        {
+                            "visits" : 39,
+                            "denial" : 0.1795,
+                            "page_views" : 55,
+                            "name" : "интернет маркетинг -услуга -эффективный -через -обучение -реклама -семинар -магазин -сайт -инструмент -сетевой -скачать -книги -использование -курсы -продвижение -курсовая -сети -методы -реферат -россии -эффективность -компании -развитие -особенности -работа -100 -рынок -практически -технологии -агентство -практика -вирин -журнал -успенский -виды -блог -специалист -учебник -задачи -понятие -диплом -отдел -характерной -чертой -является -тестирование -новости -литература -конверсия -средство -вакансии -система -ооо -история -функции -основные -направления -менеджер -термины -аудиокнига -определение -ресурсы -википедия -директор -структура",
+                            "depth" : 1.4103,
+                            "visit_time" : 103,
+                            "chld" : [
+                                {
+                                    "visits" : 7,
+                                    "denial" : 0.1429,
+                                    "page_views" : 8,
+                                    "name" : "интернет маркетинг",
+                                    "depth" : 1.1429,
+                                    "visit_time" : 56,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s42272363524954352"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "интернет маркетинг в инфобизнесе",
+                                    "depth" : 2,
+                                    "visit_time" : 34,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s8819189705825739939"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "«интернет-маркетинг за 55 минут»",
+                                    "depth" : 2,
+                                    "visit_time" : 397,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s9191828054610239548"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "интернет маркетинг латвия",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s11458867379449434054"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "специфики маркетинга и pr в интернете",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s14921673991097314454"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "на правах рукописи интернет-маркетинг",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s16935309257868909096"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "маркетинг в интернете",
+                                    "depth" : 1,
+                                    "visit_time" : 17,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s6422342505118600292"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "интернет- маркетинг с гарантией",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 204569898,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p204569898-s9647049024308236098"
+                                },
+                                {
+                                    "visits" : 25,
+                                    "denial" : 0.16,
+                                    "page_views" : 38,
+                                    "name" : "Прочие",
+                                    "depth" : 1.52,
+                                    "visit_time" : 125,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469100-p204569898_1"
+                                }
+                            ],
+                            "phrase_id" : 204569898,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p204569898"
+                        },
+                        {
+                            "visits" : 8,
+                            "denial" : 0.125,
+                            "page_views" : 8,
+                            "name" : "интернет маркетинг обучение",
+                            "depth" : 1,
+                            "visit_time" : 23,
+                            "phrase_id" : 1656949,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p1656949"
+                        },
+                        {
+                            "visits" : 7,
+                            "denial" : 0.1429,
+                            "page_views" : 8,
+                            "name" : "эффективный маркетинг в интернете",
+                            "depth" : 1.1429,
+                            "visit_time" : 128,
+                            "phrase_id" : 31795876,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p31795876"
+                        },
+                        {
+                            "visits" : 5,
+                            "denial" : 0,
+                            "page_views" : 6,
+                            "name" : "Дополнительные релевантные фразы",
+                            "depth" : 1.2,
+                            "visit_time" : 157,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "распространение в интернете писем о шейхе ахмете",
+                                    "depth" : 2,
+                                    "visit_time" : 635,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s3009951777066876493"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "реклама в интернете бесплатно",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s13103223160545059045"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "internet marketing manager",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s13332336167825710691"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "своё дело в интернете покупка рекламных банеров и размещение на сайтах",
+                                    "depth" : 1,
+                                    "visit_time" : 14,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s7706974265124909721"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "настроить контекстную рекламу",
+                                    "depth" : 1,
+                                    "visit_time" : 106,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p1-s9324309246968786619"
+                                }
+                            ],
+                            "phrase_id" : 1,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p1"
+                        },
+                        {
+                            "visits" : 3,
+                            "denial" : 0.6667,
+                            "page_views" : 3,
+                            "name" : "услуги интернет маркетинга",
+                            "depth" : 1,
+                            "visit_time" : 6,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "услуги интернет маркетинг",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 2083372,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p2083372-s14901391320877042353"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 1,
+                                    "page_views" : 1,
+                                    "name" : "маркетинг услуг доступа в интернет по технологии adsl",
+                                    "depth" : 1,
+                                    "visit_time" : 0,
+                                    "phrase_id" : 2083372,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p2083372-s16490268750419827881"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "Прочие",
+                                    "depth" : 1,
+                                    "visit_time" : 19,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469100-p2083372_1"
+                                }
+                            ],
+                            "phrase_id" : 2083372,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p2083372"
+                        },
+                        {
+                            "visits" : 2,
+                            "denial" : 0.5,
+                            "page_views" : 2,
+                            "name" : "интернет маркетинг сайта",
+                            "depth" : 1,
+                            "visit_time" : 8,
+                            "phrase_id" : 1156253,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p1156253"
+                        },
+                        {
+                            "visits" : 2,
+                            "denial" : 0,
+                            "page_views" : 2,
+                            "name" : "интернет маркетинг реклама",
+                            "depth" : 1,
+                            "visit_time" : 9,
+                            "phrase_id" : 539005,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p539005"
+                        },
+                        {
+                            "visits" : 2,
+                            "denial" : 0,
+                            "page_views" : 2,
+                            "name" : "семинар интернет маркетинг",
+                            "depth" : 1,
+                            "visit_time" : 19,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "семинары по интернет маркетингу",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 845005,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p845005-s11222282622548259551"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "семинар по интернет маркетингу спивак",
+                                    "depth" : 1,
+                                    "visit_time" : 23,
+                                    "phrase_id" : 845005,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469100-p845005-s17278666106765642863"
+                                }
+                            ],
+                            "phrase_id" : 845005,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469100-p845005"
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру интернет-маркетинга. Участие бесплатное!",
+                    "id" : "c1986652-b97469100",
+                    "type" : "banner"
+                },
+                {
+                    "visits" : 53,
+                    "denial" : 0.2453,
+                    "page_views" : 61,
+                    "name" : "#Вирусный маркетинг# от А до Я!",
+                    "depth" : 1.1509,
+                    "visit_time" : 50,
+                    "direct_id" : "M-135501680",
+                    "chld" : [
+                        {
+                            "visits" : 43,
+                            "denial" : 0.186,
+                            "page_views" : 50,
+                            "name" : "Вирусный маркетинг -примеры -книга -курсовая -реферат",
+                            "depth" : 1.1628,
+                            "visit_time" : 57,
+                            "chld" : [
+                                {
+                                    "visits" : 20,
+                                    "denial" : 0.25,
+                                    "page_views" : 24,
+                                    "name" : "вирусный маркетинг",
+                                    "depth" : 1.2,
+                                    "visit_time" : 53,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s17250781127500197697"
+                                },
+                                {
+                                    "visits" : 3,
+                                    "denial" : 0.3333,
+                                    "page_views" : 3,
+                                    "name" : "системы вирусного маркетинга",
+                                    "depth" : 1,
+                                    "visit_time" : 10,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s6593466066865993171"
+                                },
+                                {
+                                    "visits" : 2,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "dbhecysq vfhrtnbyu",
+                                    "depth" : 1,
+                                    "visit_time" : 17,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s6077475677817608396"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 3,
+                                    "name" : "вирусном маркетинге",
+                                    "depth" : 3,
+                                    "visit_time" : 807,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s13921475337737005643"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : ",bh;f dbhecyjuj vfhrtnbyuf",
+                                    "depth" : 1,
+                                    "visit_time" : 18,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s14862932219862004545"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "вирусного маркетинга видео",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s16622486495576716069"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "вирусный маркетинг юлия литвина",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s17641308144534801768"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "как заняться вирусным маркетингом",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s17833390760576528366"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "вопросы по вирусному маркетингу",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s17983805061445925539"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "биржа вирусного маркетинга",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s6659741276380887700"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "скрипт вирусного маркетинга",
+                                    "depth" : 1,
+                                    "visit_time" : 30,
+                                    "phrase_id" : 204569907,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569907-s9639509270192848211"
+                                },
+                                {
+                                    "visits" : 10,
+                                    "denial" : 0.2,
+                                    "page_views" : 11,
+                                    "name" : "Прочие",
+                                    "depth" : 1.1,
+                                    "visit_time" : 37,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469101-p204569907_1"
+                                }
+                            ],
+                            "phrase_id" : 204569907,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469101-p204569907"
+                        },
+                        {
+                            "visits" : 9,
+                            "denial" : 0.5556,
+                            "page_views" : 10,
+                            "name" : "Вирусная реклама -примеры -социальная -видео -вконтакте -лучшая -курсовая -фото -агентство -реферат",
+                            "depth" : 1.1111,
+                            "visit_time" : 25,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "вирусной рекламы цены",
+                                    "depth" : 2,
+                                    "visit_time" : 171,
+                                    "phrase_id" : 204569877,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p204569877-s7286330772750098164"
+                                },
+                                {
+                                    "visits" : 8,
+                                    "denial" : 0.625,
+                                    "page_views" : 8,
+                                    "name" : "Прочие",
+                                    "depth" : 1,
+                                    "visit_time" : 7,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97469101-p204569877_1"
+                                }
+                            ],
+                            "phrase_id" : 204569877,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469101-p204569877"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "Дополнительные релевантные фразы",
+                            "depth" : 1,
+                            "visit_time" : 16,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "вирусные ролики",
+                                    "depth" : 1,
+                                    "visit_time" : 16,
+                                    "phrase_id" : 1,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469101-p1-s7081547870557873658"
+                                }
+                            ],
+                            "phrase_id" : 1,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469101-p1"
+                        }
+                    ],
+                    "body" : "Бесплатный онлайн-семинар «Вирусный маркетинг». 31 января. Записывайтесь!",
+                    "id" : "c1986652-b97469101",
+                    "type" : "banner"
+                },
+                {
+                    "visits" : 28,
+                    "denial" : 0.0714,
+                    "page_views" : 34,
+                    "name" : "Вирусный маркетинг от А до Я!",
+                    "depth" : 1.2143,
+                    "visit_time" : 98,
+                    "direct_id" : "M-135501678",
+                    "chld" : [
+                        {
+                            "visits" : 24,
+                            "denial" : 0.0833,
+                            "page_views" : 29,
+                            "name" : "бизнес молодость -скачать -торрент -шаблон -осипов -петр -лохотрон -начало -смотреть -секта -тнт -книга -купить -torrent -инициация -онлайн -триггеры -яндекс -директ -фильм -ютуб -развод -музыка -вконтакте -декларация -обман -александр -волчек -светодиоды -правда -негативные -отзывы -вакансии -пусть -говорят",
+                            "depth" : 1.2083,
+                            "visit_time" : 92,
+                            "chld" : [
+                                {
+                                    "visits" : 15,
+                                    "denial" : 0.1333,
+                                    "page_views" : 17,
+                                    "name" : "бизнес молодость",
+                                    "depth" : 1.1333,
+                                    "visit_time" : 92,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s17814270745597190182"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "бизнес молодость в киеве",
+                                    "depth" : 2,
+                                    "visit_time" : 445,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s15720679806507212345"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "овощи бизнес молодость",
+                                    "depth" : 2,
+                                    "visit_time" : 25,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s18000029411075659206"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "бизнес молодость база знаний",
+                                    "depth" : 2,
+                                    "visit_time" : 254,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s5352339569251125774"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "сайт как бизнес молодость",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s11874864268466769918"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "бизнес-молодость",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s12564207620503586285"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "бизнес и молодость",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204533441,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533441-s6835990846921082117"
+                                },
+                                {
+                                    "visits" : 3,
+                                    "denial" : 0,
+                                    "page_views" : 3,
+                                    "name" : "Прочие",
+                                    "depth" : 1,
+                                    "visit_time" : 20,
+                                    "type" : "other",
+                                    "id" : "c1986652-b97457592-p204533441_1"
+                                }
+                            ],
+                            "phrase_id" : 204533441,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97457592-p204533441"
+                        },
+                        {
+                            "visits" : 3,
+                            "denial" : 0,
+                            "page_views" : 3,
+                            "name" : "viralmarketingbomb",
+                            "depth" : 1,
+                            "visit_time" : 18,
+                            "chld" : [
+                                {
+                                    "visits" : 3,
+                                    "denial" : 0,
+                                    "page_views" : 3,
+                                    "name" : "viralmarketingbomb",
+                                    "depth" : 1,
+                                    "visit_time" : 18,
+                                    "phrase_id" : 160951738,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p160951738-s17694858710875624077"
+                                }
+                            ],
+                            "phrase_id" : 160951738,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97457592-p160951738"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 2,
+                            "name" : "buzzbox",
+                            "depth" : 2,
+                            "visit_time" : 466,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 2,
+                                    "name" : "buzzbox",
+                                    "depth" : 2,
+                                    "visit_time" : 466,
+                                    "phrase_id" : 204533426,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97457592-p204533426-s852738858169505144"
+                                }
+                            ],
+                            "phrase_id" : 204533426,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97457592-p204533426"
+                        }
+                    ],
+                    "body" : "Раскроем все секреты. Фишки гуру интернет-маркетинга. Участие бесплатное!",
+                    "id" : "c1986652-b97457592",
+                    "type" : "banner"
+                },
+                {
+                    "visits" : 2,
+                    "denial" : 0,
+                    "page_views" : 2,
+                    "name" : "Как #наработать клиентскую базу#?",
+                    "depth" : 1,
+                    "visit_time" : 15,
+                    "direct_id" : "M-135501679",
+                    "chld" : [
+                        {
+                            "visits" : 2,
+                            "denial" : 0,
+                            "page_views" : 2,
+                            "name" : "увеличить продажи с сайта",
+                            "depth" : 1,
+                            "visit_time" : 15,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "как увеличить продажи на сайте",
+                                    "depth" : 1,
+                                    "visit_time" : 14,
+                                    "phrase_id" : 4810455,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469102-p4810455-s13052467559615244382"
+                                },
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "срочно увеличить продажи с сайта",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 4810455,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469102-p4810455-s13550389547865310329"
+                                }
+                            ],
+                            "phrase_id" : 4810455,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469102-p4810455"
+                        }
+                    ],
+                    "body" : "Подскажет онлайн-семинар «Вирусный маркетинг». Бесплатная регистрация:",
+                    "id" : "c1986652-b97469102",
+                    "type" : "banner"
+                },
+                {
+                    "visits" : 2,
+                    "denial" : 0.5,
+                    "page_views" : 2,
+                    "name" : "Семинар по вирусному маркетингу!",
+                    "depth" : 1,
+                    "visit_time" : 8,
+                    "direct_id" : "M-135501681",
+                    "chld" : [
+                        {
+                            "visits" : 1,
+                            "denial" : 0,
+                            "page_views" : 1,
+                            "name" : "повышения продаж с сайта",
+                            "depth" : 1,
+                            "visit_time" : 15,
+                            "chld" : [
+                                {
+                                    "visits" : 1,
+                                    "denial" : 0,
+                                    "page_views" : 1,
+                                    "name" : "повышение продаж на сайте",
+                                    "depth" : 1,
+                                    "visit_time" : 15,
+                                    "phrase_id" : 204569886,
+                                    "type" : "search_phrase",
+                                    "id" : "c1986652-b97469103-p204569886-s5902949237705490074"
+                                }
+                            ],
+                            "phrase_id" : 204569886,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469103-p204569886"
+                        },
+                        {
+                            "visits" : 1,
+                            "denial" : 1,
+                            "page_views" : 1,
+                            "name" : "формирования базы клиентов",
+                            "depth" : 1,
+                            "visit_time" : 0,
+                            "phrase_id" : 204569891,
+                            "type" : "phrase",
+                            "id" : "c1986652-b97469103-p204569891"
+                        }
+                    ],
+                    "body" : "Секреты #формирования клиентской базы#. Участие бесплатное. Регистрируйтесь!",
+                    "id" : "c1986652-b97469103",
+                    "type" : "banner"
+                }
+            ],
+            "type" : "campaign",
+            "id" : "c1986652"
+        }
+    ],
+    "rows" : 1,
+    "date1" : "20130224",
+    "id" : "19740241",
+    "goals" : [
+        1867900
+    ],
+    "totals" : {
+        "visits" : 232,
+        "denial" : 0.2155,
+        "page_views" : 279,
+        "depth" : 1.2026,
+        "visit_time" : 87
+    }
+}

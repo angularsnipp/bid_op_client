@@ -10,6 +10,8 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import play.api.Play.current //or use (implicit app: play.api.Application)
+import play.api.libs.json.{ JsValue, JsNull }
+import json_api._
 
 import org.joda.time.DateTime
 
@@ -59,6 +61,7 @@ object Scheduler {
     val triggerCP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyCP)
       .startAt(startSS.toDate())
+      //.startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInMinutes(nMinutes)
@@ -76,6 +79,7 @@ object Scheduler {
     val triggerBPP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyBPP)
       .startAt(startLS.toDate())
+      //.startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInHours(24)
@@ -128,7 +132,7 @@ class ShortScheduler extends Job {
 
           uniqueLogins map { l =>
             Future { //send requests concurrently for all unique logins for the specific user
-              val prev_ft = new DateTime(jec.getPreviousFireTime())
+              val prev_ft = new DateTime(jec.getPreviousFireTime()).minusMonths(3)
               var cur_ft = new DateTime(jec.getFireTime())
 
               if (cur_ft.getMinuteOfDay() < prev_ft.getMinuteOfDay()) //if cur_ft is a new day, i.e., 00:00:00
@@ -136,9 +140,26 @@ class ShortScheduler extends Job {
 
               val ucl = cl.filter(_._login == l) //list of campaigns for unique login - l
 
+              /**
+               * get Statistics from Yandex.Metrika
+               */
+              val m = API_metrika(l, ucl.head._token)
+              val counterList = m.counters
+              val ssml = m.summary(counterList, cur_ft.minusMonths(3), cur_ft)
+              val cgl = ssml.map { v =>
+                v._1 -> v._2.goals
+              }
+              val ssmgl = m.summaryGoals(cgl, cur_ft.minusMonths(3), cur_ft)
+
+              val cMetrikaPerformance: List[PerformanceMetrika] = m.cSummary(ssml, ssmgl)
+              val bpMetrikaPerformance: List[PerformanceMetrika] = m.bpSummary(ssml, ssmgl)
+
+              /**
+               * get Statistics from Yandex.Direct -> add stats from Yandex.Metrika -> send to BID
+               */
               Future { //send request for all campaigns belonging to the specific login
                 //CampaignPerformance
-                get_post_CP(u, n, ucl, cur_ft, prev_ft).onSuccess {
+                get_post_CP(u, n, ucl, cur_ft, prev_ft, cMetrikaPerformance).onSuccess {
                   case true => println("!!! SUCCESS FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
                   case false => println("??? FAILED... FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
                 }
@@ -146,7 +167,7 @@ class ShortScheduler extends Job {
 
               Future { //send request succesively for all campaigns belonging to the specific login
                 //BannersPerformance
-                if (get_post_BP(u, n, ucl, cur_ft, prev_ft))
+                if (get_post_BP(u, n, ucl, cur_ft, prev_ft, bpMetrikaPerformance))
                   println("!!! SUCCESS FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
                 else
                   println("??? FAILED... FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
@@ -159,20 +180,21 @@ class ShortScheduler extends Job {
                   case false => println("??? FAILED... FINISH - ANA for: " + u.name + ", " + l + ", " + cur_ft + " ???")
                 }
               }
-            }
-          }
+
+            } //logins future
+          } //logins
         } onSuccess {
           case _ => println("<<<<<<<<< User: " + u.name + " >>>>>>>>")
-        }
-      }
-    }
+        } //users future
+      } //users
+    } // users match
     println("-------- END Job -----  CampaignPerformance ------------------")
   }
 
   /**
    * CampaignPerformance
    */
-  def get_post_CP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime): Future[Boolean] = {
+  def get_post_CP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime, mpList: List[PerformanceMetrika] = Nil): Future[Boolean] = {
     /* LIMIT = 100 in the day!!! */
 
     val login = ucl.head._login
@@ -186,7 +208,9 @@ class ShortScheduler extends Job {
           // post StatItem list to BID
           statItem_List map { sil =>
             val bl = ucl map { c =>
-              val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id, Performance._apply(prev_ft, cur_ft, sil.filter(_.CampaignID == c.network_campaign_id.toInt)))
+              val performance = API_bid.postCampaignStats(u, n, c.network_campaign_id,
+                Performance._apply(prev_ft, cur_ft, sil.filter(_.CampaignID == c.network_campaign_id.toInt)),
+                mpList.filter(mp => mp.campaignID.getOrElse(0) == c.network_campaign_id.toInt))
               if (performance.isDefined)
                 println("!!! SUCCESS - CP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
               else
@@ -204,7 +228,7 @@ class ShortScheduler extends Job {
   /**
    * BannersPerformance
    */
-  def get_post_BP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime): Boolean = {
+  def get_post_BP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime, mpList: List[PerformanceMetrika] = Nil): Boolean = {
 
     val login = ucl.head._login
     val token = ucl.head._token
@@ -217,7 +241,8 @@ class ShortScheduler extends Job {
           case (bannersStat, json_stat) =>
             // post StatItem list to BID
             bannersStat map { bs =>
-              val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft)
+              val performance = API_bid.postBannersStats(u, n, c.network_campaign_id, bs, cur_ft,
+                mpList.filter(mp => mp.campaignID.getOrElse(0) == c.network_campaign_id.toInt))
               if (performance.isDefined)
                 println("!!! SUCCESS - BP for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
               else
@@ -342,14 +367,16 @@ class LongScheduler extends Job {
   /**
    * BannerPhrasePerformance
    */
-  def get_post_BPP(u: User, n: String, c: Campaign, cur_ft: DateTime) = {
+  def get_post_BPP(u: User, n: String, c: Campaign, cur_ft: DateTime, start_date: Option[DateTime] = None) = {
     val login = c._login
     val token = c._token
     val cID = c.network_campaign_id
 
+    val start_dt = start_date.getOrElse(cur_ft)
+
     //create Report on Yandex server
     API_yandex(login, token)
-      .createNewReport(cID.toInt, cur_ft.toDate(), cur_ft.toDate())
+      .createNewReport(cID.toInt, start_dt.toDate(), cur_ft.toDate())
       .map { newReportID =>
         newReportID map { id =>
 

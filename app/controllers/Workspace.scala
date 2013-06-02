@@ -56,18 +56,32 @@ object Workspace extends Controller {
   def postCampaign = Action(parse.json) { implicit request =>
     {
       val data = request.body
+
+      val user = User.findByName((data \ ("user")).as[String]).get
+      val net = (data \ ("net")).as[String]
+      val start_date = Bid.iso_fmt.parseDateTime((data \ ("start_date")).as[String])
+
       val camp = API_bid.postCampaign(
-        user = User.findByName((data \ ("user")).as[String]).get,
-        net = (data \ ("net")).as[String],
+        user = user,
+        net = net,
         campaign = Campaign(
           _login = (data \ ("_login")).as[String],
           _token = (data \ ("_token")).as[String],
           network_campaign_id = (data \ ("network_campaign_id")).as[Long].toString(),
-          start_date = Bid.iso_fmt.parseDateTime((data \ ("start_date")).as[String]),
-          daily_budget = (data \ ("daily_budget")).as[Double]))
+          start_date = start_date,
+          daily_budget = (data \ ("daily_budget")).as[Double],
+          strategy = (data \ ("strategy")).as[String]))
 
       if (camp.isDefined) {
         println("!!! SUCCESS postCampaign !!!")
+
+        // Get First Detailed Report from Yandex direct
+        // It should be done for sync direct and metrika phrase IDs
+        Future {
+          (new jobs.LongScheduler).get_post_BPP(user, net, camp.get, new DateTime(), Some(start_date))
+        } onSuccess {
+          case _ => println("!!! FINISH - First BPP for: " + user.name + ", " + camp.get.network_campaign_id + " !!!")
+        }
 
         Created
       } else println("??? FAILED postCampaign ???"); BadRequest

@@ -3,6 +3,7 @@ package json_api
 import models._
 
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 /************* JSON WRITEs and READs for creating REQUESTs and handling RESULTs ************/
 /************* or just define JSON FORMATs 									  ************/
@@ -19,11 +20,24 @@ object Reads { //-------------------------- fromJson ---------------------------
   implicit lazy val campaign = Json.reads[Campaign]
   implicit lazy val performance = Json.reads[Performance]
   implicit lazy val phrasePriceInfo = Json.reads[PhrasePriceInfo]
-  
+
   implicit lazy val bannersStatItem = Json.reads[BannersStatItem]
   implicit lazy val getBannersStatResponse = Json.reads[GetBannersStatResponse]
-   
+
   implicit lazy val clientInfo = Json.reads[ClientInfo]
+
+  //for metrika  
+  implicit val rds: Reads[DataStat] = (
+    (__ \ "visits").readNullable[Int] and
+    (__ \ "visits_all").readNullable[Int] and
+    (__ \ "denial").readNullable[Double] and
+    (__ \ "goal_reaches").readNullable[Int] and
+    (__ \ "direct_id").readNullable[String] and
+    (__ \ "phrase_id").readNullable[Long] and
+    (__ \ "type").readNullable[String] and
+    (__ \ "chld").readNullable(list(__.lazyRead(rds))))(DataStat.apply _)
+
+  implicit lazy val statSummaryMetrika = Json.reads[StatSummaryMetrika]
 }
 
 object Writes { //---------------------- toJson -----------------------------------
@@ -41,9 +55,14 @@ object Writes { //---------------------- toJson --------------------------------
   implicit lazy val getBannersInfo = Json.writes[GetBannersInfo]
   implicit lazy val getSummaryStatRequest = Json.writes[GetSummaryStatRequest]
   implicit lazy val newReportInfo = Json.writes[NewReportInfo]
-  
+
   implicit lazy val bannersStatItem = Json.writes[BannersStatItem]
   implicit lazy val getBannersStatResponse = Json.writes[GetBannersStatResponse]
+
+  //for metrika
+  implicit lazy val withoutGoal = Json.writes[WithoutGoal]
+  implicit lazy val withGoal = Json.writes[WithGoal]
+  implicit lazy val performanceMetrika = Json.writes[PerformanceMetrika]
 }
 
 /*object Formats {

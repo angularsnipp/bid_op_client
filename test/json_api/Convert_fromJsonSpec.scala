@@ -380,7 +380,8 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "_login": "krisp0",
         "_token": "123",
         "network_campaign_id": "100",        
-        "daily_budget": 50.0}""".format(date.getMillis(), date.plusDays(1).getMillis())
+        "daily_budget": 50.0,
+        "strategy": "HigestPosition"}""".format(date.getMillis(), date.plusDays(1).getMillis())
 
       val Some(res) = fromJson[Campaign](Json.parse(data))
 
@@ -403,13 +404,15 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "_login": "krisp0",
         "_token": "123",
         "network_campaign_id": "100",        
-        "daily_budget": 50.0},
+        "daily_budget": 50.0,
+        "strategy": "HigestPosition"},
        {"start_date": %d,
         "end_date": %d,
         "_login": "krisp0",
         "_token": "123",
         "network_campaign_id": "100",        
-        "daily_budget": 50.0}
+        "daily_budget": 50.0,
+        "strategy": "HigestPosition"}
        ]""".format(date.getMillis(), date.plusDays(1).getMillis(), date.getMillis(), date.plusDays(1).getMillis())
 
       val Some(res) = fromJson[List[Campaign]](Json.parse(data))
@@ -518,6 +521,52 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
       res.Stat.head.Shows must_== (550)
       res.Stat.head.Sum must_== (12.3)
       //res.Stat.head.StatDate must_== (new DateTime(date))
+    }
+  }
+
+  /*------------- StatSummaryMetrika ---------------------------------------------------*/
+  "fromJson - StatSummaryMetrika" should {
+    sequential
+
+    "take TRUE data" in {
+      val data = """
+    		  {
+    		  "rows" : 1,
+    		  "date1" : "20130224",
+    		  "date2" : "20130524",
+    		  "id" : "19740241",
+    		  "goals" : [1867900],
+    		  "data" : []
+    		  }
+       """
+
+      val Some(res) = fromJson[StatSummaryMetrika](Json.parse(data))
+
+      res.rows must_== (1)
+      res.date1 must_== ("20130224")
+      res.goal_id must_== (None)
+    }
+
+    "take Full data WithoutGoals" in {
+      val file_name = "test/json_api/StatSummaryMetrika.json"
+      val data = io.Source.fromFile(file_name).getLines.mkString
+
+      val Some(res) = fromJson[StatSummaryMetrika](Json.parse(data))
+
+      res.rows must_== (1)
+      res.date1 must_== ("20130224")
+      res.goal_id must_== (None)
+    }
+
+    "take Full data WithGoals" in {
+      val file_name = "test/json_api/StatSummaryMetrikaGoals.json"
+      val data = io.Source.fromFile(file_name).getLines.mkString
+
+      val Some(res) = fromJson[StatSummaryMetrika](Json.parse(data))
+
+      res.rows must_== (1)
+      res.date1 must_== ("20130224")
+      res.goal_id must_== (Some(1867900))
     }
   }
 }

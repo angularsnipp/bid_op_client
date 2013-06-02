@@ -80,7 +80,7 @@ function getCampaignsList(cl) {
 						'<td class="center">' + scil[i].Status + '</td>' +								
 						'<td class="center">' +
 							'<a class="btn btn-info" id="' + scil[i].CampaignID + '" ' + 
-								'onclick="addCampaign(\'' + scil[i].Login + '\',' + scil[i].CampaignID + ',' + scil[i].StartDate + ',' + scil[i].Rest + ')">' +										
+								'onclick="addCampaign(\'' + scil[i].Login + '\',' + scil[i].CampaignID + ',' + scil[i].StartDate + ',' + scil[i].Rest + ',\'' + scil[i].StrategyName + '\')">' +										
 								'<i class="icon-plus icon-white"></i>' +  
 								'Add' +                                            
 							'</a>' +									
@@ -93,7 +93,7 @@ function getCampaignsList(cl) {
 }
 
 // add campaign to Bid
-function addCampaign(login,id,sd,db) { 
+function addCampaign(login,id,sd,db,st) { 
 	$.ajax({
 		type: 'POST',
 		url: "@routes.Workspace.postCampaign",        			
@@ -104,7 +104,8 @@ function addCampaign(login,id,sd,db) {
         	_token: '@token',
         	network_campaign_id: id,
         	start_date: new Date(sd),        					
-        	daily_budget: db	      			 				      				
+        	daily_budget: db,
+        	strategy: st
         }),
         contentType:'application/json; charset=utf-8',
 		dataType : 'json',

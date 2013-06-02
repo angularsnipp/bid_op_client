@@ -94,11 +94,15 @@ object API_bid {
   }
 
   /*DURING the day - Campaigns Stats*/
-  def postCampaignStats(user: User, net: String, id: String, performance: Performance): Option[Performance] = {
+  def postCampaignStats(user: User, net: String, id: String, performance: Performance, mpList: List[PerformanceMetrika] = Nil): Option[Performance] = {
+    val jsdata = Json.obj(
+      "direct" -> toJson[Performance](performance),
+      "metrika" -> toJson[List[PerformanceMetrika]](mpList))
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/stats")
       .withHeaders(("password" -> user.password))
-      .post[JsValue](toJson[Performance](performance))
+      .post[JsValue](Json.toJson(jsdata))
       .map { response =>
+        println(">>>>>>>CP " + performance + "***********" + mpList + " MP<<<<<<<<")
         if (response.status == Http.Status.CREATED) fromJson[Performance](response.json) else None
       }
 
@@ -106,10 +110,13 @@ object API_bid {
   }
 
   /*DURING the day - BannerPhrase Stats*/
-  def postBannersStats(user: User, net: String, id: String, getBannersStatResponse: GetBannersStatResponse, cur_dt: DateTime): Option[GetBannersStatResponse] = {
+  def postBannersStats(user: User, net: String, id: String, getBannersStatResponse: GetBannersStatResponse, cur_dt: DateTime, mpList: List[PerformanceMetrika] = Nil): Option[GetBannersStatResponse] = {
+    val jsdata = Json.obj(
+      "direct" -> toJson[GetBannersStatResponse](getBannersStatResponse),
+      "metrika" -> toJson[List[PerformanceMetrika]](mpList))
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannersstats")
       .withHeaders(("password" -> user.password), ("current_datetime" -> iso_fmt.print(cur_dt)))
-      .post[JsValue](toJson[GetBannersStatResponse](getBannersStatResponse))
+      .post[JsValue](Json.toJson(jsdata))
       .map { response =>
         if (response.status == Http.Status.CREATED) Some(getBannersStatResponse) else None
       }
@@ -147,6 +154,18 @@ object API_bid {
       .get()
       .map { response =>
         if (response.status == Http.Status.OK) fromJson[List[PhrasePriceInfo]](response.json) else None
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
+  /* Metrika Reports */
+  def postMetrikaReports(user: User, net: String, metrikaReport: JsValue): Boolean = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/metrika/stats")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](metrikaReport)
+      .map { response =>
+        if (response.status == Http.Status.CREATED) true else false
       }
 
     Await.result(result, Duration.Inf)

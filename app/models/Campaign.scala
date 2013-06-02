@@ -11,11 +11,12 @@ case class Campaign(
   val network_campaign_id: String = "",
   val start_date: DateTime = new DateTime,
   val end_date: DateTime = new DateTime,
-  val daily_budget: Double = 0.0) {
+  val daily_budget: Double = 0.0,
+  val strategy: String = "") {
   //implicit val campaign = Json.format[Campaign]
 }
 
-object Campaign extends Function6[String, String, String, DateTime, DateTime, Double, Campaign] {
+object Campaign extends Function7[String, String, String, DateTime, DateTime, Double, String, Campaign] {
 
   //create Campaign using ShortCampaignInfo from Yandex 
   def applyShortCampaignInfo(login: String, token: String, sci: ShortCampaignInfo): Campaign = {
@@ -24,7 +25,8 @@ object Campaign extends Function6[String, String, String, DateTime, DateTime, Do
       _token = token,
       network_campaign_id = sci.CampaignID.toString(),
       start_date = sci.StartDate,
-      daily_budget = sci.Rest)
+      daily_budget = sci.Rest,
+      strategy = sci.StrategyName.getOrElse(""))
   }
 
 }

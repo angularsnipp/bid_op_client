@@ -72,16 +72,17 @@ object Application extends Controller with Secured {
       implicit request => user map { u =>
         u.name match {
           case "krisp0" =>
-            if (API_bid.clearDB(u))
+            if (API_bid.clearDB(u)) {
               println("!!! BID DB is CLEAR !!!")
-            else
+
+              if (User.truncate)
+                println("!!! CLIENT DB is CLEAR !!!")
+              else
+                println("??? FAIL ---> CLIENT DB is NOT CLEAR ???")
+            } else
               println("??? FAIL ---> BID DB is NOT CLEAR ???")
 
-            if (User.truncate)
-              println("!!! CLIENT DB is CLEAR !!!")
-            else
-              println("??? FAIL ---> CLIENT DB is NOT CLEAR ???")
-            Ok
+            Redirect(routes.Application.home)
           case _ => Redirect(routes.Application.home)
         }
       } getOrElse { Redirect(routes.Application.home) }
