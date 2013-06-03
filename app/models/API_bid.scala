@@ -102,7 +102,6 @@ object API_bid {
       .withHeaders(("password" -> user.password))
       .post[JsValue](Json.toJson(jsdata))
       .map { response =>
-        println(">>>>>>>CP " + performance + "***********" + mpList + " MP<<<<<<<<")
         if (response.status == Http.Status.CREATED) fromJson[Performance](response.json) else None
       }
 
