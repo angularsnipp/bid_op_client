@@ -379,6 +379,7 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "end_date": %d,
         "_login": "krisp0",
         "_token": "123",
+        "_clientLogin": "",
         "network_campaign_id": "100",        
         "daily_budget": 50.0,
         "strategy": "HigestPosition"}""".format(date.getMillis(), date.plusDays(1).getMillis())
@@ -403,6 +404,7 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "end_date": %d,
         "_login": "krisp0",
         "_token": "123",
+        "_clientLogin": "",
         "network_campaign_id": "100",        
         "daily_budget": 50.0,
         "strategy": "HigestPosition"},
@@ -410,6 +412,7 @@ class Convert_fromJsonSpec extends Specification with AllExpectations {
         "end_date": %d,
         "_login": "krisp0",
         "_token": "123",
+        "_clientLogin": "",
         "network_campaign_id": "100",        
         "daily_budget": 50.0,
         "strategy": "HigestPosition"}

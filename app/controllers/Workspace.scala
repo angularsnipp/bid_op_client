@@ -67,6 +67,7 @@ object Workspace extends Controller {
         campaign = Campaign(
           _login = (data \ ("_login")).as[String],
           _token = (data \ ("_token")).as[String],
+          _clientLogin = (data \ ("_clientLogin")).as[String],
           network_campaign_id = (data \ ("network_campaign_id")).as[Long].toString(),
           start_date = start_date,
           daily_budget = (data \ ("daily_budget")).as[Double],
