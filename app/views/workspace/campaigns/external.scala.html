@@ -72,7 +72,7 @@ function getCampaignsList(cl) {
 	 			$('#table_body').append(
 	 				'<tr>' +
 						'<td>' + scil[i].CampaignID + '</td>' +
-						'<td class="center">' + scil[i].Login + '</td>' +
+						'<td class="center">' + '@login' + '</td>' +
 						'<td class="center">' + new Date(scil[i].StartDate) + '</td>' +
 						'<td class="center">' + scil[i].Rest + '</td>' +
 						'<td class="center">' + scil[i].StrategyName + '</td>' +
@@ -80,7 +80,7 @@ function getCampaignsList(cl) {
 						'<td class="center">' + scil[i].Status + '</td>' +								
 						'<td class="center">' +
 							'<a class="btn btn-info" id="' + scil[i].CampaignID + '" ' + 
-								'onclick="addCampaign(\'' + scil[i].Login + '\',' + scil[i].CampaignID + ',' + scil[i].StartDate + ',' + scil[i].Rest + ',\'' + scil[i].StrategyName + '\')">' +										
+								'onclick="addCampaign(' + scil[i].CampaignID + ',' + scil[i].StartDate + ',' + scil[i].Rest + ',\'' + scil[i].StrategyName + '\')">' +										
 								'<i class="icon-plus icon-white"></i>' +  
 								'Add' +                                            
 							'</a>' +									
@@ -93,14 +93,14 @@ function getCampaignsList(cl) {
 }
 
 // add campaign to Bid
-function addCampaign(login,id,sd,db,st) { 
+function addCampaign(id,sd,db,st) { 
 	$.ajax({
 		type: 'POST',
 		url: "@routes.Workspace.postCampaign",        			
 		data: JSON.stringify({
     		user: '@user.get.name',
     		net: '@net',
-    	 	_login: login,
+    	 	_login: '@login',
         	_token: '@token',
         	network_campaign_id: id,
         	start_date: new Date(sd),        					
