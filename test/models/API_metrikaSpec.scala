@@ -18,12 +18,12 @@ class API_metrikaSpec extends Specification with AllExpectations {
     sequential
 
     "counters" in {
-      val res = m.counters
+      val res = m.counters(List(user_login))
       res must_== (List(19740241, 19740337))
     }
 
     "summary" in {
-      val res0 = m.summary(m.counters, cur_ft.minusMonths(3), cur_ft)
+      val res0 = m.summary(m.counters(List(user_login)), cur_ft.minusMonths(3), cur_ft)
 
       val res = res0.head._2
       res.date2 must_== ("20130524")
@@ -42,7 +42,7 @@ class API_metrikaSpec extends Specification with AllExpectations {
     }
 
     "summaryGoals" in {
-      val ssml = m.summary(m.counters, cur_ft.minusMonths(3), cur_ft)
+      val ssml = m.summary(m.counters(List(user_login)), cur_ft.minusMonths(3), cur_ft)
       val cgl = ssml.map { v =>
         v._1 -> v._2.goals
       }
@@ -102,7 +102,7 @@ class API_metrikaSpec extends Specification with AllExpectations {
 
     "cSummary" in {
 
-      val ssml = m.summary(m.counters, cur_ft.minusMonths(3), cur_ft)
+      val ssml = m.summary(m.counters(List(user_login)), cur_ft.minusMonths(3), cur_ft)
       val cgl = ssml.map { v =>
         v._1 -> v._2.goals
       }
@@ -136,7 +136,7 @@ class API_metrikaSpec extends Specification with AllExpectations {
     }
 
     "bpSummary" in {
-      val ssml = m.summary(m.counters, cur_ft.minusMonths(3), cur_ft)
+      val ssml = m.summary(m.counters(List(user_login)), cur_ft.minusMonths(3), cur_ft)
       val cgl = ssml.map { v =>
         v._1 -> v._2.goals
       }

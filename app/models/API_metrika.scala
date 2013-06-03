@@ -15,11 +15,12 @@ case class API_metrika(
 
   lazy val metrika = Metrika(login, token)
 
-  def counters: List[Long] = {
+  def counters(clientLogins: List[String]): List[Long] = {
     val res = metrika.getCounterList()
     val cl = (res \ "counters").as[List[JsValue]]
 
-    cl.map { js => (js \ "id").as[String].toLong }
+    cl.filter { js => clientLogins.contains((js \ "owner_login").as[String]) }
+      .map { js => (js \ "id").as[String].toLong }
   }
 
   def summary(counters: List[Long], date1: DateTime, date2: DateTime): List[(Long, StatSummaryMetrika)] = {

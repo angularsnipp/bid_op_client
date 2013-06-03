@@ -144,7 +144,7 @@ class ShortScheduler extends Job {
                * get Statistics from Yandex.Metrika
                */
               val m = API_metrika(l, ucl.head._token)
-              val counterList = m.counters
+              val counterList = m.counters(ucl.map(_._clientLogin).distinct)
               val ssml = m.summary(counterList, cur_ft, cur_ft)
               val cgl = ssml.map { v =>
                 v._1 -> v._2.goals
