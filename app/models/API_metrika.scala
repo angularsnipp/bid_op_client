@@ -1,6 +1,6 @@
 package models
 
-import api._
+import yandex.metrika._
 import json_api.Convert._
 import play.api.libs.json._
 import org.joda.time._
