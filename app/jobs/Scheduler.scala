@@ -60,8 +60,8 @@ object Scheduler {
     // Trigger the job to run at some time "startCP", and then repeat every "nMinutes" minutes
     val triggerCP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyCP)
-      //.startAt(startSS.toDate())
-      .startNow()
+      .startAt(startSS.toDate())
+      //.startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInMinutes(nMinutes)
