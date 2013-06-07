@@ -136,7 +136,18 @@ object API_bid {
   }
 
   /*ActualBids and NetAdvisedBids*/
-  def postBannerReports(user: User, net: String, id: String, bannerPhraseReport: List[BannerInfo]): Boolean = {
+  def postBannerReports(user: User, net: String, id: String, bannerPhraseReport: JsValue): Boolean = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](bannerPhraseReport)
+      .map { response =>
+        if (response.status == Http.Status.CREATED) true else false
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
+  /*def postBannerReports(user: User, net: String, id: String, bannerPhraseReport: List[BannerInfo]): Boolean = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/bannerreports")
       .withHeaders(("password" -> user.password))
       .post[JsValue](toJson[List[BannerInfo]](bannerPhraseReport))
@@ -145,7 +156,7 @@ object API_bid {
       }
 
     Await.result(result, Duration.Inf)
-  }
+  }*/
 
   def getRecommendations(user: User, net: String, id: String, datetime: DateTime = new DateTime): Option[List[PhrasePriceInfo]] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations")

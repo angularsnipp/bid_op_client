@@ -4,6 +4,12 @@ import fly.play.s3._
 
 object AWS {
 
-  val bucket = S3("homeland-assets")
+  def bucket(url: String): String = {
+    try {
+      S3("homeland-assets").url(url, 10)
+    } catch {
+      case e: Throwable => ""
+    }
+  }
 
 }

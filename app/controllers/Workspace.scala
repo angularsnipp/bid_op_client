@@ -37,7 +37,21 @@ object Workspace extends Controller {
         .getBanners(List(id.toInt))
         .map {
           case (bannerInfo_List, json_banners) =>
-            if (bannerInfo_List.isDefined) {
+            val biList = (json_banners \ "data").asOpt[List[JsValue]]
+            if (biList.isDefined) {
+              println("!!! SUCCESS getBanners !!!")
+
+              // post BannersInfo to BID
+              if (API_bid.postBannerReports(user, net, id, json_banners \ "data"))
+                println("!!! ActualBids and NetAdvisedBids is POSTED to BID !!!")
+              else
+                println("??? ActualBids and NetAdvisedBids is NOT POSTED to BID !!!")
+
+              //return List[BannerInfo] to client browser
+              Ok(toJson[List[BannerInfo]](bannerInfo_List.get))
+            } else println("??? FAILED getBanners ???"); BadRequest
+
+          /*if (bannerInfo_List.isDefined) {
               println("!!! SUCCESS getBanners !!!")
 
               // post BannersInfo to BID
@@ -48,7 +62,7 @@ object Workspace extends Controller {
 
               //return List[BannerInfo] to client browser
               Ok(toJson[List[BannerInfo]](bannerInfo_List.get))
-            } else println("??? FAILED getBanners ???"); BadRequest
+            } else println("??? FAILED getBanners ???"); BadRequest*/
         }
     }
   }

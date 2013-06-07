@@ -10,7 +10,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import play.api.Play.current //or use (implicit app: play.api.Application)
-import play.api.libs.json.{ JsValue, JsNull }
+import play.api.libs.json._
 import json_api._
 
 import org.joda.time.DateTime
@@ -60,8 +60,8 @@ object Scheduler {
     // Trigger the job to run at some time "startCP", and then repeat every "nMinutes" minutes
     val triggerCP = TriggerBuilder.newTrigger()
       .withIdentity(tKeyCP)
-      .startAt(startSS.toDate())
-      //.startNow()
+      //.startAt(startSS.toDate())
+      .startNow()
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInMinutes(nMinutes)
@@ -145,6 +145,7 @@ class ShortScheduler extends Job {
                */
               val m = API_metrika(l, ucl.head._token)
               val counterList = m.counters(ucl.map(_._clientLogin).distinct)
+
               val ssml = m.summary(counterList, cur_ft, cur_ft)
               val cgl = ssml.map { v =>
                 v._1 -> v._2.goals
@@ -272,7 +273,23 @@ class ShortScheduler extends Job {
         .map {
           case (bannerInfo_List, json_banners) =>
             // post BannersInfo list to BID
-            bannerInfo_List map { bil =>
+            val biList = (json_banners \ "data").asOpt[List[JsValue]]
+            biList map { bil =>
+              cl map { c =>
+                val bannerPhraseReport = Json.toJson(bil.filter(_ \ "CampaignID" == JsNumber(c.network_campaign_id.toLong)))
+                val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bannerPhraseReport)
+                if (res)
+                  println("!!! SUCCESS - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " !!!")
+                else
+                  println("??? FAILED... - ANA for: " + u.name + ", " + login + ", " + c.network_campaign_id + " ???")
+                res
+              }
+              //if (API_bid.postBannerReports(u, n, c.network_campaign_id, bil)) true else false
+            } getOrElse {
+              println("<< failed ANA: " + u.name + ", " + login + ": " + json_banners + " >>")
+              List(false)
+            }
+          /*bannerInfo_List map { bil =>
               cl map { c =>
                 val res = API_bid.postBannerReports(u, n, c.network_campaign_id, bil.filter(_.CampaignID == c.network_campaign_id.toLong))
                 if (res)
@@ -285,7 +302,7 @@ class ShortScheduler extends Job {
             } getOrElse {
               println("<< failed ANA: " + u.name + ", " + login + ": " + json_banners + " >>")
               List(false)
-            }
+            }*/
         }
 
     def cl10(cl: List[Campaign]): List[Boolean] =
