@@ -28,7 +28,7 @@ object ApplicationBuild extends Build {
   import Resolvers._
   val appDependencies = Seq(
     // Add your project dependencies here
-    jdbc, anorm, scalatest, fasterxml, squeryl_orm, postgresDriver, yandex_metrika, yandex_direct, aws_S3) //, codahale)
+    jdbc, anorm, scalatest, fasterxml, squeryl_orm, postgresDriver, yandex_direct, aws_S3) //, codahale)
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here

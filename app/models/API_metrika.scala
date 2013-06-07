@@ -1,6 +1,6 @@
 package models
 
-import yandex.metrika._
+//import yandex.metrika._
 import json_api.Convert._
 import play.api.libs.json._
 import org.joda.time._
@@ -13,10 +13,10 @@ case class API_metrika(
   /* Date format */
   val date_fmt = new SimpleDateFormat("yyyyMMdd")
 
-  lazy val metrika = Metrika(login, token)
+  //lazy val metrika = Metrika(login, token)
 
   def counters(clientLogins: List[String]): List[Long] = {
-    val res = metrika.getCounterList()
+    val res = JsNull //metrika.getCounterList()
     val cl = (res \ "counters").as[List[JsValue]]
 
     cl.filter { js => clientLogins.contains((js \ "owner_login").as[String]) }
@@ -24,14 +24,14 @@ case class API_metrika(
   }
 
   def summary(counters: List[Long], date1: DateTime, date2: DateTime): List[(Long, StatSummaryMetrika)] = {
-    val p = OParameters(
+    /*val p = OParameters(
       date1 = Some(date_fmt.format(date1.toDate)),
       date2 = Some(date_fmt.format(date2.toDate)),
       table_mode = Some("tree"))
-
+*/
     counters.flatMap { counter_id =>
-      p.id = Some(counter_id)
-      val res = metrika.getStatSourcesDirectSummary(p)
+      //p.id = Some(counter_id)
+      val res = JsNull //metrika.getStatSourcesDirectSummary(p)
 
       fromJson[StatSummaryMetrika](res).map { ssm =>
         counter_id -> ssm
@@ -40,18 +40,18 @@ case class API_metrika(
   }
 
   def summaryGoals(cgl: List[(Long, List[Long])], date1: DateTime, date2: DateTime): List[(Long, Long, StatSummaryMetrika)] = {
-    val p = OParameters(
+    /*val p = OParameters(
       date1 = Some(date_fmt.format(date1.toDate)),
       date2 = Some(date_fmt.format(date2.toDate)),
-      table_mode = Some("tree"))
+      table_mode = Some("tree"))*/
 
     (for {
       cg <- cgl //(counter_id,goals)
       goal_id <- cg._2
     } yield {
-      p.id = Some(cg._1)
-      p.goal_id = Some(goal_id)
-      val res = metrika.getStatSourcesDirectSummary(p)
+      //p.id = Some(cg._1)
+      //p.goal_id = Some(goal_id)
+      val res = JsNull //metrika.getStatSourcesDirectSummary(p)
       fromJson[StatSummaryMetrika](res).map { ssm =>
         (cg._1, goal_id, ssm)
       }
