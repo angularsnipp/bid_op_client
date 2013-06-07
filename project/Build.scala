@@ -8,7 +8,7 @@ object Dependencies {
   val fasterxml = "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.0-RC3"
   val squeryl_orm = "org.squeryl" %% "squeryl" % "0.9.5-6"
   val postgresDriver = "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
-  val yandex_metrika = "com.github.krispo" % "yandex-metrika_2.10" % "0.1-SNAPSHOT"
+  val yandex_metrika = "com.github.krispo" %% "yandex-metrika" % "0.2-SNAPSHOT"
   val yandex_direct = "com.github.krispo" % "yandex-direct_2.10" % "0.1-SNAPSHOT"
   val aws_S3 = "nl.rhinofly" %% "api-s3" % "2.6.1"
 }

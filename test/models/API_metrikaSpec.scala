@@ -8,7 +8,7 @@ import common.Yandex
 
 class API_metrikaSpec extends Specification with AllExpectations {
   val user_login = "moksellegroup" //fake login
-  val token = "8d1a7b0837df49a99bf5f95d24464323" //fake token
+  val token = "3283fafd354840bda4f6c727028495de" //fake token
 
   val m = API_metrika(user_login, token)
   val cur_ft = new DateTime(m.date_fmt.parse("20130524"))
