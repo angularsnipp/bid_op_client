@@ -1,5 +1,6 @@
 package models
 
+import yandex.direct._
 import common.Yandex
 import play.api.libs.ws.{ WS, Response }
 import scala.concurrent.{ Future, Await }
@@ -21,170 +22,127 @@ case class API_yandex(
    * T is a request(or input) type (i.e., GetBannersInfo or GetSummaryStatRequest)
    * */
 
-  /****************************** POST request *****************************************/
-
-  /* send request repeatedly */
-  def withRetry[T](n: Int, dl: Deadline)(f: => Future[T]): Future[T] = {
-    f.recoverWith { //if failed
-      case t: Throwable =>
-        if ((n > 0) & (dl.hasTimeLeft)) {
-          withRetry(n - 1, dl)(f)
-        } else {
-          println("=== 5 attempts have made === ")
-          f
-        }
-    }
-  }
-
-  /* check if failed */
-  def isFailed(response: Response): Boolean = {
-    (response.json \ ("error_code")).asOpt[Int].isDefined //if an error is defined
-  }
-
-  def post(method: String, param: JsValue = JsNull): Future[Response] = {
-    val jsData = InputData(login, token, method, param)
-
-    def wsCall = WS.url(url).post[JsValue](jsData)
-    /*.map { response =>
-        require(!isFailed(response)) //success is required
-        response
-      }*/
-
-    withRetry(n = 5, 5.minutes.fromNow)(wsCall) //try to repeat WS calling up to 5 times until success
-  }
+  /*
+   * Initialize Direct class
+   */
+  val direct = Direct(login, token, Yandex.app_id, url = url)
 
   /****************************** Methods implementation *******************************/
 
   /* PingAPI */
   def pingAPI: Boolean = {
-    val fres = post("PingAPI").map { response =>
-      (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
-    }
-    Await.result(fres, Duration.Inf)
+    val fres = direct.pingAPI
+
+    (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
   }
 
   /* GetClientInfo */
-  def getClientInfo(logins: List[String]): Future[Option[List[ClientInfo]]] = {
-    val fres = post("GetClientInfo", Json.toJson(logins))
-      .map { response =>
-        fromJson[List[ClientInfo]](response.json \ ("data"))
-      }
-    fres
-    //Await.result(fres, Duration.Inf)
+  def getClientInfo(logins: List[String]): Option[List[ClientInfo]] = {
+    val fres = direct.getClientInfo(Json.toJson(logins))
+
+    fromJson[List[ClientInfo]](fres \ ("data"))
+
   }
   /* GetClientsList 
    * this method is available only for Agency
    * */
   def getClientsList: Option[List[ClientInfo]] = {
-    val fres = post("GetClientsList")
-      .map { response =>
-        fromJson[List[ClientInfo]](response.json \ ("data"))
-      }
-    //fres
-    Await.result(fres, Duration.Inf)
+    val fres = direct.getClientsList(JsNull)
+
+    fromJson[List[ClientInfo]](fres \ ("data"))
   }
 
   /* GetCampaignsList */
-  def getCampaignsList(param: List[String] /* List of client Logins */ ): Future[Option[List[ShortCampaignInfo]]] = {
+  def getCampaignsList(param: List[String] /* List of client Logins */ ): Option[List[ShortCampaignInfo]] = {
     val jparam = param match {
       case List("") => JsNull //for simple user
       case par => Json.toJson(param) //for Agency
     }
-    val fres = post("GetCampaignsList", jparam)
-      .map { response =>
-        fromJson[List[ShortCampaignInfo]](response.json \ ("data"))
-      }
-    fres
+    val fres = direct.getCampaignsList(jparam)
+
+    fromJson[List[ShortCampaignInfo]](fres \ ("data"))
+
   }
 
   /* GetBanners */
-  def getBanners(campaignIDS: List[Int]): Future[(Option[List[BannerInfo]], JsValue)] = {
-    val fres = post("GetBanners", toJson[GetBannersInfo](GetBannersInfo(campaignIDS)))
-      .map { response =>
-        (fromJson[List[BannerInfo]](response.json \ ("data")), response.json)
-      }
-    fres
+  def getBanners(campaignIDS: List[Int]): (Option[List[BannerInfo]], JsValue) = {
+    val fres = direct.getBanners(toJson[GetBannersInfo](GetBannersInfo(campaignIDS)))
+
+    (fromJson[List[BannerInfo]](fres \ ("data")), fres)
+
   }
 
   /* GetSummaryStat */
-  def getSummaryStat(campaignIDS: List[Int], start_date: Date, end_date: Date): Future[(Option[List[StatItem]], JsValue)] = {
-    val fres = post(
-      "GetSummaryStat",
+  def getSummaryStat(campaignIDS: List[Int], start_date: Date, end_date: Date): (Option[List[StatItem]], JsValue) = {
+    val fres = direct.getSummaryStat(
       toJson[GetSummaryStatRequest](
         GetSummaryStatRequest(
           CampaignIDS = campaignIDS,
           StartDate = Yandex.date_fmt.format(start_date),
           EndDate = Yandex.date_fmt.format(end_date))))
-      .map { response =>
-        (fromJson[List[StatItem]](response.json \ ("data")), response.json)
-      }
-    fres
+
+    (fromJson[List[StatItem]](fres \ ("data")), fres)
+
   }
 
   /*-- detailed BannerPhrases report (DURING the day)--*/
   /* GetBannersStat */
-  def getBannersStat(campaignID: Int, start_date: Date, end_date: Date): Future[(Option[GetBannersStatResponse], JsValue)] = {
-    val fres = post(
-      "GetBannersStat",
+  def getBannersStat(campaignID: Int, start_date: Date, end_date: Date): (Option[GetBannersStatResponse], JsValue) = {
+    val fres = direct.getBannersStat(
       toJson[NewReportInfo](
         NewReportInfo(
           CampaignID = campaignID,
           StartDate = Yandex.date_fmt.format(start_date),
           EndDate = Yandex.date_fmt.format(end_date))))
-      .map { response =>
-        (fromJson[GetBannersStatResponse](response.json \ ("data")), response.json)
-      }
-    fres
+
+    (fromJson[GetBannersStatResponse](fres \ ("data")), fres)
+
   }
 
   /*-- detailed BannerPhrases report (at the END of the day)--*/
   /* CreateNewReport */
-  def createNewReport(campaignID: Int, start_date: Date, end_date: Date): Future[Option[Int]] = {
-    val fres = post(
-      "CreateNewReport",
+  def createNewReport(campaignID: Int, start_date: Date, end_date: Date): Option[Int] = {
+    val fres = direct.createNewReport(
       toJson[NewReportInfo](
         NewReportInfo(
           CampaignID = campaignID,
           StartDate = Yandex.date_fmt.format(start_date),
           EndDate = Yandex.date_fmt.format(end_date))))
-      .map { response =>
-        (response.json \ ("data")).asOpt[Int]
-      }
-    fres
+
+    (fres \ ("data")).asOpt[Int]
+
   }
 
   /* GetReportList */
   def getReportList: (Option[List[ReportInfo]], JsValue) = {
-    val fres = post("GetReportList")
-      .map { response =>
-        (fromJson[List[ReportInfo]](response.json \ ("data")), response.json)
-      }
-    Await.result(fres, Duration.Inf)
+    val fres = direct.getReportList
+
+    (fromJson[List[ReportInfo]](fres \ ("data")), fres)
+
   }
 
   /* Download XML report*/
-  def getXML(reportUrl: String): Future[xml.Elem] = { //won't require login and token 
-    WS.url(reportUrl).get()
+  def getXML(reportUrl: String): xml.Elem = { //won't require login and token 
+    val fres = WS.url(reportUrl).get()
       .map { response =>
         response.xml
       }
+    Await.result(fres, Duration.Inf)
   }
 
   /* DeleteReport */
   def deleteReport(reportID: Int): Boolean = {
-    val fres = post("DeleteReport", Json.toJson(reportID))
-      .map { response =>
-        (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
-      }
-    Await.result(fres, Duration.Inf)
+    val fres = direct.deleteReport(Json.toJson(reportID))
+
+    (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
+
   }
 
   /* UpdatePrices */
   def updatePrice(phrasepriceInfo: List[PhrasePriceInfo]): Boolean = {
-    val fres = post("UpdatePrices", toJson[List[PhrasePriceInfo]](phrasepriceInfo))
-      .map { response =>
-        (response.json \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
-      }
-    Await.result(fres, Duration.Inf)
+    val fres = direct.updatePrices(toJson[List[PhrasePriceInfo]](phrasepriceInfo))
+
+    (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
+
   }
 }

@@ -160,7 +160,7 @@ class ShortScheduler extends Job {
                */
               Future { //send request for all campaigns belonging to the specific login
                 //CampaignPerformance
-                get_post_CP(u, n, ucl, cur_ft, prev_ft, cMetrikaPerformance).onSuccess {
+                get_post_CP(u, n, ucl, cur_ft, prev_ft, cMetrikaPerformance) match {
                   case true => println("!!! SUCCESS FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
                   case false => println("??? FAILED... FINISH - CP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
                 }
@@ -168,15 +168,15 @@ class ShortScheduler extends Job {
 
               Future { //send request succesively for all campaigns belonging to the specific login
                 //BannersPerformance
-                if (get_post_BP(u, n, ucl, cur_ft, prev_ft, bpMetrikaPerformance))
-                  println("!!! SUCCESS FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
-                else
-                  println("??? FAILED... FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
+                get_post_BP(u, n, ucl, cur_ft, prev_ft, bpMetrikaPerformance) match {
+                  case true => println("!!! SUCCESS FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
+                  case false => println("??? FAILED... FINISH - BP for: " + u.name + ", " + l + ", " + cur_ft + " ???")
+                }
               }
 
               Future { //for make requests in parallel way
                 //ActualBids and NetAdvisedBids
-                get_post_ANA(u, n, ucl).onSuccess {
+                get_post_ANA(u, n, ucl) match {
                   case true => println("!!! SUCCESS FINISH - ANA for: " + u.name + ", " + l + ", " + cur_ft + " !!!")
                   case false => println("??? FAILED... FINISH - ANA for: " + u.name + ", " + l + ", " + cur_ft + " ???")
                 }
@@ -195,7 +195,7 @@ class ShortScheduler extends Job {
   /**
    * CampaignPerformance
    */
-  def get_post_CP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime, mpList: List[PerformanceMetrika] = Nil): Future[Boolean] = {
+  def get_post_CP(u: User, n: String, ucl: List[Campaign], cur_ft: DateTime, prev_ft: DateTime, mpList: List[PerformanceMetrika] = Nil): Boolean = {
     /* LIMIT = 100 in the day!!! */
 
     val login = ucl.head._login
@@ -203,8 +203,7 @@ class ShortScheduler extends Job {
 
     // get StatItem list from Yandex
     API_yandex(login, token)
-      .getSummaryStat(ucl.map(_.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate())
-      .map {
+      .getSummaryStat(ucl.map(_.network_campaign_id.toInt), prev_ft.toDate(), cur_ft.toDate()) match {
         case (statItem_List, json_stat) =>
           // post StatItem list to BID
           statItem_List map { sil =>
@@ -236,9 +235,8 @@ class ShortScheduler extends Job {
 
     ucl map { c =>
       // get BannersStat from Yandex
-      val fb = API_yandex(login, token)
-        .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate())
-        .map {
+      API_yandex(login, token)
+        .getBannersStat(c.network_campaign_id.toInt, prev_ft.toDate(), cur_ft.toDate()) match {
           case (bannersStat, json_stat) =>
             // post StatItem list to BID
             bannersStat map { bs =>
@@ -254,14 +252,14 @@ class ShortScheduler extends Job {
               false
             }
         }
-      Await.result(fb, 30 seconds) //await up to 30s for getting response for each campaign
+      //Await.result(fb, 30 seconds) //await up to 30s for getting response for each campaign
     } find (!_) isEmpty
   }
 
   /**
    * ActualBids and NetAdvisedBids
    */
-  def get_post_ANA(u: User, n: String, ucl: List[Campaign]): Future[Boolean] = {
+  def get_post_ANA(u: User, n: String, ucl: List[Campaign]): Boolean = {
 
     val login = ucl.head._login
     val token = ucl.head._token
@@ -269,8 +267,7 @@ class ShortScheduler extends Job {
     def getBanners(cl: List[Campaign]) =
       // get BannersInfo list from Yandex
       API_yandex(login, token)
-        .getBanners(cl.map(_.network_campaign_id.toInt))
-        .map {
+        .getBanners(cl.map(_.network_campaign_id.toInt)) match {
           case (bannerInfo_List, json_banners) =>
             // post BannersInfo list to BID
             val biList = (json_banners \ "data").asOpt[List[JsValue]]
@@ -308,13 +305,12 @@ class ShortScheduler extends Job {
     def cl10(cl: List[Campaign]): List[Boolean] =
       if (cl.length > 10) { //10 is a max value for Yandex
         val bl = getBanners(cl.take(10))
-        Await.result(bl, 30 seconds) ::: cl10(cl.drop(10))
+        bl ::: cl10(cl.drop(10))
       } else {
-        val bl = getBanners(cl)
-        Await.result(bl, 30 seconds)
+        getBanners(cl)
       }
 
-    Future { cl10(ucl).find(!_).isEmpty } //true if ANAs for all campaigns have been added successful
+    cl10(ucl).find(!_).isEmpty //true if ANAs for all campaigns have been added successful
   }
 
   def wakeUP = {
@@ -365,7 +361,7 @@ class LongScheduler extends Job {
               val ucl = cl.filter(_._login == l) //list of campaigns for unique login - l
 
               ucl map { c =>
-                Await.result(get_post_BPP(u, n, c, cur_ft), 1 minutes)
+                get_post_BPP(u, n, c, cur_ft)
                 println("!!! FINISH - BPP for: " + u.name + ", " + l + ", " + c.network_campaign_id + " - " + cur_ft + " !!!")
                 /*get_post_BPP(u, n, c, cur_ft).onSuccess {
                   case _ => println("!!! FINISH - BannerPhrasePerformance for campaignID " + c.network_campaign_id + ", user: " + u.name + ", " + cur_ft + " !!!")
@@ -394,33 +390,32 @@ class LongScheduler extends Job {
     //create Report on Yandex server
     API_yandex(login, token)
       .createNewReport(cID.toInt, start_dt.toDate(), cur_ft.toDate())
-      .map { newReportID =>
-        newReportID map { id =>
+      .map { id =>
 
-          def getUrl: Option[String] = {
-            val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
-            reportInfo_List map { ril =>
-              val reportInfo = ril.filter(_.ReportID == id).head
-              reportInfo.StatusReport match {
-                case "Pending" => {
-                  Thread.sleep(5000)
-                  println("!!!!!! PENDING !!!!!");
-                  getUrl
-                }
-                case "Done" => {
-                  println("!!!!!! DONE !!!!!")
-                  reportInfo.Url
-                }
+        def getUrl: Option[String] = {
+          val (reportInfo_List, json_reports) = API_yandex(login, token).getReportList
+          reportInfo_List map { ril =>
+            val reportInfo = ril.filter(_.ReportID == id).head
+            reportInfo.StatusReport match {
+              case "Pending" => {
+                Thread.sleep(5000)
+                println("!!!!!! PENDING !!!!!");
+                getUrl
               }
-            } getOrElse (None)
-          }
+              case "Done" => {
+                println("!!!!!! DONE !!!!!")
+                reportInfo.Url
+              }
+            }
+          } getOrElse (None)
+        }
 
-          //Get current report Url 
-          getUrl map { reportUrl =>
-            //download XML report from Yandex Url
-            API_yandex(login, token)
-              .getXML(reportUrl)
-              .map { xml_node =>
+        //Get current report Url 
+        getUrl map { reportUrl =>
+          //download XML report from Yandex Url
+          API_yandex(login, token)
+            .getXML(reportUrl) match {
+              case xml_node =>
                 //post report to BID
                 val postToBid = API_bid.postReports(u, n, cID, xml_node)
 
@@ -430,14 +425,13 @@ class LongScheduler extends Job {
                   println("??? Report is NOT POSTED to BID ???")
 
                 //remove current report from Yandex Server
-                if (API_yandex(login, token).deleteReport(newReportID.get))
+                if (API_yandex(login, token).deleteReport(id))
                   println("!!! Report is DELETED from Yandex!!!")
                 else
                   println("??? Report is NOT DELETED from Yandex ???")
-              }
-          } getOrElse println("??? FAILED... getting report url ???")
-        } getOrElse println("??? FAILED... report is NOT created ???")
-      }
+            }
+        } getOrElse println("??? FAILED... getting report url ???")
+      } getOrElse println("??? FAILED... report is NOT created ???")
   }
 }
 

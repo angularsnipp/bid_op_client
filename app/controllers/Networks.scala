@@ -9,6 +9,7 @@ import play.api.libs.ws.WS
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json.Json
 import json_api.Convert._
+import scala.concurrent.Future
 
 object Networks extends Controller with Secured {
 
@@ -107,21 +108,24 @@ object Networks extends Controller with Secured {
           req => req match {
             case (login, token, network) =>
               Async {
-                //check if this user is Agency or Client and retrieve the list of client Logins
-                API_yandex(login, token).getClientInfo(List(login)).map { cilo =>
+                Future {
+                  //check if this user is Agency or Client and retrieve the list of client Logins
 
-                  val loginList = cilo map { cil =>
-                    cil.filter(_.Login == login).headOption map { ci =>
-                      println("login: " + login + ", role - " + ci.Role)
-                      ci.Role match {
-                        case "Client" => Nil
-                        case "Agency" =>
-                          API_yandex(login, token).getClientsList map { cl =>
-                            cl map (_.Login)
-                          } getOrElse (Nil)
+                  val loginList =
+                    API_yandex(login, token).getClientInfo(List(login))
+                      .map { cil =>
+                        cil.filter(_.Login == login).headOption map { ci =>
+                          println("login: " + login + ", role - " + ci.Role)
+                          ci.Role match {
+                            case "Client" => Nil
+                            case "Agency" =>
+                              API_yandex(login, token).getClientsList map { cl =>
+                                cl map (_.Login)
+                              } getOrElse (Nil)
+                          }
+                        } getOrElse (Nil)
                       }
-                    } getOrElse (Nil)
-                  } getOrElse (Nil)
+                      .getOrElse(Nil)
                   println("!!! List of logins for Agency: " + loginList)
                   Ok(views.html.workspace.campaigns.external(user, network, login, token, loginList))
                 }
@@ -132,8 +136,9 @@ object Networks extends Controller with Secured {
 
   def getCampaignsList(login: String, token: String, clLogin: String) = Action {
     Async {
-      API_yandex(login, token).getCampaignsList(List(clLogin)) map { scilo =>
-        Ok(toJson(scilo.getOrElse(Nil)))
+      Future {
+        val scil = API_yandex(login, token).getCampaignsList(List(clLogin)).getOrElse(Nil)
+        Ok(toJson(scil))
       }
     }
   }
