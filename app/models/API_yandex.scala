@@ -145,4 +145,29 @@ case class API_yandex(
     (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
 
   }
+
+  /* 
+   * Copy full campaign   
+   */
+  def copyCampaign(campaignID: Int): Int = {
+    val param = direct.getCampaignsParams(campaignIDS = List(campaignID)) match {
+      case JsNull => JsNull
+      case jspar => {
+
+        val jsparfilter = (jspar \ "data")
+          .as[List[JsObject]]
+          .filter(_ \ "CampaignID" == JsNumber(campaignID))
+          .head
+
+        val zeroID = JsObject(Seq(("CampaignID" -> JsNumber(0))))
+        val name = JsObject(Seq(("Name" -> JsString("NewCampaign"))))
+
+        Json.toJson(jsparfilter ++ zeroID ++ name)
+      }
+    }
+    //println("<<< " + param + " >>>")
+    val res = direct.createOrUpdateCampaign(param)
+    println("<<< " + res + " >>>")
+    (res \ ("data")).asOpt[Int].getOrElse(0)
+  }
 }

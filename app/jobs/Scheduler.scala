@@ -62,6 +62,7 @@ object Scheduler {
       .withIdentity(tKeyCP)
       .startAt(startSS.toDate())
       //.startNow()
+      .startAt(startSS.plusYears(1).toDate())
       .withSchedule(
         SimpleScheduleBuilder.simpleSchedule()
           .withIntervalInMinutes(nMinutes)

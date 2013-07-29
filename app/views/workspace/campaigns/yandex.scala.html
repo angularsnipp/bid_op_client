@@ -33,6 +33,7 @@
 								  <th>Budget</th>	
 								  <th>Charts</th>							  
 								  <th>Actions</th>
+								  <th>Copy</th>
 							  </tr>
 						  </thead>   
 						  <tbody>						
@@ -53,6 +54,12 @@
 									<a class="btn btn-info disabled">								
 										<i class="icon-eye-open icon-white"></i>  
 										View                                            
+									</a>
+								</td>
+								<td class="center">
+									<a class="btn btn-info">								
+										<i class="icon-eye-open icon-white"></i>  
+										Copy                                            
 									</a>
 								</td>
 							</tr>							
@@ -82,4 +89,9 @@
 	val res = API_bid.getCampaigns(user = User.findByName(user).get, net = net)
 	responseData_bid[Campaign](nullparser(res))
 }
+
+<a class="btn btn-info" href="@routes.Networks.copyCampaign(c._login, c._token, c.network_campaign_id)">								
+										<i class="icon-eye-open icon-white"></i>  
+										Copy                                            
+									</a>
 **@

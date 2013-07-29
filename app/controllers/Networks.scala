@@ -142,4 +142,13 @@ object Networks extends Controller with Secured {
       }
     }
   }
+
+  def copyCampaign(login: String, token: String, campaignID: String) = Action {
+    Async {
+      Future {
+        val newCampaignID = API_yandex(login, token).copyCampaign(campaignID.toInt)
+        Ok(Json.toJson(newCampaignID))
+      }
+    }
+  }
 }
