@@ -169,6 +169,17 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
+  def getPhrases(user: User, net: String, id: String): Option[JsValue] = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/phrases")
+      .withHeaders(("password" -> user.password))
+      .get()
+      .map { response =>
+        if (response.status == Http.Status.OK) Some(response.json) else None
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
   /* Metrika Reports */
   def postMetrikaReports(user: User, net: String, metrikaReport: JsValue): Boolean = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/metrika/stats")

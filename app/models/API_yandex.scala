@@ -170,4 +170,46 @@ case class API_yandex(
     println("<<< " + res + " >>>")
     (res \ ("data")).asOpt[Int].getOrElse(0)
   }
+
+  /**
+   * Wordstat Report
+   */
+  // Full procedure for getting Wordstat Report
+  def getWordstat(param: JsValue): JsValue = {
+    val rep = direct.createNewWordstatReport(param)
+
+    (rep \ "data").asOpt[Int].map { id =>
+
+      def isReady: Boolean = {
+        val wrl = (direct.getWordstatReportList \ "data").as[List[JsValue]]
+
+        val owr = wrl.filter(_ \ "ReportID" == JsNumber(id)).headOption
+        owr map {
+          _ \ "StatusReport" match {
+            case JsString("Pending") => {
+              Thread.sleep(5000)
+              println("!!!!!! PENDING !!!!!");
+              isReady
+            }
+            case JsString("Done") => {
+              println("!!!!!! DONE !!!!!")
+              true
+            }
+            case e =>
+              println("??? " + e + " ???")
+              false
+          }
+        } getOrElse (false)
+      }
+
+      if (isReady) {
+        val wsr = direct.getWordstatReport(id)
+        direct.deleteWordstatReport(id)
+        wsr
+      } else JsNull
+    }.getOrElse {
+      println("??? Report is NOT created...")
+      JsNull
+    }
+  }
 }

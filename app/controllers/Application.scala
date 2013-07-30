@@ -122,17 +122,4 @@ object Application extends Controller with Secured {
    * Ok.stream(str &> Comet(callback = "console.log"))
    * }
    */
-
-  def commands(tags: String) = Action {
-    import play.api.libs.json._
-    val js = Json.parse(tags)
-
-    /* Yandex.Direct API */
-
-    /* Yandex.Metrika API */
-
-    /* Others */
-
-    Ok
-  }
 }

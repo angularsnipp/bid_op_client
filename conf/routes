@@ -3,46 +3,54 @@
 # ~~~~
 
 # Home page
-GET     /                   					controllers.Application.index
-GET     /home                  					controllers.Application.home
-GET     /about                 					controllers.Application.about
-GET     /contact               					controllers.Application.contact
-GET     /help                  					controllers.Application.help
+GET    /                               controllers.Application.index
+GET    /home                           controllers.Application.home
+GET    /about                          controllers.Application.about
+GET    /contact                        controllers.Application.contact
+GET    /help                           controllers.Application.help
 
-GET     /admin                           		controllers.Application.admin
-GET 	/startJobs 								controllers.Application.startJobs
-GET 	/stopJobs 								controllers.Application.stopJobs
-GET 	/getUsers 								controllers.Application.getUsers
-GET 	/clearDB 								controllers.Application.clearDB
-GET 	/wakeUP 								controllers.Application.wakeUP
-GET 	/commands								controllers.Application.commands(tags: String)
+GET    /admin                          controllers.Application.admin
+GET    /startJobs                      controllers.Application.startJobs
+GET    /stopJobs                       controllers.Application.stopJobs
+GET    /getUsers                       controllers.Application.getUsers
+GET    /clearDB                        controllers.Application.clearDB
+GET    /wakeUP                         controllers.Application.wakeUP
 # GET 	/keepAlive								controllers.Application.keepAlive
 
 # Authentication
-GET     /login                      			controllers.Auth.login
-GET     /register                     			controllers.Auth.register
-POST    /login                      			controllers.Auth.authenticate
-GET     /logout                     			controllers.Auth.logout
-GET     /yOAuth									controllers.OAuth_yandex.oAuth
+GET    /login                          controllers.Auth.login
+GET    /register                       controllers.Auth.register
+POST   /login                          controllers.Auth.authenticate
+GET    /logout                         controllers.Auth.logout
+GET    /yOAuth                         controllers.OAuth_yandex.oAuth
 
 # Workspace
 
-GET     /workspace             					controllers.Networks.index(network: String ?= "")
+GET    /workspace                      controllers.Networks.index(network: String ?= "")
 
 ## Campaigns list page
-GET     /workspace/campaign_report				controllers.Networks.campaignReport(network: String, campaign: String)
-GET     /workspace/external_login				controllers.Networks.externalLogin(network: String, token:String)
-GET     /workspace/external_campaigns			controllers.Networks.externalCampaigns(network: String, token:String)
-GET     /workspace/charts						controllers.Networks.getCharts(network: String, campaignID: String)
-GET 	/workspace/campaignsList				controllers.Networks.getCampaignsList(login: String, token: String, clLogin: String ?= "")
-GET     /workspace/copycampaign					controllers.Networks.copyCampaign(login: String, token: String, campaignID: String)
+GET    /workspace/campaign_report      controllers.Networks.campaignReport(network: String, campaign: String)
+GET    /workspace/external_login       controllers.Networks.externalLogin(network: String, token:String)
+GET    /workspace/external_campaigns   controllers.Networks.externalCampaigns(network: String, token:String)
+GET    /workspace/charts               controllers.Networks.getCharts(network: String, campaignID: String)
+GET    /workspace/campaignsList        controllers.Networks.getCampaignsList(login: String, token: String, clLogin: String ?= "")
+GET    /workspace/copycampaign         controllers.Networks.copyCampaign(login: String, token: String, campaignID: String)
 
 ## Interactive work with Campaigns
-POST 	/workspace/postCampaign 				controllers.Workspace.postCampaign
-POST 	/workspace/getRecommendations			controllers.Workspace.getRecommendations
-POST 	/workspace/getStats						controllers.Workspace.getStats
-POST 	/workspace/getBanners					controllers.Workspace.getBanners
-POST	/workspace/getReport					controllers.Workspace.getReport
+POST   /workspace/postCampaign         controllers.Workspace.postCampaign
+POST   /workspace/getRecommendations   controllers.Workspace.getRecommendations
+POST   /workspace/getStats             controllers.Workspace.getStats
+POST   /workspace/getBanners           controllers.Workspace.getBanners
+POST   /workspace/getReport            controllers.Workspace.getReport
+
+# API
+GET    /api/getUsers                   controllers.API.getUsers
+
+## Yandex
+POST   /api/yandex/getWordstatReport   controllers.API.getWordstatReport
+
+## Bid
+POST   /api/bid/postWordstatReport     controllers.API.postWordstatReport
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET    /assets/*file                   controllers.Assets.at(path="/public", file)
