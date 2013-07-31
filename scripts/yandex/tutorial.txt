@@ -1,0 +1,12 @@
+1) To run the script from this directory use command:
+
+./scriptname.sh par1 par2 par3 par4opt
+ 
+par1 - username
+par2 - password
+par3 - login 	//any user can have several logins
+par4opt - campaignID 	// : String - it's a network_campaign_id						
+						// is used for "dev"/"prod" mode. If it's not assigned - the script is applied to all campaigns with given login.
+						// is not used for "test" mode. In this case "words.json" is used
+
+2) Mode variable "MODE" is set up inside "init.sh"

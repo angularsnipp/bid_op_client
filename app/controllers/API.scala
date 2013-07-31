@@ -60,112 +60,76 @@ object API extends Controller {
    */
   def getWordstatReport = isAuth(user => implicit request => {
     val cs = API_bid.getCampaigns(user, "Yandex").get
-    val login = request.headers.get("login").get
-    val token = cs.filter(_._login == login).headOption.map(_._token).getOrElse("")
+    request.headers.get("login").map { l =>
+      val login = l
+      val token = cs.filter(_._login == login).headOption.map(_._token).getOrElse("")
 
-    val res = request
-      .headers
-      .get("campaignID")
-      .map { cID =>
-        cs.filter(c => c._login == login) map { c =>
+      def wordstat(c: Campaign) = {
+        println("<<<" + c.network_campaign_id + ">>>")
 
-          println("<<<" + c.network_campaign_id + ">>>")
+        val param = API_bid.getPhrases(user, "Yandex", c.network_campaign_id).get.as[List[JsValue]]
+        println("!!!!!!!" + param)
 
-          val param = API_bid.getPhrases(user, "Yandex", c.network_campaign_id).get.as[List[JsValue]]
-          println("!!!!!!!" + param)
-
-          def ph10(phlist: List[JsValue]): Enumerator[JsValue] = {
-            phlist match {
-              case Nil => Enumerator.eof
-              case phl =>
-                val (cur, next) =
-                  if (phl.length > 10) {
-                    (phl.take(10), phl.drop(10))
-                  } else {
-                    (phl, Nil)
-                  }
-
-                val js = Json.obj(("Phrases" -> cur))
-                val wsr = API_yandex(login, token).getWordstat(js)
-                println("Number of Words remain: " + (phl.length - 10))
-                API_bid.postPhrasesStats(user, "Yandex", wsr) match {
-                  case true => println("!!! Wordstat report is POSTED !!!")
-                  case false => println("??? Failed... Wordstat report is NOT posted...")
+        def ph10(phlist: List[JsValue]): Enumerator[JsValue] = {
+          phlist match {
+            case Nil => Enumerator.eof
+            case phl =>
+              val (cur, next) =
+                if (phl.length > 10) {
+                  (phl.take(10), phl.drop(10))
+                } else {
+                  (phl, Nil)
                 }
-                //(wsr \ "data").as[List[JsValue]] ::: ph10(next)
-                Enumerator(wsr) >- ph10(next)
-            }
+
+              val js = Json.obj(("Phrases" -> cur))
+              val wsr = API_yandex(login, token).getWordstat(js)
+              println("Number of Words remain: " + (phl.length - 10))
+              API_bid.postPhrasesStats(user, "Yandex", wsr) match {
+                case true => println("!!! Wordstat report is POSTED !!!")
+                case false => println("??? Failed... Wordstat report is NOT posted...")
+              }
+              //(wsr \ "data").as[List[JsValue]] ::: ph10(next)
+              Enumerator(wsr) >- ph10(next)
           }
-
-          //val res = Json.obj(("data" -> ph10(param)))
-          val res = ph10(param)
-
-          /*val enum = Enumerator("1 ", { Thread.sleep(10000); "2 " }, "3 ", "4 ")
-          val consume = Iteratee.consume[String]()
-          val newIter = enum(consume)
-          val res = newIter.flatMap(i => i.run)
-          res.map(s => println(s))*/
-
-          // &> upperCase) //(Json.stringify(res))
         }
-        Ok
-        /*val res = request
-      .headers
-      .get("campaignID")
-      .map { cID =>
-        cs.filter(c => c.network_campaign_id == cID & c._login == login).headOption map { c =>
 
-          val param = API_bid.getPhrases(user, "Yandex", cID).get.as[List[JsValue]]
-          println("!!!!!!!" + param)
-
-          def ph10(phlist: List[JsValue]): Enumerator[JsValue] = {
-            phlist match {
-              case Nil => Enumerator.eof
-              case phl =>
-                val (cur, next) =
-                  if (phl.length > 10) {
-                    (phl.take(10), phl.drop(10))
-                  } else {
-                    (phl, Nil)
-                  }
-
-                val js = Json.obj(("Phrases" -> cur))
-                val wsr = API_yandex(login, token).getWordstat(js)
-                println("Number of Words remain: " + (phl.length - 10))
-                API_bid.postPhrasesStats(user, "Yandex", wsr) match {
-                  case true => println("!!! Wordstat report is POSTED !!!")
-                  case false => println("??? Failed... Wordstat report is NOT posted...")
-                }
-                //(wsr \ "data").as[List[JsValue]] ::: ph10(next)
-                Enumerator(wsr) >- ph10(next)
-            }
-          }
-
-          //val res = Json.obj(("data" -> ph10(param)))
-          val res = ph10(param)
-
-          val enum = Enumerator("1 ", { Thread.sleep(10000); "2 " }, "3 ", "4 ")
-          val consume = Iteratee.consume[String]()
-          val newIter = enum(consume)
-          val res = newIter.flatMap(i => i.run)
-          res.map(s => println(s))
-
-          Ok.stream(res) // &> upperCase) //(Json.stringify(res))
-        } getOrElse {
-          BadRequest("??? Campaign is NOT found...")
-        }*/
-      }
-      .getOrElse {
-        val param = request.body.asJson.getOrElse(JsNull)
-        val wsr = API_yandex(login, token).getWordstat(param)
-        API_bid.postPhrasesStats(user, "Yandex", wsr) match {
-          case true => println("!!! Wordstat report is POSTED !!!")
-          case false => println("??? Failed... Wordstat report is NOT posted...")
-        }
-        Ok(Json.stringify(wsr))
+        val enum = ph10(param)
+        enum
       }
 
-    res
+      request.headers.get("mode") match {
+        case Some("test") =>
+          val param = request.body.asJson.getOrElse(JsNull)
+          val wsr = API_yandex(login, token).getWordstat(param)
+          API_bid.postPhrasesStats(user, "Yandex", wsr) match {
+            case true => println("!!! Wordstat report is POSTED !!!")
+            case false => println("??? Failed... Wordstat report is NOT posted...")
+          }
+          Ok(Json.stringify(wsr))
+        case _ =>
+          val res = request
+            .headers
+            .get("campaignID")
+            .map { cID =>
+              cs.filter(c => c.network_campaign_id == cID & c._login == login).headOption map { c =>
+                Ok.stream(wordstat(c) >>> Enumerator(JsString("The End")))
+              } getOrElse {
+                InternalServerError("??? Campaign or login is NOT found...")
+              }
+            }
+            .getOrElse {
+              val el = cs.filter(c => c._login == login) map { c =>
+                wordstat(c)
+              }
+              val e = el.foldRight(Enumerator.eof[JsValue]) { case (e1, e2) => e1 >- e2 }
+
+              Ok.stream(e >>> Enumerator(JsString("The End")))
+            }
+          res
+      }
+    }.getOrElse {
+      Ok("??? Login parameter is not defined...")
+    }
   })
 
 }
