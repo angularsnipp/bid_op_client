@@ -180,6 +180,17 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }
 
+  def postPhrasesStats(user: User, net: String, phrasesStats: JsValue): Boolean = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/phrasesstats")
+      .withHeaders(("password" -> user.password))
+      .post[JsValue](phrasesStats)
+      .map { response =>
+        if (response.status == Http.Status.OK) true else false
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
   /* Metrika Reports */
   def postMetrikaReports(user: User, net: String, metrikaReport: JsValue): Boolean = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/metrika/stats")
