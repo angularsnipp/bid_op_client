@@ -139,12 +139,20 @@ case class API_yandex(
   }
 
   /* UpdatePrices */
-  def updatePrice(phrasepriceInfo: List[PhrasePriceInfo]): Boolean = {
+  def updatePrice(phrasepriceInfo: JsValue): Boolean = {
+    val fres = direct.updatePrices(phrasepriceInfo)
+
+    (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
+
+  }
+
+  /*def updatePrice(phrasepriceInfo: List[PhrasePriceInfo]): Boolean = {
     val fres = direct.updatePrices(toJson[List[PhrasePriceInfo]](phrasepriceInfo))
 
     (fres \ ("data")).asOpt[Int].getOrElse(false) match { case 1 => true case _ => false }
 
   }
+*/
 
   /* 
    * Copy full campaign   

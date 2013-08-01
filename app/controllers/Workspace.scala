@@ -228,17 +228,17 @@ object Workspace extends Controller {
       //get Recommendations from BID
       val ppInfo_List = API_bid.getRecommendations(user, net, id, new DateTime().minusMonths(2))
 
-      if (ppInfo_List.isDefined) {
+      ppInfo_List.map { ppil =>
         println("!!! SUCCESS: Recommendations have TAKEN from BID !!!")
         //Update Prices on Yandex        
         val res =
-          if (API_yandex(login, token).updatePrice(ppInfo_List.get))
+          if (API_yandex(login, token).updatePrice(ppil))
             println("SUCCESS: Prices is updated!!!")
           else
             println("FAILED: Prices is NOT updated!!!")
 
-        Ok(toJson[List[PhrasePriceInfo]](ppInfo_List.get))
-      } else println("??? FAILED: Recommendations have NOT TAKEN from BID ???"); BadRequest
+        Ok(Json.stringify(ppil))
+      }.getOrElse { println("??? FAILED: Recommendations have NOT TAKEN from BID ???"); BadRequest }
     }
   }
 }

@@ -51,6 +51,7 @@ POST   /api/yandex/getWordstatReport   controllers.API.getWordstatReport
 
 ## Bid
 POST   /api/bid/postWordstatReport     controllers.API.postWordstatReport
+GET    /api/bid/runoptimization        controllers.API.runOptimization
 
 # Map static resources from the /public folder to the /assets URL path
 GET    /assets/*file                   controllers.Assets.at(path="/public", file)

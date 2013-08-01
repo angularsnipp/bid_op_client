@@ -21,7 +21,7 @@ object API extends Controller {
       val password = request.headers.get("password").getOrElse("")
 
       User.authenticate(User(username, password)) match {
-        case None => BadRequest("Invalid USERNAME or PASSWORD...")
+        case None => BadRequest("??? Invalid USERNAME or PASSWORD...")
         case Some(user) => f(user)(request)
       }
     }
@@ -50,6 +50,26 @@ object API extends Controller {
    * BID
    */
   def postWordstatReport = isAuth(user => implicit request => Ok)
+
+  def runOptimization = isAuth {
+    user =>
+      implicit request => {
+        request.headers.get("login").map { login =>
+          request.headers.get("campaignID").map { cID =>
+            val b = API_bid.runOptimization(user, "Yandex", cID)
+            Ok(Json.toJson(b))
+          }.getOrElse {
+            val cs = API_bid.getCampaigns(user, "Yandex").get
+            val el = cs.filter(_._login == login) map { c =>
+              API_bid.runOptimization(user, "Yandex", c.network_campaign_id)
+            }
+            Ok(Json.toJson(el))
+          }
+        }.getOrElse {
+          Ok("??? Login parameter is not defined...")
+        }
+      }
+  }
 
   /**
    * ******************************************************************

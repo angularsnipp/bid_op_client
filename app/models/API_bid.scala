@@ -158,12 +158,13 @@ object API_bid {
     Await.result(result, Duration.Inf)
   }*/
 
-  def getRecommendations(user: User, net: String, id: String, datetime: DateTime = new DateTime): Option[List[PhrasePriceInfo]] = {
+  def getRecommendations(user: User, net: String, id: String, datetime: DateTime = new DateTime): Option[JsValue] = { //Option[List[PhrasePriceInfo]] = {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/recommendations")
       .withHeaders(("If-Modified-Since" -> datetime.toString()), ("password" -> user.password))
       .get()
       .map { response =>
-        if (response.status == Http.Status.OK) fromJson[List[PhrasePriceInfo]](response.json) else None
+        //if (response.status == Http.Status.OK) fromJson[List[PhrasePriceInfo]](response.json) else None
+        if (response.status == Http.Status.OK) Some(response.json) else None
       }
 
     Await.result(result, Duration.Inf)
@@ -184,6 +185,17 @@ object API_bid {
     val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/phrasesstats")
       .withHeaders(("password" -> user.password))
       .post[JsValue](phrasesStats)
+      .map { response =>
+        if (response.status == Http.Status.OK) true else false
+      }
+
+    Await.result(result, Duration.Inf)
+  }
+
+  def runOptimization(user: User, net: String, id: String): Boolean = {
+    val result = WS.url(Base_URI + "/user/" + user.name + "/net/" + net + "/camp/" + id + "/runoptimization")
+      .withHeaders(("password" -> user.password))
+      .get()
       .map { response =>
         if (response.status == Http.Status.OK) true else false
       }
