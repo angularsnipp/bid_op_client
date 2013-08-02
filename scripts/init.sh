@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #mode: test, dev, prod
-MODE="prod"
+MODE="test"
 
 URL_DEV_CLIENT="http://localhost:9000/api"
 URL_PROD_CLIENT="http://bid-op-client.herokuapp.com/api"

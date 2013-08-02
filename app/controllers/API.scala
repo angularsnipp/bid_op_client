@@ -6,9 +6,8 @@ import play.api.libs.json._
 import scala.concurrent.{ Future, Promise }
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.util.concurrent.TimeUnit
-import play.api.libs.iteratee.Enumerator
-import play.api.libs.iteratee.Iteratee
-import play.api.libs.iteratee.Enumeratee
+import play.api.libs.iteratee._
+import org.joda.time._
 
 object API extends Controller {
 
@@ -151,5 +150,60 @@ object API extends Controller {
       Ok("??? Login parameter is not defined...")
     }
   })
+
+  /*
+   * Update prices on Yandex Network
+   */
+  def updatePrices = isAuth {
+    user =>
+      implicit request => {
+        val cs = API_bid.getCampaigns(user, "Yandex").get
+
+        val nMinutes = 15
+        val now = new DateTime()
+        val datetime = now
+          .minusMillis(now.getMillisOfDay())
+          .plusMinutes(nMinutes * (now.getMinuteOfDay() / nMinutes)) //multiple to "nMinutes" minutes
+
+        println("Get recommendation after: " + datetime)
+
+        request.headers.get("login").map { login =>
+          val token = cs.filter(_._login == login).headOption.map(_._token).getOrElse("")
+
+          request.headers.get("mode") match {
+            case Some("test") => {
+              request.body.asJson.map { js =>
+                API_yandex(login, token).updatePrice(js) match {
+                  case true =>
+                    println("!!! Prices are updated !!!")
+                    Ok("!!! Prices are updated !!!")
+                  case false =>
+                    println("??? Prices are NOT updated...")
+                    Ok("??? Prices are NOT updated...")
+                }
+              }.getOrElse {
+                Ok("Empty")
+              }
+            }
+            case _ =>
+              request.headers.get("campaignID").map { cID =>
+                API_bid.getRecommendations(user, "Yandex", cID, datetime).map { rec =>
+                  Ok(Json.stringify(rec))
+                }.getOrElse {
+                  NotFound("??? Recommendations are Not found...")
+                }
+              }.getOrElse {
+                val cs = API_bid.getCampaigns(user, "Yandex").get
+                val el = cs.filter(_._login == login) flatMap { c =>
+                  API_bid.getRecommendations(user, "Yandex", c.network_campaign_id, datetime)
+                }
+                Ok(Json.toJson(el))
+              }
+          }
+        }.getOrElse {
+          Ok("??? Login parameter is not defined...")
+        }
+      }
+  }
 
 }

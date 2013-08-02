@@ -27,7 +27,7 @@ object Reads { //-------------------------- fromJson ---------------------------
   implicit lazy val clientInfo = Json.reads[ClientInfo]
 
   //for metrika  
-  implicit val rds: Reads[DataStat] = (
+  implicit lazy val rds: Reads[DataStat] = (
     (__ \ "visits").readNullable[Int] and
     (__ \ "visits_all").readNullable[Int] and
     (__ \ "denial").readNullable[Double] and

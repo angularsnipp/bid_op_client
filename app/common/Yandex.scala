@@ -20,12 +20,12 @@ object Yandex {
 
   /* application information for YANDEX api */
   //// krisp0_bid app - for heroku
-  val app_id = "bee99a08160d4287aa0e468b9be7ed91" //client_id
-  val app_secret = "d08e6a30a6d44c3b9da147f3e76880de" //client_secret
+  //val app_id = "bee99a08160d4287aa0e468b9be7ed91" //client_id
+  //val app_secret = "d08e6a30a6d44c3b9da147f3e76880de" //client_secret
 
   //local_app_bid - for local testing
-  //val app_id = "e3a82ab5b4054deda4bb917d2a537224" //client_id
-  //val app_secret = "f36429ca82044f3990338ea6f93b8ba7" //client_secret  
+  val app_id = "e3a82ab5b4054deda4bb917d2a537224" //client_id
+  val app_secret = "f36429ca82044f3990338ea6f93b8ba7" //client_secret  
 
   /* OAuth information */
   val url_OAuthAuthorization = "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + app_id //url for user Authorization on Yandex
